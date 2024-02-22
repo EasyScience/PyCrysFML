@@ -23,9 +23,14 @@ jobs:
       matrix:
         os: [ubuntu-22.04, macos-12]  # [ubuntu-22.04, macos-12, windows-2022]
         build_system: [cmake]  # [cmake, fpm]
+        compiler: [gfortran]  # [gfortran, ifx]
         include:
           - os: macos-12
             build_system: fpm
+            compiler: gfortran
+          - os: ubuntu-22.04
+            build_system: cmake
+            compiler: ifx
 
     steps:
       - name: Check-out repository
@@ -59,7 +64,7 @@ jobs:
         run: python -m pip install numpy pytest deepdiff
 
       - name: Install OS-specific dependences (macOS)
-        if: runner.os == 'macOS'
+        if: runner.os == 'macOS' && matrix.compiler == 'gfortran'
         run: |
           brew reinstall gcc  # to add gfortran
           gfortran --version
@@ -74,16 +79,46 @@ jobs:
           sudo gem install fpm  # FPM
           fpm --version
 
+      #- name: Install OS-specific dependences (Linux + ifx)
+      #  if: runner.os == 'Linux' && matrix.compiler == 'ifx'
+      #  run: |
+      #    curl -Lo- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB | sudo gpg --dearmor -o /usr/share/keyrings/oneapi-archive-keyring.gpg
+      #    sudo tee /etc/apt/sources.list.d/oneAPI.list <<< "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main"
+      #    sudo apt update
+      #    sudo apt install intel-oneapi-compiler-fortran
+      #    source /opt/intel/oneapi/setvars.sh > /dev/null
+      #    ifx --version
+
+      - name: Install OS-specific dependences (Linux + ifx)
+        if: runner.os == 'Linux' && matrix.compiler == 'ifx'
+        run: |
+          wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB
+          sudo apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB
+          rm GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB
+          echo "deb https://apt.repos.intel.com/oneapi all main" | sudo tee /etc/apt/sources.list.d/oneAPI.list
+          sudo apt-get update
+          sudo apt-get install intel-oneapi-compiler-fortran
+          source /opt/intel/oneapi/setvars.sh
+          printenv >> $GITHUB_ENV
+          ifx --version
+
+      - name: Debug
+        run: ifx --version
+
+
       - name: Download CrysFML (fpm_macos branch)
         run: git clone --single-branch --branch fpm_macos https://code.ill.fr/rodriguez-carvajal/${{ env.CRYSFML_PROJECT }}.git
 
       - name: Build CrysFML using CMake
         if: matrix.build_system == 'cmake'
         run: |
+          if [[ '${{ runner.os }}' == 'Linux' && '${{ matrix.compiler }}' == 'ifx' ]]; then
+            source /opt/intel/oneapi/setvars.sh > /dev/null
+          fi
           cd ${{ env.PROJECTS_DIR }}/${{ env.CRYSFML_PROJECT }}
           mkdir build
           cd build
-          cmake -D ARCH32=OFF -D PYTHON_API=OFF -D CMAKE_BUILD_TYPE=Debug -D CMAKE_Fortran_COMPILER=gfortran -D CMAKE_INSTALL_PREFIX=${{ env.CRYSFML_INSTALL_DIR }} ..
+          cmake -D ARCH32=OFF -D PYTHON_API=OFF -D CMAKE_BUILD_TYPE=Debug -D CMAKE_Fortran_COMPILER=${{ matrix.compiler }} -D CMAKE_INSTALL_PREFIX=${{ env.CRYSFML_INSTALL_DIR }} ..
           cmake --build . -- -j
           cmake --install .
 
@@ -91,24 +126,28 @@ jobs:
         if: matrix.build_system == 'fpm'
         run: |
           cd ${{ env.PROJECTS_DIR }}/${{ env.CRYSFML_PROJECT }}
-          ./make_CrysFML_fpm.sh gfortran
-          mv gfortran_release ${{ env.CRYSFML_INSTALL_DIR }}
+          ./make_CrysFML_fpm.sh ${{ matrix.compiler }}
+          mv ${{ matrix.compiler }}_release ${{ env.CRYSFML_INSTALL_DIR }}
 
       - name: Download PyCrysFML (develop branch)
         run: git clone --single-branch --branch develop https://code.ill.fr/scientific-software/${{ env.PYCRYSFML_PROJECT }}.git
 
       - name: Build PyCrysFML modules one by one
         run: |
+          if [[ '${{ runner.os }}' == 'Linux' && '${{ matrix.compiler }}' == 'ifx' ]]; then
+            source /opt/intel/oneapi/setvars.sh > /dev/null
+            COMPILER_OPTIONS=(-fpp)
+          elif [[ '${{ matrix.compiler }}' == 'gfortran' ]]; then
+            COMPILER_OPTIONS=(-cpp -std=f2008 -ffree-line-length-none)
+          fi
           cd ${{ env.PROJECTS_DIR }}/${{ env.PYCRYSFML_PROJECT }}/src
           mkdir -p ${{ env.PYCRYSFML_INSTALL_DIR }}/pycrysfml08
           for name in py_cfml_metrics py_cfml_profiles py_cfml_sxtal_geom; do
-            gfortran -std=f2008 -ffree-line-length-0 -fPIC -c $name.f90 -I ${{ env.CRYSFML_INSTALL_DIR }}/include
-            gfortran -shared -o $name.so $name.o -L ${{ env.CRYSFML_INSTALL_DIR }}/lib -l CrysFML08 ${{ env.LIBPYTHON }}
+            ${{ matrix.compiler }} ${COMPILER_OPTIONS[@]} -fPIC -c $name.f90 -I ${{ env.CRYSFML_INSTALL_DIR }}/include
+            ${{ matrix.compiler }} -shared -o $name.so $name.o -L ${{ env.CRYSFML_INSTALL_DIR }}/lib -l CrysFML08 ${{ env.LIBPYTHON }}
             mv $name.so ${{ env.PYCRYSFML_INSTALL_DIR }}/pycrysfml08
           done
-          rm *.o
-          rm *.mod
-          rm *.smod
+          rm *.o *.*mod
 
       - name: Run tests
         run: pytest tests/ -vv

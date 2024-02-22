@@ -8,3 +8,5 @@ Main steps:
 * Clone the [PyCrysFML08](https://code.ill.fr/scientific-software/PyCrysFML08) project.
 * Build selected PyCrysFML08 modules with `gfortran` or `ifort`
 * Run tests with `pytest`.
+
+More details are in the [CI script](.github/workflows/main.yml).

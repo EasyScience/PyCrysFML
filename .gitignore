@@ -10,7 +10,5 @@ build
 .DS_Store
 
 # Misc
-CrysFML2008
-CrysFML2008_install
-PyCrysFML08
-PyCrysFML08_install
+crysfml*
+pycrysfml*

@@ -3,7 +3,6 @@ import sys
 import math
 from numpy.testing import assert_almost_equal
 
-sys.path.append(os.path.abspath('PyCrysFML08_install'))
 from pycrysfml08 import py_cfml_profiles
 
 # Tests

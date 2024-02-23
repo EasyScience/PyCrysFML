@@ -4,7 +4,6 @@ import math
 import numpy as np
 from numpy.testing import assert_almost_equal
 
-sys.path.append(os.path.abspath('PyCrysFML08_install'))
 from pycrysfml08 import py_cfml_sxtal_geom
 
 # Tests

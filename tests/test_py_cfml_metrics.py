@@ -6,7 +6,6 @@ from deepdiff import DeepDiff
 import numpy as np
 from numpy.testing import assert_almost_equal
 
-sys.path.append(os.path.abspath('PyCrysFML08_install'))
 from pycrysfml08 import py_cfml_metrics
 
 DI_CELL = {'fortran_type': 'cell_g_type',

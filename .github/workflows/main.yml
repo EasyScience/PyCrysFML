@@ -3,14 +3,7 @@ name: main
 on:
   push:
   schedule:
-    - cron: '*/60 8-18 * * *'  # every 1 hour from 8:00 to 18:00 every day
-
-env:
-  PROJECTS_DIR: $GITHUB_WORKSPACE
-  CRYSFML_PROJECT: CrysFML2008
-  PYCRYSFML_PROJECT: PyCrysFML08
-  CRYSFML_INSTALL_DIR: $PROJECTS_DIR/${CRYSFML_PROJECT}_install
-  PYCRYSFML_INSTALL_DIR: $PROJECTS_DIR/${PYCRYSFML_PROJECT}_install
+    - cron: '*/120 8-18 * * *'  # every 2 hours from 8:00 to 18:00 every day
 
 jobs:
   main:
@@ -21,15 +14,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, macos-12]  # [ubuntu-22.04, macos-12, windows-2022]
-        build_system: [cmake]  # [cmake, fpm]
+        os: [macos-12, ubuntu-22.04]  # [ubuntu-22.04, macos-12, windows-2022]
+        build_system: [cmake, fpm]  # [cmake, fpm]
         compiler: [gfortran]  # [gfortran, ifx]
         include:
-          - os: macos-12
-            build_system: fpm
-            compiler: gfortran
           - os: ubuntu-22.04
             build_system: cmake
+            compiler: ifx
+          - os: ubuntu-22.04
+            build_system: fpm
             compiler: ifx
 
     steps:
@@ -44,42 +37,41 @@ jobs:
       - name: Upgrade PIP
         run: python -m pip install --upgrade pip
 
-      - name: Declare env variables
+      - name: Declare env variables (independent)
         shell: bash
         run: |
           echo "PROJECTS_DIR=$GITHUB_WORKSPACE" >> $GITHUB_ENV
-          echo "CRYSFML_PROJECT=CrysFML2008" >> $GITHUB_ENV
-          echo "PYCRYSFML_PROJECT=PyCrysFML08" >> $GITHUB_ENV
-          echo "CRYSFML_INSTALL_DIR=${{ env.PROJECTS_DIR }}/${{ env.CRYSFML_PROJECT }}_install" >> $GITHUB_ENV
-          echo "PYCRYSFML_INSTALL_DIR=${{ env.PROJECTS_DIR }}/${{ env.PYCRYSFML_PROJECT }}_install" >> $GITHUB_ENV
+          echo "CRYSFML_PROJECT=crysfml08" >> $GITHUB_ENV
+          echo "PYCRYSFML_PROJECT=pycrysfml08" >> $GITHUB_ENV
+          echo "DIST_PACKAGE_NAME=pycrysfml08" >> $GITHUB_ENV
+
+      - name: Declare env variables (dependent)
+        shell: bash
+        run: |
+          echo "CRYSFML_REPO=${{ env.PROJECTS_DIR }}/${{ env.CRYSFML_PROJECT }}_repo" >> $GITHUB_ENV
+          echo "PYCRYSFML_REPO=${{ env.PROJECTS_DIR }}/${{ env.PYCRYSFML_PROJECT }}_repo" >> $GITHUB_ENV
+          echo "CRYSFML_BUILD=${{ env.PROJECTS_DIR }}/${{ env.CRYSFML_PROJECT }}_build" >> $GITHUB_ENV
+          echo "PYCRYSFML_BUILD=${{ env.PROJECTS_DIR }}/${{ env.PYCRYSFML_PROJECT }}_build" >> $GITHUB_ENV
+          echo "CRYSFML_DIST=${{ env.PROJECTS_DIR }}/${{ env.CRYSFML_PROJECT }}_dist" >> $GITHUB_ENV
+          echo "PYCRYSFML_DIST=${{ env.PROJECTS_DIR }}/${{ env.PYCRYSFML_PROJECT }}_dist" >> $GITHUB_ENV
+          echo "PYCRYSFML_WHEEL=${{ env.PROJECTS_DIR }}/${{ env.PYCRYSFML_PROJECT }}_wheel" >> $GITHUB_ENV
           if [[ '${{ runner.os }}' == 'macOS' ]]; then
             echo "LIBPYTHON=-L/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/config-3.11-darwin -lpython3.11" >> $GITHUB_ENV
             echo "MACOSX_DEPLOYMENT_TARGET=$(sw_vers -productVersion)" >> $GITHUB_ENV  # needed because of `brew reinstall gcc`
           fi
           if [[ '${{ runner.os }}' == 'Linux' && '${{ matrix.compiler }}' == 'ifx' ]]; then
-            echo "COMPILER_OPTIONS=-fpp -libs:dll -threads -fPIC" >> $GITHUB_ENV
+            echo "COMPILER_OPTIONS=-fpp -fPIC" >> $GITHUB_ENV
           elif [[ '${{ matrix.compiler }}' == 'gfortran' ]]; then
             echo "COMPILER_OPTIONS=-cpp -std=f2008 -ffree-line-length-none -fPIC" >> $GITHUB_ENV
           fi
-
-      - name: Install Python dependences
-        run: python -m pip install numpy pytest deepdiff
 
       - name: Install OS-specific dependences (macOS)
         if: runner.os == 'macOS' && matrix.compiler == 'gfortran'
         run: |
           brew reinstall gcc  # to add gfortran
           gfortran --version
-          brew tap fortran-lang/homebrew-fortran
-          brew install fpm
-          fpm --version
-
-      - name: Install OS-specific dependences (Linux + FPM)
-        if: runner.os == 'Linux' && matrix.build_system == 'fpm'
-        run: |
-          sudo apt-get install ruby ruby-dev rubygems build-essential  # needed for FPM
-          sudo gem install fpm  # FPM
-          fpm --version
+          #brew install llvm  # ??? OpenMP for parallel compilation in FPM
+          #brew reinstall libomp  # ??? OpenMP for parallel compilation in FPM
 
       - name: Install OS-specific dependences (Linux + ifx)
         if: runner.os == 'Linux' && matrix.compiler == 'ifx'
@@ -106,38 +98,72 @@ jobs:
       #    ifx --version
 
       - name: Download CrysFML (fpm_macos branch)
-        run: git clone --single-branch --branch fpm_macos https://code.ill.fr/rodriguez-carvajal/${{ env.CRYSFML_PROJECT }}.git
+        run: git clone --single-branch --branch fpm_macos https://code.ill.fr/rodriguez-carvajal/crysfml2008.git ${{ env.CRYSFML_REPO }}
 
       - name: Build CrysFML using CMake
         if: matrix.build_system == 'cmake'
         run: |
-          cd ${{ env.PROJECTS_DIR }}/${{ env.CRYSFML_PROJECT }}
-          mkdir build
-          cd build
-          cmake -D ARCH32=OFF -D PYTHON_API=OFF -D CMAKE_BUILD_TYPE=Debug -D CMAKE_Fortran_COMPILER=${{ matrix.compiler }} -D CMAKE_INSTALL_PREFIX=${{ env.CRYSFML_INSTALL_DIR }} ..
-          cmake --build . -- -j
-          cmake --install .
+          echo '### cmake -D ARCH32=OFF -D PYTHON_API=OFF -D CMAKE_BUILD_TYPE=Debug -D CMAKE_Fortran_COMPILER=${{ matrix.compiler }} -D CMAKE_INSTALL_PREFIX=${{ env.CRYSFML_DIST }}  -S ${{ env.CRYSFML_REPO }} -B ${{ env.CRYSFML_BUILD }}'
+          cmake -D ARCH32=OFF -D PYTHON_API=OFF -D CMAKE_BUILD_TYPE=Debug -D CMAKE_Fortran_COMPILER=${{ matrix.compiler }} -D CMAKE_INSTALL_PREFIX=${{ env.CRYSFML_DIST }}  -S ${{ env.CRYSFML_REPO }} -B ${{ env.CRYSFML_BUILD }}
+          echo '### cmake --build ${{ env.CRYSFML_BUILD }} --parallel'
+          cmake --build ${{ env.CRYSFML_BUILD }} --parallel
+          echo '### cmake --install ${{ env.CRYSFML_BUILD }}'
+          cmake --install ${{ env.CRYSFML_BUILD }}
 
       - name: Build CrysFML using FPM
         if: matrix.build_system == 'fpm'
         run: |
-          cd ${{ env.PROJECTS_DIR }}/${{ env.CRYSFML_PROJECT }}
+          echo '# python -m pip install fpm'
+          python -m pip install fpm
+          echo '# fpm --version'
+          fpm --version
+          echo '# cd ${{ env.CRYSFML_REPO }}'
+          cd ${{ env.CRYSFML_REPO }}
+          echo '# ./make_CrysFML_fpm.sh ${{ matrix.compiler }}'
           ./make_CrysFML_fpm.sh ${{ matrix.compiler }}
-          mv ${{ matrix.compiler }}_release ${{ env.CRYSFML_INSTALL_DIR }}
+          echo '# mv ${{ matrix.compiler }}_release ${{ env.CRYSFML_DIST }}'
+          mv ${{ matrix.compiler }}_release ${{ env.CRYSFML_DIST }}
 
       - name: Download PyCrysFML (develop branch)
-        run: git clone --single-branch --branch develop https://code.ill.fr/scientific-software/${{ env.PYCRYSFML_PROJECT }}.git
+        run: git clone --single-branch --branch develop https://code.ill.fr/scientific-software/pycrysfml08.git ${{ env.PYCRYSFML_REPO }}
 
       - name: Build PyCrysFML modules one by one
         run: |
-          cd ${{ env.PROJECTS_DIR }}/${{ env.PYCRYSFML_PROJECT }}/src
-          mkdir -p ${{ env.PYCRYSFML_INSTALL_DIR }}/pycrysfml08
+          echo '### mkdir -p ${{ env.PYCRYSFML_DIST }}/${{ env.DIST_PACKAGE_NAME }}'
+          mkdir -p ${{ env.PYCRYSFML_DIST }}/${{ env.DIST_PACKAGE_NAME }}
+          echo '### cd ${{ env.PYCRYSFML_REPO }}/src'
+          cd ${{ env.PYCRYSFML_REPO }}/src
           for name in py_cfml_metrics py_cfml_profiles py_cfml_sxtal_geom; do
-            ${{ matrix.compiler }} ${{ env.COMPILER_OPTIONS }} -c $name.f90 -I ${{ env.CRYSFML_INSTALL_DIR }}/include
-            ${{ matrix.compiler }} -shared -o $name.so $name.o -L ${{ env.CRYSFML_INSTALL_DIR }}/lib -l CrysFML08 ${{ env.LIBPYTHON }}
-            mv $name.so ${{ env.PYCRYSFML_INSTALL_DIR }}/pycrysfml08
+            echo "### ${{ matrix.compiler }} ${{ env.COMPILER_OPTIONS }} -c $name.f90 -I ${{ env.CRYSFML_DIST }}/include"
+            ${{ matrix.compiler }} ${{ env.COMPILER_OPTIONS }} -c $name.f90 -I ${{ env.CRYSFML_DIST }}/include
+            echo "### ${{ matrix.compiler }} -shared -o $name.so $name.o -L ${{ env.CRYSFML_DIST }}/lib -l CrysFML08 ${{ env.LIBPYTHON }}"
+            ${{ matrix.compiler }} -shared -o $name.so $name.o -L ${{ env.CRYSFML_DIST }}/lib -l CrysFML08 ${{ env.LIBPYTHON }}
+            echo "### mv $name.so ${{ env.PYCRYSFML_DIST }}/${{ env.DIST_PACKAGE_NAME }}"
+            mv $name.so ${{ env.PYCRYSFML_DIST }}/${{ env.DIST_PACKAGE_NAME }}
+            echo '### ls -l ${{ env.PYCRYSFML_DIST }}/${{ env.DIST_PACKAGE_NAME }}'
+            ls -l ${{ env.PYCRYSFML_DIST }}/${{ env.DIST_PACKAGE_NAME }}
           done
+          echo "### rm *.o *.*mod"
           rm *.o *.*mod
+
+      - name: Make PyCrysFML python wheel
+        run: |
+          python -m pip install build
+          echo '### touch ${{ env.PYCRYSFML_DIST }}/${{ env.DIST_PACKAGE_NAME }}/__init__.py'
+          touch ${{ env.PYCRYSFML_DIST }}/${{ env.DIST_PACKAGE_NAME }}/__init__.py
+          echo '### python3 -m build --wheel --outdir ${{ env.PYCRYSFML_WHEEL }}'
+          python3 -m build --wheel --outdir ${{ env.PYCRYSFML_WHEEL }}
+          echo '### ls - l ${{ env.PROJECTS_DIR }}'
+          ls -l ${{ env.PROJECTS_DIR }}
+          echo '### ls -l ${{ env.PYCRYSFML_DIST }}'
+          ls -l ${{ env.PYCRYSFML_DIST }}
+          echo '### ls - l ${{ env.PYCRYSFML_WHEEL }}'
+          ls -l ${{ env.PYCRYSFML_WHEEL }}
+
+      - name: Install PyCrysFML from local wheel (with dev extras)
+        run: |
+          echo '### python3 -m pip install "${{ env.DIST_PACKAGE_NAME }}[dev]" --find-links=${{ env.PYCRYSFML_WHEEL }}'
+          python3 -m pip install "${{ env.DIST_PACKAGE_NAME }}[dev]" --find-links=${{ env.PYCRYSFML_WHEEL }}
 
       - name: Run tests
         run: pytest tests/ -vv

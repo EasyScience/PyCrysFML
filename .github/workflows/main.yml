@@ -2,8 +2,8 @@ name: main
 
 on:
   push:
-  schedule:
-    - cron: '*/120 8-18 * * *'  # every 2 hours from 8:00 to 18:00 every day
+  #schedule:
+  #  - cron: '*/120 8-18 * * *'  # every 2 hours from 8:00 to 18:00 every day
 
 jobs:
   main:
@@ -15,15 +15,15 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-12, ubuntu-22.04]  # [ubuntu-22.04, macos-12, windows-2022]
-        build_system: [cmake, fpm]  # [cmake, fpm]
-        compiler: [gfortran]  # [gfortran, ifx]
+        build_system: [cmake]  # [cmake, fpm]
+        compiler: [gfortran]  # [gfortran, ifort]
         include:
           - os: ubuntu-22.04
             build_system: cmake
-            compiler: ifx
-          - os: ubuntu-22.04
-            build_system: fpm
-            compiler: ifx
+            compiler: ifort
+          #- os: ubuntu-22.04
+          #  build_system: fpm
+          #  compiler: ifort
 
     steps:
       - name: Check-out repository
@@ -59,7 +59,7 @@ jobs:
             echo "LIBPYTHON=-L/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/config-3.11-darwin -lpython3.11" >> $GITHUB_ENV
             echo "MACOSX_DEPLOYMENT_TARGET=$(sw_vers -productVersion)" >> $GITHUB_ENV  # needed because of `brew reinstall gcc`
           fi
-          if [[ '${{ runner.os }}' == 'Linux' && '${{ matrix.compiler }}' == 'ifx' ]]; then
+          if [[ '${{ runner.os }}' == 'Linux' && '${{ matrix.compiler }}' == 'ifort' ]]; then
             echo "COMPILER_OPTIONS=-fpp -fPIC" >> $GITHUB_ENV
           elif [[ '${{ matrix.compiler }}' == 'gfortran' ]]; then
             echo "COMPILER_OPTIONS=-cpp -std=f2008 -ffree-line-length-none -fPIC" >> $GITHUB_ENV
@@ -73,8 +73,8 @@ jobs:
           #brew install llvm  # ??? OpenMP for parallel compilation in FPM
           #brew reinstall libomp  # ??? OpenMP for parallel compilation in FPM
 
-      - name: Install OS-specific dependences (Linux + ifx)
-        if: runner.os == 'Linux' && matrix.compiler == 'ifx'
+      - name: Install OS-specific dependences (Linux + ifort)
+        if: runner.os == 'Linux' && matrix.compiler == 'ifort'
         run: |
           curl -Lo- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB | sudo gpg --dearmor -o /usr/share/keyrings/oneapi-archive-keyring.gpg
           sudo tee /etc/apt/sources.list.d/oneAPI.list <<< "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main"
@@ -82,10 +82,10 @@ jobs:
           sudo apt-get install intel-oneapi-compiler-fortran
           source /opt/intel/oneapi/setvars.sh
           printenv >> $GITHUB_ENV
-          ifx --version
+          ifort --version
 
-      #- name: Install OS-specific dependences (Linux + ifx)
-      #  if: runner.os == 'Linux' && matrix.compiler == 'ifx'
+      #- name: Install OS-specific dependences (Linux + ifort)
+      #  if: runner.os == 'Linux' && matrix.compiler == 'ifort'
       #  run: |
       #    wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB
       #    sudo apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB
@@ -95,7 +95,7 @@ jobs:
       #    sudo apt-get install intel-oneapi-compiler-fortran
       #    source /opt/intel/oneapi/setvars.sh
       #    printenv >> $GITHUB_ENV
-      #    ifx --version
+      #    ifort --version
 
       - name: Download CrysFML (fpm_macos branch)
         run: git clone --single-branch --branch fpm_macos https://code.ill.fr/rodriguez-carvajal/crysfml2008.git ${{ env.CRYSFML_REPO }}

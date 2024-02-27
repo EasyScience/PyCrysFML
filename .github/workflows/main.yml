@@ -34,6 +34,10 @@ jobs:
         with:
             python-version: 3.11
 
+      - name: Set up nmake environment
+        if: runner.os != 'windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
       - name: Upgrade PIP
         run: python -m pip install --upgrade pip
 
@@ -118,10 +122,10 @@ jobs:
         if: matrix.build_system == 'cmake' && runner.os == 'windows'
         # shell: cmd
         run: |
-          cd ${{ env.CRYSFML_REPO }}
-          mkdir build
-          cd build
-          cmake -G "NMake Makefiles" -D ARCH32=OFF -D PYTHON_API=OFF -D CMAKE_BUILD_TYPE=Debug -D CMAKE_Fortran_COMPILER=${{ matrix.compiler }} -D CMAKE_INSTALL_PREFIX=${{ env.CRYSFML_DIST }} -B ${{ env.CRYSFML_BUILD }} ..
+          # cd ${{ env.CRYSFML_REPO }}
+          # mkdir build
+          # cd build
+          cmake -G "NMake Makefiles" -D ARCH32=OFF -D PYTHON_API=OFF -D CMAKE_BUILD_TYPE=Debug -D CMAKE_Fortran_COMPILER=${{ matrix.compiler }} -D CMAKE_INSTALL_PREFIX=${{ env.CRYSFML_DIST }} -S ${{ env.CRYSFML_REPO }} -B ${{ env.CRYSFML_BUILD }}
           nmake
           nmake install
 

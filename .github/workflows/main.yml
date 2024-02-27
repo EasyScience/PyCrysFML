@@ -165,18 +165,15 @@ jobs:
 
       - name: Build PyCrysFML modules one by one (Windows)
         if: runner.os == 'windows'
-        shell: bash
+        # shell: bash
         run: |
           mkdir -p ${{ env.PYCRYSFML_DIST }}/${{ env.DIST_PACKAGE_NAME }}
           cd ${{ env.PYCRYSFML_REPO }}/src
-          for name in py_cfml_metrics py_cfml_profiles py_cfml_sxtal_geom; do
-            ${{ matrix.compiler }} -shared -o $name.pyd $name.f90 ${{ env.COMPILER_OPTIONS }} -I ${{ env.CRYSFML_INSTALL_DIR }}/include -L ${{ env.CRYSFML_INSTALL_DIR }}/lib -lCrysFML08 {{ env.LIBPYTHON }}
-            # ${{ matrix.compiler }} ${{ env.COMPILER_OPTIONS }} -c $name.f90 -I ${{ env.CRYSFML_DIST }}/include
-            # ${{ matrix.compiler }} -shared -o $name.so $name.o -L ${{ env.CRYSFML_DIST }}/lib -l CrysFML08 ${{ env.LIBPYTHON }}
-            mv $name.so ${{ env.PYCRYSFML_DIST }}/${{ env.DIST_PACKAGE_NAME }}
-            ls -l ${{ env.PYCRYSFML_DIST }}/${{ env.DIST_PACKAGE_NAME }}
-          done
-          rm *.o *.*mod
+          for %%nam in (py_cfml_metrics py_cfml_profiles py_cfml_sxtal_geom) do (
+            ${{ matrix.compiler }} -shared -o %%nam.pyd %%nam.f90 ${{ env.COMPILER_OPTIONS }} -I ${{ env.CRYSFML_INSTALL_DIR }}/include -L ${{ env.CRYSFML_INSTALL_DIR }}/lib -lCrysFML08 {{ env.LIBPYTHON }}
+            cp %%nam.pyd ${{ env.PYCRYSFML_DIST }}/${{ env.DIST_PACKAGE_NAME }}
+          )
+          rm *.smod *.*mod
 
       - name: Make PyCrysFML python wheel
         run: |

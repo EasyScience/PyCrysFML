@@ -70,6 +70,7 @@ jobs:
           fi
           if [[ '${{ runner.os }}' == 'windows' ]]; then
             echo "LIBPYTHON=${{ env.Python_ROOT_DIR }}\\libs\\python311.lib" >> $GITHUB_ENV
+            ls -l ${{ env.Python_ROOT_DIR }}\\libs
             echo "COMPILER_OPTIONS= -std=f2008 -ffree-line-length-none -fPIC" >> $GITHUB_ENV
           fi
 

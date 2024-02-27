@@ -120,11 +120,7 @@ jobs:
 
       - name: Build CrysFML using CMake on Windows
         if: matrix.build_system == 'cmake' && runner.os == 'windows'
-        # shell: cmd
         run: |
-          # cd ${{ env.CRYSFML_REPO }}
-          # mkdir build
-          # cd build
           cmake -G "NMake Makefiles" -D ARCH32=OFF -D PYTHON_API=OFF -D CMAKE_BUILD_TYPE=Debug -D CMAKE_Fortran_COMPILER=${{ matrix.compiler }} -D CMAKE_INSTALL_PREFIX=${{ env.CRYSFML_DIST }} -S ${{ env.CRYSFML_REPO }} -B ${{ env.CRYSFML_BUILD }}
           cd ${{ env.CRYSFML_BUILD }}
           nmake
@@ -147,7 +143,8 @@ jobs:
       - name: Download PyCrysFML (develop branch)
         run: git clone --single-branch --branch develop https://code.ill.fr/scientific-software/pycrysfml08.git ${{ env.PYCRYSFML_REPO }}
 
-      - name: Build PyCrysFML modules one by one
+      - name: Build PyCrysFML modules one by one (Linux/macos)
+        if: runner.os == 'Linux' || runner.os == 'macOS'
         run: |
           echo '### mkdir -p ${{ env.PYCRYSFML_DIST }}/${{ env.DIST_PACKAGE_NAME }}'
           mkdir -p ${{ env.PYCRYSFML_DIST }}/${{ env.DIST_PACKAGE_NAME }}
@@ -164,6 +161,21 @@ jobs:
             ls -l ${{ env.PYCRYSFML_DIST }}/${{ env.DIST_PACKAGE_NAME }}
           done
           echo "### rm *.o *.*mod"
+          rm *.o *.*mod
+
+      - name: Build PyCrysFML modules one by one (Windows)
+        if: runner.os == 'windows'
+        shell: bash
+        run: |
+          mkdir -p ${{ env.PYCRYSFML_DIST }}/${{ env.DIST_PACKAGE_NAME }}
+          cd ${{ env.PYCRYSFML_REPO }}/src
+          for name in py_cfml_metrics py_cfml_profiles py_cfml_sxtal_geom; do
+            ${{ matrix.compiler }} -shared -o $name.pyd $name.f90 ${{ env.COMPILER_OPTIONS }} -I ${{ env.CRYSFML_INSTALL_DIR }}/include -L ${{ env.CRYSFML_INSTALL_DIR }}/lib -lCrysFML08 {{ env.LIBPYTHON }}
+            # ${{ matrix.compiler }} ${{ env.COMPILER_OPTIONS }} -c $name.f90 -I ${{ env.CRYSFML_DIST }}/include
+            # ${{ matrix.compiler }} -shared -o $name.so $name.o -L ${{ env.CRYSFML_DIST }}/lib -l CrysFML08 ${{ env.LIBPYTHON }}
+            mv $name.so ${{ env.PYCRYSFML_DIST }}/${{ env.DIST_PACKAGE_NAME }}
+            ls -l ${{ env.PYCRYSFML_DIST }}/${{ env.DIST_PACKAGE_NAME }}
+          done
           rm *.o *.*mod
 
       - name: Make PyCrysFML python wheel

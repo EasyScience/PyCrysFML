@@ -165,7 +165,7 @@ jobs:
 
       - name: Build PyCrysFML modules one by one (Windows)
         if: runner.os == 'windows'
-        # shell: bash
+        shell: cmd
         run: |
           mkdir -p ${{ env.PYCRYSFML_DIST }}/${{ env.DIST_PACKAGE_NAME }}
           cd ${{ env.PYCRYSFML_REPO }}/src

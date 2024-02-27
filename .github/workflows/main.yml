@@ -169,9 +169,9 @@ jobs:
         run: |
           mkdir -p ${{ env.PYCRYSFML_DIST }}/${{ env.DIST_PACKAGE_NAME }}
           cd ${{ env.PYCRYSFML_REPO }}/src
-          for %%nam in (py_cfml_metrics py_cfml_profiles py_cfml_sxtal_geom) do (
-            ${{ matrix.compiler }} -shared -o %%nam.pyd %%nam.f90 ${{ env.COMPILER_OPTIONS }} -I ${{ env.CRYSFML_INSTALL_DIR }}/include -L ${{ env.CRYSFML_INSTALL_DIR }}/lib -lCrysFML08 {{ env.LIBPYTHON }}
-            cp %%nam.pyd ${{ env.PYCRYSFML_DIST }}/${{ env.DIST_PACKAGE_NAME }}
+          for %%n in (py_cfml_metrics py_cfml_profiles py_cfml_sxtal_geom) do (
+            ${{ matrix.compiler }} -shared -o %%n.pyd %%n.f90 ${{ env.COMPILER_OPTIONS }} -I ${{ env.CRYSFML_INSTALL_DIR }}/include -L ${{ env.CRYSFML_INSTALL_DIR }}/lib -lCrysFML08 {{ env.LIBPYTHON }}
+            cp %%n.pyd ${{ env.PYCRYSFML_DIST }}/${{ env.DIST_PACKAGE_NAME }}
           )
           rm *.smod *.*mod
 

@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-12, ubuntu-22.04]  # [ubuntu-22.04, macos-12, windows-2022]
+        os: [windows-2022]  # [ubuntu-22.04, macos-12, windows-2022]
         build_system: [cmake]  # [cmake, fpm]
         compiler: [gfortran]  # [gfortran, ifort]
         include:
@@ -64,6 +64,10 @@ jobs:
           elif [[ '${{ matrix.compiler }}' == 'gfortran' ]]; then
             echo "COMPILER_OPTIONS=-cpp -std=f2008 -ffree-line-length-none -fPIC" >> $GITHUB_ENV
           fi
+          if [[ '${{ runner.os }}' == 'windows' ]]; then
+            echo "LIBPYTHON=${{ env.Python_ROOT_DIR }}\\libs\\python311.lib" >> $GITHUB_ENV
+            echo "COMPILER_OPTIONS= -std=f2008 -ffree-line-length-none -fPIC" >> $GITHUB_ENV
+          fi
 
       - name: Install OS-specific dependences (macOS)
         if: runner.os == 'macOS' && matrix.compiler == 'gfortran'
@@ -100,8 +104,8 @@ jobs:
       - name: Download CrysFML (fpm_macos branch)
         run: git clone --single-branch --branch fpm_macos https://code.ill.fr/rodriguez-carvajal/crysfml2008.git ${{ env.CRYSFML_REPO }}
 
-      - name: Build CrysFML using CMake
-        if: matrix.build_system == 'cmake'
+      - name: Build CrysFML using CMake on Linux/macos
+        if: matrix.build_system == 'cmake' && (runner.os == 'Linux' || runner.os == 'macOS')
         run: |
           echo '### cmake -D ARCH32=OFF -D PYTHON_API=OFF -D CMAKE_BUILD_TYPE=Debug -D CMAKE_Fortran_COMPILER=${{ matrix.compiler }} -D CMAKE_INSTALL_PREFIX=${{ env.CRYSFML_DIST }}  -S ${{ env.CRYSFML_REPO }} -B ${{ env.CRYSFML_BUILD }}'
           cmake -D ARCH32=OFF -D PYTHON_API=OFF -D CMAKE_BUILD_TYPE=Debug -D CMAKE_Fortran_COMPILER=${{ matrix.compiler }} -D CMAKE_INSTALL_PREFIX=${{ env.CRYSFML_DIST }}  -S ${{ env.CRYSFML_REPO }} -B ${{ env.CRYSFML_BUILD }}
@@ -109,6 +113,13 @@ jobs:
           cmake --build ${{ env.CRYSFML_BUILD }} --parallel
           echo '### cmake --install ${{ env.CRYSFML_BUILD }}'
           cmake --install ${{ env.CRYSFML_BUILD }}
+
+      - name: Build CrysFML using CMake on Windows
+        if: matrix.build_system == 'cmake' && runner.os == 'windows'
+        run: |
+          cmake -G "NMake Makefiles" -D ARCH32=OFF -D PYTHON_API=OFF -D CMAKE_BUILD_TYPE=Debug -D CMAKE_Fortran_COMPILER=${{ matrix.compiler }} -D CMAKE_INSTALL_PREFIX=${{ env.CRYSFML_DIST }}  -S ${{ env.CRYSFML_REPO }} -B ${{ env.CRYSFML_BUILD }}
+          nmake
+          nmake install
 
       - name: Build CrysFML using FPM
         if: matrix.build_system == 'fpm'

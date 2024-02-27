@@ -167,8 +167,7 @@ jobs:
         if: runner.os == 'windows'
         shell: cmd
         run: |
-          mkdir ${{ env.PROJECTS_DIR }}\\${{ env.PYCRYSFML_PROJECT }}_dist"
-          mkdir ${{ env.PYCRYSFML_DIST }}\\${{ env.DIST_PACKAGE_NAME }}
+          mkdir ${{ env.PROJECTS_DIR }}\\${{ env.PYCRYSFML_PROJECT }}_dist\\${{ env.DIST_PACKAGE_NAME }}
           cd ${{ env.PYCRYSFML_REPO }}/src
           for %%n in (py_cfml_metrics py_cfml_profiles py_cfml_sxtal_geom) do (
             ${{ matrix.compiler }} -shared -o %%n.pyd %%n.f90 ${{ env.COMPILER_OPTIONS }} -I ${{ env.CRYSFML_DIST }}/include -L ${{ env.CRYSFML_DIST }}/lib -lCrysFML08 ${{ env.LIBPYTHON }}
@@ -176,6 +175,15 @@ jobs:
             dir ${{ env.PYCRYSFML_DIST }}/${{ env.DIST_PACKAGE_NAME }}
           )
           del *.smod *.*mod
+
+      - name: Store required system DLLs for Windows
+        if: runner.os == 'windows'
+        run: |
+            copy ${{ env.Python_ROOT_DIR }}\\python311.dll ${{ env.PYCRYSFML_DIST }}/${{ env.DIST_PACKAGE_NAME }}
+            copy c:/mingw64/bin/libgcc_s_seh-1.dll ${{ env.PYCRYSFML_DIST }}/${{ env.DIST_PACKAGE_NAME }}
+            copy c:/mingw64/bin/libgfortran-5.dll ${{ env.PYCRYSFML_DIST }}/${{ env.DIST_PACKAGE_NAME }}
+            copy c:/mingw64/bin/libquadmath-0.dll ${{ env.PYCRYSFML_DIST }}/${{ env.DIST_PACKAGE_NAME }}
+            copy c:/mingw64/bin/libwinpthread-1.dll ${{ env.PYCRYSFML_DIST }}/${{ env.DIST_PACKAGE_NAME }}
 
       - name: Make PyCrysFML python wheel
         run: |

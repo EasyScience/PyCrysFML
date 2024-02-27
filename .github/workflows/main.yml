@@ -126,6 +126,7 @@ jobs:
           # mkdir build
           # cd build
           cmake -G "NMake Makefiles" -D ARCH32=OFF -D PYTHON_API=OFF -D CMAKE_BUILD_TYPE=Debug -D CMAKE_Fortran_COMPILER=${{ matrix.compiler }} -D CMAKE_INSTALL_PREFIX=${{ env.CRYSFML_DIST }} -S ${{ env.CRYSFML_REPO }} -B ${{ env.CRYSFML_BUILD }}
+          cd ${{ env.CRYSFML_BUILD }}
           nmake
           nmake install
 

@@ -200,6 +200,12 @@ jobs:
           echo '### ls - l ${{ env.PYCRYSFML_WHEEL }}'
           ls -l ${{ env.PYCRYSFML_WHEEL }}
 
+      - name: upload wheel
+        uses: actions/upload-artifact@v2
+        with:
+          name: pycrysfml08.whl
+          path: ${{ env.PYCRYSFML_WHEEL }}\\*.whl
+
       - name: Install PyCrysFML from local wheel (with dev extras)
         run: |
           echo '### python3 -m pip install "${{ env.DIST_PACKAGE_NAME }}[dev]" --find-links=${{ env.PYCRYSFML_WHEEL }}'

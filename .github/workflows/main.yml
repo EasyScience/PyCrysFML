@@ -17,10 +17,10 @@ jobs:
         os: [windows-2022]  # [ubuntu-22.04, macos-12, windows-2022]
         build_system: [cmake]  # [cmake, fpm]
         compiler: [gfortran]  # [gfortran, ifort]
-        include:
-          - os: ubuntu-22.04
-            build_system: cmake
-            compiler: ifort
+        # include:
+        #   - os: ubuntu-22.04
+        #     build_system: cmake
+        #     compiler: ifort
           #- os: ubuntu-22.04
           #  build_system: fpm
           #  compiler: ifort
@@ -116,6 +116,7 @@ jobs:
 
       - name: Build CrysFML using CMake on Windows
         if: matrix.build_system == 'cmake' && runner.os == 'windows'
+        shell: cmd
         run: |
           cmake -G "NMake Makefiles" -D ARCH32=OFF -D PYTHON_API=OFF -D CMAKE_BUILD_TYPE=Debug -D CMAKE_Fortran_COMPILER=${{ matrix.compiler }} -D CMAKE_INSTALL_PREFIX=${{ env.CRYSFML_DIST }}  -S ${{ env.CRYSFML_REPO }} -B ${{ env.CRYSFML_BUILD }}
           nmake

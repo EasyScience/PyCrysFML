@@ -21,10 +21,6 @@ jobs:
           - os: ubuntu-22.04
             build_system: cmake
             compiler: ifort
-          - os: ubuntu-22.04
-           build_system: fpm
-           compiler: ifort
-
     steps:
       - name: Check-out repository
         uses: actions/checkout@v3

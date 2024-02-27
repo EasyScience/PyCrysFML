@@ -14,16 +14,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-2022]  # [ubuntu-22.04, macos-12, windows-2022]
+        os: [ubuntu-22.04, macos-12, windows-2022]
         build_system: [cmake]  # [cmake, fpm]
         compiler: [gfortran]  # [gfortran, ifort]
-        # include:
-        #   - os: ubuntu-22.04
-        #     build_system: cmake
-        #     compiler: ifort
-          #- os: ubuntu-22.04
-          #  build_system: fpm
-          #  compiler: ifort
+        include:
+          - os: ubuntu-22.04
+            build_system: cmake
+            compiler: ifort
+          - os: ubuntu-22.04
+           build_system: fpm
+           compiler: ifort
 
     steps:
       - name: Check-out repository
@@ -118,7 +118,7 @@ jobs:
           echo '### cmake --install ${{ env.CRYSFML_BUILD }}'
           cmake --install ${{ env.CRYSFML_BUILD }}
 
-      - name: Build CrysFML using CMake on Windows
+      - name: Build CrysFML using CMake  (Windows)
         if: matrix.build_system == 'cmake' && runner.os == 'windows'
         run: |
           cmake -G "NMake Makefiles" -D ARCH32=OFF -D PYTHON_API=OFF -D CMAKE_BUILD_TYPE=Debug -D CMAKE_Fortran_COMPILER=${{ matrix.compiler }} -D CMAKE_INSTALL_PREFIX=${{ env.CRYSFML_DIST }} -S ${{ env.CRYSFML_REPO }} -B ${{ env.CRYSFML_BUILD }}
@@ -172,11 +172,10 @@ jobs:
           for %%n in (py_cfml_metrics py_cfml_profiles py_cfml_sxtal_geom) do (
             ${{ matrix.compiler }} -shared -o %%n.pyd %%n.f90 ${{ env.COMPILER_OPTIONS }} -I ${{ env.CRYSFML_DIST }}/include -L ${{ env.CRYSFML_DIST }}/lib -lCrysFML08 ${{ env.LIBPYTHON }}
             move %%n.pyd ${{ env.PYCRYSFML_DIST }}/${{ env.DIST_PACKAGE_NAME }}
-            dir ${{ env.PYCRYSFML_DIST }}\\${{ env.DIST_PACKAGE_NAME }}
           )
           del *.smod *.*mod
 
-      - name: Store required system DLLs for Windows
+      - name: Store required system DLLs (Windows)
         if: runner.os == 'windows'
         run: |
             copy ${{ env.Python_ROOT_DIR }}\\python311.dll ${{ env.PYCRYSFML_DIST }}/${{ env.DIST_PACKAGE_NAME }}

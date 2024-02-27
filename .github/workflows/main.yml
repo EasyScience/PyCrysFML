@@ -167,7 +167,8 @@ jobs:
         if: runner.os == 'windows'
         shell: cmd
         run: |
-          mkdir ${{ env.PYCRYSFML_DIST }}/${{ env.DIST_PACKAGE_NAME }}
+          mkdir ${{ env.PROJECTS_DIR }}\\${{ env.PYCRYSFML_PROJECT }}_dist"
+          mkdir ${{ env.PYCRYSFML_DIST }}\\${{ env.DIST_PACKAGE_NAME }}
           cd ${{ env.PYCRYSFML_REPO }}/src
           for %%n in (py_cfml_metrics py_cfml_profiles py_cfml_sxtal_geom) do (
             ${{ matrix.compiler }} -shared -o %%n.pyd %%n.f90 ${{ env.COMPILER_OPTIONS }} -I ${{ env.CRYSFML_DIST }}/include -L ${{ env.CRYSFML_DIST }}/lib -lCrysFML08 ${{ env.LIBPYTHON }}

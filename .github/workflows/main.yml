@@ -52,7 +52,6 @@ jobs:
       - name: Declare env variables (dependent)
         shell: bash
         run: |
-          echo "Current platform: ${{ runner.os }}"
           echo "CRYSFML_REPO=${{ env.PROJECTS_DIR }}/${{ env.CRYSFML_PROJECT }}_repo" >> $GITHUB_ENV
           echo "PYCRYSFML_REPO=${{ env.PROJECTS_DIR }}/${{ env.PYCRYSFML_PROJECT }}_repo" >> $GITHUB_ENV
           echo "CRYSFML_BUILD=${{ env.PROJECTS_DIR }}/${{ env.CRYSFML_PROJECT }}_build" >> $GITHUB_ENV
@@ -69,7 +68,7 @@ jobs:
           elif [[ '${{ matrix.compiler }}' == 'gfortran' ]]; then
             echo "COMPILER_OPTIONS=-cpp -std=f2008 -ffree-line-length-none -fPIC" >> $GITHUB_ENV
           fi
-          if [[ '${{ runner.os }}' == 'windows' ]]; then
+          if [[ '${{ runner.os }}' == 'Windows' ]]; then
             echo "LIBPYTHON=${{ env.Python_ROOT_DIR }}\\libs\\python311.lib" >> $GITHUB_ENV
             ls -l ${{ env.Python_ROOT_DIR }}\\libs
             echo "COMPILER_OPTIONS= -std=f2008 -ffree-line-length-none -fPIC" >> $GITHUB_ENV

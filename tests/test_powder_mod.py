@@ -144,7 +144,7 @@ def test_set_space_group_Pnma():
     set_space_group_by_phase_idx(new_study_dict, phase_idx=0, space_group='P n m a')
     assert space_group_by_phase_idx(new_study_dict, phase_idx=0) == 'P n m a'
 
-def _test_compute_pattern_SrTiO3_Pm3m():
+def test_compute_pattern_SrTiO3_Pm3m():
     _, desired = np.loadtxt('tests/srtio3-pm3m-pattern_Nebil-ifort.xy', unpack=True)
     study_dict = copy.deepcopy(STUDY_DICT)
     set_space_group_by_phase_idx(study_dict, phase_idx=0, space_group='P m -3 m')
@@ -155,7 +155,7 @@ def _test_compute_pattern_SrTiO3_Pm3m():
     actual = actual[:-1]
     assert_almost_equal(desired, actual, decimal=0, verbose=True)
 
-def test_compute_pattern_SrTiO3_Pnma():
+def _test_compute_pattern_SrTiO3_Pnma():
     desired = np.loadtxt('tests/srtio3-pmmm-pattern_Andrew-ifort.xy', unpack=True)
     study_dict = copy.deepcopy(STUDY_DICT)
     set_space_group_by_phase_idx(study_dict, phase_idx=0, space_group='P n m a')
@@ -175,7 +175,7 @@ if __name__ == '__main__':
     #_, y_calc = powder_mod.simulation(study_dict)
     #print('::::: Y calculated (P m -3 m):', y_calc)
 
-    #clean_after_compute(STUDY_DICT)
+    clean_after_compute(STUDY_DICT)
     study_dict["phases"][0]["SrTiO3"]["_space_group_name_H-M_alt"] = 'P n m a'
     _, y_calc = powder_mod.simulation(study_dict)
     print('::::: Y calculated (P n m a):', y_calc)

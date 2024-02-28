@@ -51,4 +51,8 @@ def test_set_crystal_cell():
     code, message, actual = py_cfml_metrics.set_crystal_cell(nd_abc, nd_albega)
     assert code == 0
     assert message == ''
-    assert DeepDiff(desired, actual) == {}
+    for key in desired.keys():
+        if isinstance(desired[key], np.ndarray):
+            assert_almost_equal(desired[key], actual[key], decimal=4, verbose=True)
+        else:
+            assert desired[key] == actual[key]

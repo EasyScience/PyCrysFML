@@ -85,7 +85,11 @@ jobs:
             #echo "COMPILER_OPTIONS=-cpp -std=f2008 -ffree-line-length-none -fPIC" >> $GITHUB_ENV
             echo "COMPILER_OPTIONS=-cpp -ffree-line-length-none -fPIC" >> $GITHUB_ENV
           elif [[ '${{ env.FC }}' == 'ifort' || '${{ env.FC }}' == 'ifx' ]]; then
-            echo "COMPILER_OPTIONS=-fpp -fPIC" >> $GITHUB_ENV
+            if [[ '${{ runner.os }}' == 'Windows' ]]; then
+              echo "COMPILER_OPTIONS=/fpp /nologo /Warn -DWIN32=ON" >> $GITHUB_ENV
+            elif [[ '${{ runner.os }}' == 'Linux' || '${{ runner.os }}' == 'macOS' ]]; then
+              echo "COMPILER_OPTIONS=-fpp -fPIC" >> $GITHUB_ENV
+            fi
           fi
 
       - name: Declare env variables (dependent)
@@ -132,16 +136,16 @@ jobs:
           for n in py_cfml_metrics py_cfml_profiles py_cfml_sxtal_geom powder_mod; do
             echo "::::: ${{ env.FC }} ${{ env.COMPILER_OPTIONS }} -c $n.F90 -I ${{ env.CRYSFML_DIST }}/include"
             ${{ env.FC }} ${{ env.COMPILER_OPTIONS }} -c $n.F90 -I ${{ env.CRYSFML_DIST }}/include
-            echo "::::: ${{ env.FC }} -shared -o $n.so $n.o -L ${{ env.CRYSFML_DIST }}/lib -l CrysFML08 ${{ env.LIBPYTHON }}"
-            ${{ env.FC }} -shared -o $n.so $n.o -L ${{ env.CRYSFML_DIST }}/lib -l CrysFML08 ${{ env.LIBPYTHON }}
+            echo "::::: ${{ env.FC }} -shared $n.o -o $n.so -L ${{ env.CRYSFML_DIST }}/lib -l CrysFML08 ${{ env.LIBPYTHON }}"
+            ${{ env.FC }} -shared $n.o -o $n.so -L ${{ env.CRYSFML_DIST }}/lib -l CrysFML08 ${{ env.LIBPYTHON }}
             echo "::::: mv $n.so ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}"
             mv $n.so ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}
           done
           echo '::::: ls -l ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}'
           ls -l ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}
 
-      - name: Build some PyCrysFML modules one by one (Windows)
-        if: runner.os == 'Windows'
+      - name: Build some PyCrysFML modules one by one (Windows + gfortran)
+        if: runner.os == 'Windows' && env.FC == 'gfortran'
         shell: cmd
         run: |
           echo '::::: mkdir ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}'
@@ -149,10 +153,29 @@ jobs:
           echo '::::: cd ${{ env.PYCRYSFML_REPO }}${{ env.SEP }}src'
           cd ${{ env.PYCRYSFML_REPO }}${{ env.SEP }}src
           for %%n in (py_cfml_metrics py_cfml_profiles py_cfml_sxtal_geom powder_mod) do (
-            echo "::::: ${{ env.FC }} ${{ env.COMPILER_OPTIONS }} -c %%n.f90 -I ${{ env.CRYSFML_DIST }}/include"
-            ${{ env.FC }} ${{ env.COMPILER_OPTIONS }} -c %%n.f90 -I ${{ env.CRYSFML_DIST }}/include
-            echo "::::: ${{ env.FC }} -shared -o %%n.pyd %%n.o -L ${{ env.CRYSFML_DIST }}/lib -l CrysFML08 ${{ env.LIBPYTHON }}"
-            ${{ env.FC }} -shared -o %%n.pyd %%n.o -L ${{ env.CRYSFML_DIST }}/lib -l CrysFML08 ${{ env.LIBPYTHON }}
+            echo "::::: ${{ env.FC }} ${{ env.COMPILER_OPTIONS }} -c %%n.f90 -I ${{ env.CRYSFML_DIST }}${{ env.SEP }}include"
+            ${{ env.FC }} ${{ env.COMPILER_OPTIONS }} -c %%n.f90 -I ${{ env.CRYSFML_DIST }}${{ env.SEP }}include
+            echo "::::: ${{ env.FC }} -shared %%n.o -o %%n.pyd -L ${{ env.CRYSFML_DIST }}${{ env.SEP }}lib -l CrysFML08 ${{ env.LIBPYTHON }}"
+            ${{ env.FC }} -shared %%n.o -o %%n.pyd -L ${{ env.CRYSFML_DIST }}${{ env.SEP }}lib -l CrysFML08 ${{ env.LIBPYTHON }}
+            echo "::::: move %%n.pyd ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}"
+            move %%n.pyd ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}
+          )
+          echo '::::: dir ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}'
+          dir ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}
+
+      - name: Build some PyCrysFML modules one by one (Windows + ifort/ifx)
+        if: runner.os == 'Windows' && (env.FC == 'ifort' || env.FC == 'ifx')
+        shell: cmd
+        run: |
+          echo '::::: mkdir ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}'
+          mkdir ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}
+          echo '::::: cd ${{ env.PYCRYSFML_REPO }}${{ env.SEP }}src'
+          cd ${{ env.PYCRYSFML_REPO }}${{ env.SEP }}src
+          for %%n in (py_cfml_metrics py_cfml_profiles py_cfml_sxtal_geom powder_mod) do (
+            echo "::::: ${{ env.FC }} ${{ env.COMPILER_OPTIONS }} /c %%n.f90 -I ${{ env.CRYSFML_DIST }}${{ env.SEP }}include"
+            ${{ env.FC }} ${{ env.COMPILER_OPTIONS }} /c %%n.f90 -I ${{ env.CRYSFML_DIST }}${{ env.SEP }}include
+            echo "::::: link %%n.obj /out:"%%n.dll" /libpath:${{ env.CRYSFML_DIST }}${{ env.SEP }}lib /dll CrysFML08.lib ${{ env.LIBPYTHON }}"
+            link %%n.obj /out:"%%n.pyd" /libpath:${{ env.CRYSFML_DIST }}${{ env.SEP }}lib /dll CrysFML08.lib ${{ env.LIBPYTHON }}
             echo "::::: move %%n.pyd ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}"
             move %%n.pyd ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}
           )
@@ -162,13 +185,13 @@ jobs:
       - name: Add required system DLLs (Windows)
         if: runner.os == 'Windows'
         run: |
-            cp ${{ env.Python_ROOT_DIR }}\\python311.dll ${{ env.PYCRYSFML_DIST }}\\${{ env.DIST_PACKAGE_NAME }}
-            cp c:\\mingw64\\bin\\libgcc_s_seh-1.dll ${{ env.PYCRYSFML_DIST }}\\${{ env.DIST_PACKAGE_NAME }}
-            cp c:\\mingw64\\bin\\libgfortran-5.dll ${{ env.PYCRYSFML_DIST }}\\${{ env.DIST_PACKAGE_NAME }}
-            cp c:\\mingw64\\bin\\libquadmath-0.dll ${{ env.PYCRYSFML_DIST }}\\${{ env.DIST_PACKAGE_NAME }}
-            cp c:\\mingw64\\bin\\libwinpthread-1.dll ${{ env.PYCRYSFML_DIST }}\\${{ env.DIST_PACKAGE_NAME }}
-            echo '::::: dir ${{ env.PYCRYSFML_DIST }}\\${{ env.DIST_PACKAGE_NAME }}'
-            ls -l ${{ env.PYCRYSFML_DIST }}\\${{ env.DIST_PACKAGE_NAME }}
+            cp ${{ env.Python_ROOT_DIR }}\python311.dll ${{ env.PYCRYSFML_DIST }}\${{ env.DIST_PACKAGE_NAME }}
+            cp c:\mingw64\bin\libgcc_s_seh-1.dll ${{ env.PYCRYSFML_DIST }}\${{ env.DIST_PACKAGE_NAME }}
+            cp c:\mingw64\bin\libgfortran-5.dll ${{ env.PYCRYSFML_DIST }}\${{ env.DIST_PACKAGE_NAME }}
+            cp c:\mingw64\bin\libquadmath-0.dll ${{ env.PYCRYSFML_DIST }}\${{ env.DIST_PACKAGE_NAME }}
+            cp c:\mingw64\bin\libwinpthread-1.dll ${{ env.PYCRYSFML_DIST }}\${{ env.DIST_PACKAGE_NAME }}
+            echo '::::: dir ${{ env.PYCRYSFML_DIST }}\${{ env.DIST_PACKAGE_NAME }}'
+            ls -l ${{ env.PYCRYSFML_DIST }}\${{ env.DIST_PACKAGE_NAME }}
 
       - name: Add __init__.py
         run: |
@@ -222,6 +245,9 @@ jobs:
         with:
           name: ${{ env.FIXED_WHEEL_NAME }}
           path: ${{ env.PYCRYSFML_WHEEL }}${{ env.SEP }}${{ env.FIXED_WHEEL_NAME }}
+
+      #- name: Debug
+      #  run: ls -l C:\hostedtoolcache\windows\Python\3.11.8\x64\Lib\site-packages\pycrysfml08
 
       - name: Run unit tests
         run: pytest tests/ -vv

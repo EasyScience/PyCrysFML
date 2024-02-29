@@ -86,7 +86,7 @@ jobs:
             echo "COMPILER_OPTIONS=-cpp -ffree-line-length-none -fPIC -fmax-stack-var-size=128000000" >> $GITHUB_ENV
           elif [[ '${{ env.FC }}' == 'ifort' || '${{ env.FC }}' == 'ifx' ]]; then
             if [[ '${{ runner.os }}' == 'Windows' ]]; then
-              echo "COMPILER_OPTIONS=/fpp /heap-arrays /stack:128000000 /Warn -DWIN32=ON" >> $GITHUB_ENV
+              echo "COMPILER_OPTIONS=/fpp /stack:128000000 /Warn -DWIN32=ON" >> $GITHUB_ENV
             elif [[ '${{ runner.os }}' == 'Linux' || '${{ runner.os }}' == 'macOS' ]]; then
               echo "COMPILER_OPTIONS=-fpp -fPIC" >> $GITHUB_ENV
             fi
@@ -110,8 +110,8 @@ jobs:
 
       - name: Build CrysFML using CMake
         run: |
-          echo '::::: cmake ${{ env.CMAKE_GENERATOR }} -D ARCH32=OFF -D PYTHON_API=OFF -D CMAKE_BUILD_TYPE=Debug -D HEAP_ARRAYS=ON -D CMAKE_POSITION_INDEPENDENT_CODE=ON -D CMAKE_Fortran_COMPILER=${{ env.FC }} -D CMAKE_INSTALL_PREFIX=${{ env.CRYSFML_DIST }} -S ${{ env.CRYSFML_REPO }} -B ${{ env.CRYSFML_BUILD }}'
-          cmake ${{ env.CMAKE_GENERATOR }} -D ARCH32=OFF -D PYTHON_API=OFF -D CMAKE_BUILD_TYPE=Debug -D HEAP_ARRAYS=ON -D CMAKE_POSITION_INDEPENDENT_CODE=ON -D CMAKE_Fortran_COMPILER=${{ env.FC }} -D CMAKE_INSTALL_PREFIX=${{ env.CRYSFML_DIST }} -S ${{ env.CRYSFML_REPO }} -B ${{ env.CRYSFML_BUILD }}
+          echo '::::: cmake ${{ env.CMAKE_GENERATOR }} -D ARCH32=OFF -D PYTHON_API=OFF -D CMAKE_BUILD_TYPE=Debug -D CMAKE_POSITION_INDEPENDENT_CODE=ON -D CMAKE_Fortran_COMPILER=${{ env.FC }} -D CMAKE_INSTALL_PREFIX=${{ env.CRYSFML_DIST }} -S ${{ env.CRYSFML_REPO }} -B ${{ env.CRYSFML_BUILD }}'
+          cmake ${{ env.CMAKE_GENERATOR }} -D ARCH32=OFF -D PYTHON_API=OFF -D CMAKE_BUILD_TYPE=Debug -D CMAKE_POSITION_INDEPENDENT_CODE=ON -D CMAKE_Fortran_COMPILER=${{ env.FC }} -D CMAKE_INSTALL_PREFIX=${{ env.CRYSFML_DIST }} -S ${{ env.CRYSFML_REPO }} -B ${{ env.CRYSFML_BUILD }}
           echo '::::: cmake --build ${{ env.CRYSFML_BUILD }} --parallel'
           cmake --build ${{ env.CRYSFML_BUILD }} --parallel
           echo '::::: cmake --install ${{ env.CRYSFML_BUILD }}'

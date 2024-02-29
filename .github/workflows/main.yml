@@ -86,9 +86,9 @@ jobs:
             echo "COMPILER_OPTIONS=-cpp -ffree-line-length-none -fPIC -fno-stack-arrays -fmax-stack-var-size=8" >> $GITHUB_ENV
           elif [[ '${{ env.FC }}' == 'ifort' || '${{ env.FC }}' == 'ifx' ]]; then
             if [[ '${{ runner.os }}' == 'Windows' ]]; then
-              echo "COMPILER_OPTIONS=/fpp -fPIC /warn:all -DWIN32=ON" >> $GITHUB_ENV
+              echo "COMPILER_OPTIONS=/fpp /warn:all -DWIN32=ON" >> $GITHUB_ENV
             elif [[ '${{ runner.os }}' == 'Linux' || '${{ runner.os }}' == 'macOS' ]]; then
-              echo "COMPILER_OPTIONS=-fpp -fPIC -warn all" >> $GITHUB_ENV
+              echo "COMPILER_OPTIONS=-fpp -warn all -fPIC" >> $GITHUB_ENV
             fi
           fi
 

@@ -155,7 +155,7 @@ def _test_compute_pattern_SrTiO3_Pm3m():
     actual = actual[:-1]
     assert_almost_equal(desired, actual, decimal=0, verbose=True)
 
-def _test_compute_pattern_SrTiO3_Pnma():
+def test_compute_pattern_SrTiO3_Pnma():
     desired = np.loadtxt(os.path.join(os.path.dirname(__file__), 'srtio3-pmmm-pattern_Andrew-ifort.xy'), unpack=True)
     study_dict = copy.deepcopy(STUDY_DICT)
     set_space_group_by_phase_idx(study_dict, phase_idx=0, space_group='P n m a')

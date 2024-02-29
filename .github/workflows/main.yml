@@ -202,10 +202,12 @@ jobs:
 
       - name: Add magnetic_data.txt database
         run: |
-          echo '::::: mkdir ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}${{ env.SEP }}Databases'
-          mkdir ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}${{ env.SEP }}Databases
-          echo '::::: cp ${{ env.CRYSFML_REPO }}${{ env.SEP }}Src${{ env.SEP }}Databases${{ env.SEP }}magnetic_data.txt ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}${{ env.SEP }}Databases'
-          cp ${{ env.CRYSFML_REPO }}${{ env.SEP }}Src${{ env.SEP }}Databases${{ env.SEP }}magnetic_data.txt ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}${{ env.SEP }}Databases
+          #echo '::::: mkdir ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}${{ env.SEP }}Databases'
+          #mkdir ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}${{ env.SEP }}Databases
+          #echo '::::: cp ${{ env.CRYSFML_REPO }}${{ env.SEP }}Src${{ env.SEP }}Databases${{ env.SEP }}magnetic_data.txt ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}${{ env.SEP }}Databases'
+          #cp ${{ env.CRYSFML_REPO }}${{ env.SEP }}Src${{ env.SEP }}Databases${{ env.SEP }}magnetic_data.txt ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}${{ env.SEP }}Databases
+          echo '::::: cp -r ${{ env.CRYSFML_REPO }}${{ env.SEP }}Src${{ env.SEP }}Databases ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}'
+          cp -r ${{ env.CRYSFML_REPO }}${{ env.SEP }}Src${{ env.SEP }}Databases ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}
           echo '::::: ls -l ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}${{ env.SEP }}Databases'
           ls -l ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}${{ env.SEP }}Databases
 

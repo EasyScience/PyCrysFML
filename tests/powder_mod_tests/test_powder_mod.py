@@ -172,10 +172,11 @@ if __name__ == '__main__':
 
     #clean_after_compute(study_dict)
     #study_dict["phases"][0]["SrTiO3"]["_space_group_name_H-M_alt"] = 'P m -3 m'
-    #_, y_calc = powder_mod.simulation(study_dict)
-    #print('::::: Y calculated (P m -3 m):', y_calc)
+    #_, ycalc = powder_mod.simulation(study_dict)
+    #print('::::: Y calculated (P m -3 m):', ycalc)
 
     clean_after_compute(STUDY_DICT)
     study_dict["phases"][0]["SrTiO3"]["_space_group_name_H-M_alt"] = 'P n m a'
-    _, y_calc = powder_mod.simulation(study_dict)
-    print('::::: Y calculated (P n m a):', y_calc)
+    _, ycalc = powder_mod.simulation(study_dict)
+    print('::::: Y calculated (P n m a):', ycalc)
+    np.savetxt('ycalc.dat', ycalc, fmt='%12.6f')

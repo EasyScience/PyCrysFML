@@ -252,5 +252,11 @@ jobs:
       - name: Calc pattern with powder_mod for SG Pnma
         run: python tests${{ env.SEP }}powder_mod_tests${{ env.SEP }}test_powder_mod.py
 
+      - name: Upload calculated pattern
+        uses: actions/upload-artifact@v4
+        with:
+          name: ycalc_${{ runner.os }}_${{ env.FC }}_${{ matrix.build_system }}.dat
+          path: ycalc.dat
+
       - name: Run powder_mod tests
         run: pytest tests${{ env.SEP }}powder_mod_tests -vv

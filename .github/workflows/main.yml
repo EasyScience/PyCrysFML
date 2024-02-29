@@ -249,8 +249,8 @@ jobs:
       - name: Run unit tests
         run: pytest tests${{ env.SEP }}unit_tests -vv
 
-      - name: Run powder_mod tests
-        run: pytest tests${{ env.SEP }}powder_mod_tests -vv
-
       - name: Calc pattern with powder_mod for SG Pnma
         run: python tests${{ env.SEP }}powder_mod_tests${{ env.SEP }}test_powder_mod.py
+
+      - name: Run powder_mod tests
+        run: pytest tests${{ env.SEP }}powder_mod_tests -vv

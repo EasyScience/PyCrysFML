@@ -167,7 +167,7 @@ def test_compute_pattern_SrTiO3_Pnma():
 # Debug
 
 if __name__ == '__main__':
-    np.set_printoptions(precision=6)
+    np.set_printoptions(precision=5, threshold = np.inf)
     study_dict = copy.deepcopy(STUDY_DICT)
 
     #clean_after_compute(study_dict)

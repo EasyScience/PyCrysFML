@@ -83,10 +83,10 @@ jobs:
           fi
           if [[ '${{ env.FC }}' == 'gfortran' ]]; then
             #echo "COMPILER_OPTIONS=-cpp -std=f2008 -ffree-line-length-none -fPIC" >> $GITHUB_ENV
-            echo "COMPILER_OPTIONS=-cpp -ffree-line-length-none -fPIC -fmax-stack-var-size=128000000" >> $GITHUB_ENV
+            echo "COMPILER_OPTIONS=-cpp -ffree-line-length-none -fPIC -fmax-stack-var-size=8" >> $GITHUB_ENV
           elif [[ '${{ env.FC }}' == 'ifort' || '${{ env.FC }}' == 'ifx' ]]; then
             if [[ '${{ runner.os }}' == 'Windows' ]]; then
-              echo "COMPILER_OPTIONS=/fpp /stack:128000000 /Warn -DWIN32=ON" >> $GITHUB_ENV
+              echo "COMPILER_OPTIONS=/fpp /Warn -DWIN32=ON" >> $GITHUB_ENV
             elif [[ '${{ runner.os }}' == 'Linux' || '${{ runner.os }}' == 'macOS' ]]; then
               echo "COMPILER_OPTIONS=-fpp -fPIC" >> $GITHUB_ENV
             fi

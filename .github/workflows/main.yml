@@ -15,19 +15,29 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-22.04, macos-12, windows-2022]  # [ubuntu-22.04, macos-12, windows-2022]
+        toolchain:
+          - {compiler: gcc, version: 13}  # gfortran
+          - {compiler: intel-classic, version: '2021.10'}  # ifort
+          - {compiler: intel, version: '2023.2'}  # ifx
         build_system: [cmake]  # [cmake, fpm]
-        compiler: [gfortran]  # [gfortran, ifort]
-        include:
-          - os: ubuntu-22.04
-            build_system: cmake
-            compiler: ifort
-          - os: ubuntu-22.04
-            build_system: cmake
-            compiler: ifx
+        exclude:
+          - os: macos-12
+            toolchain: {compiler: intel, version: '2023.2'}  # ifx not supported
 
     steps:
       - name: Check-out repository
         uses: actions/checkout@v3
+
+      - name: Set up fortran
+        uses: fortran-lang/setup-fortran@v1
+        id: setup-fortran
+        with:
+          compiler: ${{ matrix.toolchain.compiler }}
+          version: ${{ matrix.toolchain.version }}
+
+      - name: Set up nmake (Windows)
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
 
       - name: Set up Python environment
         uses: actions/setup-python@v4
@@ -65,10 +75,10 @@ jobs:
             echo "SITE_PACKAGES=c:/hostedtoolcache/windows/python/3.11.8/x64/lib/site-packages" >> $GITHUB_ENV
             echo "LIBPYTHON=${{ env.Python_ROOT_DIR }}\\libs\\python311.lib" >> $GITHUB_ENV
           fi
-          if [[ '${{ matrix.compiler }}' == 'gfortran' ]]; then
+          if [[ '${{ env.FC }}' == 'gfortran' ]]; then
             #echo "COMPILER_OPTIONS=-cpp -std=f2008 -ffree-line-length-none -fPIC" >> $GITHUB_ENV
             echo "COMPILER_OPTIONS=-cpp -ffree-line-length-none -fPIC" >> $GITHUB_ENV
-          elif [[ '${{ matrix.compiler }}' == 'ifort' || '${{ matrix.compiler }}' == 'ifx' ]]; then
+          elif [[ '${{ env.FC }}' == 'ifort' || '${{ env.FC }}' == 'ifx' ]]; then
             echo "COMPILER_OPTIONS=-fpp -fPIC" >> $GITHUB_ENV
           fi
 
@@ -85,37 +95,13 @@ jobs:
           echo "ORIGINAL_WHEEL_NAME=${{ env.DIST_PACKAGE_NAME }}-${{ env.DIST_PACKAGE_VERSION }}-py3-none-any.whl" >> $GITHUB_ENV
           echo "FIXED_WHEEL_NAME=${{ env.DIST_PACKAGE_NAME }}-${{ env.DIST_PACKAGE_VERSION }}-${{ env.PYTHON_TAG }}-none-${{ env.PLATFORM_TAG }}.whl" >> $GITHUB_ENV
 
-      - name: Install OS-specific dependences (Windows)
-        if: runner.os == 'Windows'
-        uses: ilammy/msvc-dev-cmd@v1
-
-      - name: Install OS-specific dependences (macOS + gfortran)
-        if: runner.os == 'macOS' && matrix.compiler == 'gfortran'
-        run: |
-          brew reinstall gcc  # to add gfortran
-          gfortran --version
-          #brew install llvm  # ??? OpenMP for parallel compilation in FPM
-          #brew reinstall libomp  # ??? OpenMP for parallel compilation in FPM
-
-      - name: Install OS-specific dependences (Linux + ifort/ifx)
-        if: runner.os == 'Linux' && (matrix.compiler == 'ifort' || matrix.compiler == 'ifx')
-        run: |
-          curl -Lo- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB | sudo gpg --dearmor -o /usr/share/keyrings/oneapi-archive-keyring.gpg
-          sudo tee /etc/apt/sources.list.d/oneAPI.list <<< "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main"
-          sudo apt-get update
-          sudo apt-get install intel-oneapi-compiler-fortran
-          source /opt/intel/oneapi/setvars.sh
-          printenv >> $GITHUB_ENV
-          ifort --version
-          ifx --version
-
       - name: Download CrysFML (powder_mod_fix branch)
         run: git clone --single-branch --branch powder_mod_fix https://code.ill.fr/rodriguez-carvajal/crysfml2008.git ${{ env.CRYSFML_REPO }}
 
       - name: Build CrysFML using CMake
         run: |
-          echo '::::: cmake ${{ env.CMAKE_GENERATOR }} -D ARCH32=OFF -D PYTHON_API=OFF -D CMAKE_BUILD_TYPE=Debug -D CMAKE_POSITION_INDEPENDENT_CODE=ON -D CMAKE_Fortran_COMPILER=${{ matrix.compiler }} -D CMAKE_INSTALL_PREFIX=${{ env.CRYSFML_DIST }} -S ${{ env.CRYSFML_REPO }} -B ${{ env.CRYSFML_BUILD }}'
-          cmake ${{ env.CMAKE_GENERATOR }} -D ARCH32=OFF -D PYTHON_API=OFF -D CMAKE_BUILD_TYPE=Debug -D CMAKE_POSITION_INDEPENDENT_CODE=ON -D CMAKE_Fortran_COMPILER=${{ matrix.compiler }} -D CMAKE_INSTALL_PREFIX=${{ env.CRYSFML_DIST }} -S ${{ env.CRYSFML_REPO }} -B ${{ env.CRYSFML_BUILD }}
+          echo '::::: cmake ${{ env.CMAKE_GENERATOR }} -D ARCH32=OFF -D PYTHON_API=OFF -D CMAKE_BUILD_TYPE=Debug -D CMAKE_POSITION_INDEPENDENT_CODE=ON -D CMAKE_Fortran_COMPILER=${{ env.FC }} -D CMAKE_INSTALL_PREFIX=${{ env.CRYSFML_DIST }} -S ${{ env.CRYSFML_REPO }} -B ${{ env.CRYSFML_BUILD }}'
+          cmake ${{ env.CMAKE_GENERATOR }} -D ARCH32=OFF -D PYTHON_API=OFF -D CMAKE_BUILD_TYPE=Debug -D CMAKE_POSITION_INDEPENDENT_CODE=ON -D CMAKE_Fortran_COMPILER=${{ env.FC }} -D CMAKE_INSTALL_PREFIX=${{ env.CRYSFML_DIST }} -S ${{ env.CRYSFML_REPO }} -B ${{ env.CRYSFML_BUILD }}
           echo '::::: cmake --build ${{ env.CRYSFML_BUILD }} --parallel'
           cmake --build ${{ env.CRYSFML_BUILD }} --parallel
           echo '::::: cmake --install ${{ env.CRYSFML_BUILD }}'
@@ -138,10 +124,10 @@ jobs:
           cd ${{ env.PYCRYSFML_REPO }}${{ env.SEP }}src
           #for n in py_cfml_metrics py_cfml_profiles py_cfml_sxtal_geom powder_mod; do
           for n in py_cfml_metrics py_cfml_profiles py_cfml_sxtal_geom powder_mod; do
-            echo "::::: ${{ matrix.compiler }} ${{ env.COMPILER_OPTIONS }} -c $n.F90 -I ${{ env.CRYSFML_DIST }}/include"
-            ${{ matrix.compiler }} ${{ env.COMPILER_OPTIONS }} -c $n.F90 -I ${{ env.CRYSFML_DIST }}/include
-            echo "::::: ${{ matrix.compiler }} -shared -o $n.so $n.o -L ${{ env.CRYSFML_DIST }}/lib -l CrysFML08 ${{ env.LIBPYTHON }}"
-            ${{ matrix.compiler }} -shared -o $n.so $n.o -L ${{ env.CRYSFML_DIST }}/lib -l CrysFML08 ${{ env.LIBPYTHON }}
+            echo "::::: ${{ env.FC }} ${{ env.COMPILER_OPTIONS }} -c $n.F90 -I ${{ env.CRYSFML_DIST }}/include"
+            ${{ env.FC }} ${{ env.COMPILER_OPTIONS }} -c $n.F90 -I ${{ env.CRYSFML_DIST }}/include
+            echo "::::: ${{ env.FC }} -shared -o $n.so $n.o -L ${{ env.CRYSFML_DIST }}/lib -l CrysFML08 ${{ env.LIBPYTHON }}"
+            ${{ env.FC }} -shared -o $n.so $n.o -L ${{ env.CRYSFML_DIST }}/lib -l CrysFML08 ${{ env.LIBPYTHON }}
             echo "::::: mv $n.so ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}"
             mv $n.so ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}
           done
@@ -157,10 +143,10 @@ jobs:
           echo '::::: cd ${{ env.PYCRYSFML_REPO }}${{ env.SEP }}src'
           cd ${{ env.PYCRYSFML_REPO }}${{ env.SEP }}src
           for %%n in (py_cfml_metrics py_cfml_profiles py_cfml_sxtal_geom powder_mod) do (
-            echo "::::: ${{ matrix.compiler }} ${{ env.COMPILER_OPTIONS }} -c %%n.f90 -I ${{ env.CRYSFML_DIST }}/include"
-            ${{ matrix.compiler }} ${{ env.COMPILER_OPTIONS }} -c %%n.f90 -I ${{ env.CRYSFML_DIST }}/include
-            echo "::::: ${{ matrix.compiler }} -shared -o %%n.pyd %%n.o -L ${{ env.CRYSFML_DIST }}/lib -l CrysFML08 ${{ env.LIBPYTHON }}"
-            ${{ matrix.compiler }} -shared -o %%n.pyd %%n.o -L ${{ env.CRYSFML_DIST }}/lib -l CrysFML08 ${{ env.LIBPYTHON }}
+            echo "::::: ${{ env.FC }} ${{ env.COMPILER_OPTIONS }} -c %%n.f90 -I ${{ env.CRYSFML_DIST }}/include"
+            ${{ env.FC }} ${{ env.COMPILER_OPTIONS }} -c %%n.f90 -I ${{ env.CRYSFML_DIST }}/include
+            echo "::::: ${{ env.FC }} -shared -o %%n.pyd %%n.o -L ${{ env.CRYSFML_DIST }}/lib -l CrysFML08 ${{ env.LIBPYTHON }}"
+            ${{ env.FC }} -shared -o %%n.pyd %%n.o -L ${{ env.CRYSFML_DIST }}/lib -l CrysFML08 ${{ env.LIBPYTHON }}
             echo "::::: move %%n.pyd ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}"
             move %%n.pyd ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}
           )
@@ -231,8 +217,8 @@ jobs:
           name: ${{ env.FIXED_WHEEL_NAME }}
           path: ${{ env.PYCRYSFML_WHEEL }}${{ env.SEP }}${{ env.FIXED_WHEEL_NAME }}
 
-      - name: Run tests
+      - name: Run unit tests
         run: pytest tests/ -vv
 
-      - name: Debug
+      - name: Calc pattern with powder_mod for SG Pnma
         run: python tests${{ env.SEP }}test_powder_mod.py

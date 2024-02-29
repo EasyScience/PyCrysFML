@@ -110,8 +110,8 @@ jobs:
 
       - name: Build CrysFML using CMake
         run: |
-          echo '::::: cmake ${{ env.CMAKE_GENERATOR }} -D ARCH32=OFF -D PYTHON_API=OFF -D CMAKE_BUILD_TYPE=Debug -D CMAKE_POSITION_INDEPENDENT_CODE=ON -D CMAKE_Fortran_COMPILER=${{ env.FC }} -D CMAKE_INSTALL_PREFIX=${{ env.CRYSFML_DIST }} -S ${{ env.CRYSFML_REPO }} -B ${{ env.CRYSFML_BUILD }}'
-          cmake ${{ env.CMAKE_GENERATOR }} -D ARCH32=OFF -D PYTHON_API=OFF -D CMAKE_BUILD_TYPE=Debug -D CMAKE_POSITION_INDEPENDENT_CODE=ON -D CMAKE_Fortran_COMPILER=${{ env.FC }} -D CMAKE_INSTALL_PREFIX=${{ env.CRYSFML_DIST }} -S ${{ env.CRYSFML_REPO }} -B ${{ env.CRYSFML_BUILD }}
+          echo '::::: cmake ${{ env.CMAKE_GENERATOR }} -D ARCH32=OFF -D PYTHON_API=OFF -D CMAKE_BUILD_TYPE=Debug -D HEAP_ARRAYS=ON -D CMAKE_POSITION_INDEPENDENT_CODE=ON -D CMAKE_Fortran_COMPILER=${{ env.FC }} -D CMAKE_INSTALL_PREFIX=${{ env.CRYSFML_DIST }} -S ${{ env.CRYSFML_REPO }} -B ${{ env.CRYSFML_BUILD }}'
+          cmake ${{ env.CMAKE_GENERATOR }} -D ARCH32=OFF -D PYTHON_API=OFF -D CMAKE_BUILD_TYPE=Debug -D HEAP_ARRAYS=ON -D CMAKE_POSITION_INDEPENDENT_CODE=ON -D CMAKE_Fortran_COMPILER=${{ env.FC }} -D CMAKE_INSTALL_PREFIX=${{ env.CRYSFML_DIST }} -S ${{ env.CRYSFML_REPO }} -B ${{ env.CRYSFML_BUILD }}
           echo '::::: cmake --build ${{ env.CRYSFML_BUILD }} --parallel'
           cmake --build ${{ env.CRYSFML_BUILD }} --parallel
           echo '::::: cmake --install ${{ env.CRYSFML_BUILD }}'

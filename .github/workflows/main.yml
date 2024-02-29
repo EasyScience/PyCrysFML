@@ -90,7 +90,7 @@ jobs:
             elif [[ '${{ runner.os }}' == 'Linux' || '${{ runner.os }}' == 'macOS' ]]; then
               echo "COMPILER_OPTIONS=-fpp -fPIC" >> $GITHUB_ENV
             fi
-          fi 
+          fi
 
       - name: Declare env variables (dependent)
         shell: bash
@@ -246,11 +246,11 @@ jobs:
           name: ${{ env.FIXED_WHEEL_NAME }}
           path: ${{ env.PYCRYSFML_WHEEL }}${{ env.SEP }}${{ env.FIXED_WHEEL_NAME }}
 
-      #- name: Debug
-      #  run: ls -l C:\hostedtoolcache\windows\Python\3.11.8\x64\Lib\site-packages\pycrysfml08
-
       - name: Run unit tests
-        run: pytest tests/ -vv
+        run: pytest tests/unit_tests -vv
+
+      - name: Run integration tests
+        run: pytest tests/integration_tests -vv
 
       - name: Calc pattern with powder_mod for SG Pnma
         run: python tests${{ env.SEP }}test_powder_mod.py

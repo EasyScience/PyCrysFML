@@ -105,8 +105,8 @@ jobs:
           echo "ORIGINAL_WHEEL_NAME=${{ env.DIST_PACKAGE_NAME }}-${{ env.DIST_PACKAGE_VERSION }}-py3-none-any.whl" >> $GITHUB_ENV
           echo "FIXED_WHEEL_NAME=${{ env.DIST_PACKAGE_NAME }}-${{ env.DIST_PACKAGE_VERSION }}-${{ env.PYTHON_TAG }}-none-${{ env.PLATFORM_TAG }}.whl" >> $GITHUB_ENV
 
-      - name: Download CrysFML (master branch)
-        run: git clone --single-branch --branch master https://code.ill.fr/rodriguez-carvajal/crysfml2008.git ${{ env.CRYSFML_REPO }}
+      - name: Download CrysFML (powder_mod_fix branch)
+        run: git clone --single-branch --branch powder_mod_fix https://code.ill.fr/rodriguez-carvajal/crysfml2008.git ${{ env.CRYSFML_REPO }}
 
       - name: Build CrysFML using CMake
         run: |

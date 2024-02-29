@@ -20,6 +20,9 @@ jobs:
           - {compiler: intel-classic, version: '2021.10'}  # ifort
           - {compiler: intel, version: '2023.2'}  # ifx
         build_system: [cmake]  # [cmake, fpm]
+        exclude:
+          - os: macos-12
+            toolchain: {compiler: intel, version: '2023.2'}  # ifx not supported
 
     steps:
       - name: Check-out repository

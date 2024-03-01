@@ -176,7 +176,7 @@ if __name__ == '__main__':
     #print('::::: Y calculated (P m -3 m):', ycalc)
 
     clean_after_compute(STUDY_DICT)
-    study_dict["phases"][0]["SrTiO3"]["_space_group_name_H-M_alt"] = 'I 4 3 2'
+    study_dict["phases"][0]["SrTiO3"]["_space_group_name_H-M_alt"] = 'P n m a'
     _, ycalc = powder_mod.simulation(study_dict)
-    print('::::: Y calculated (I 4 3 2):', ycalc)
+    print('::::: Y calculated (P n m a):', ycalc)
     np.savetxt('ycalc.dat', ycalc, fmt='%12.6f')

@@ -44,6 +44,24 @@ def test_get_betas_from_biso():
     assert message == ''
     assert_almost_equal(desired, actual, decimal=4, verbose=True)
 
+def test_get_betas_from_u():
+    u = np.array([0.0127, 0.0127, 0.0127, 0.0, 0.0, 0.0], dtype='f')
+    di_cell = copy.deepcopy(DI_CELL)
+    desired = np.array([0.0025, 0.0025, 0.0025, 0.0, 0.0, 0.0], dtype='f')
+    code, message, actual = py_cfml_metrics.get_betas_from_u(u, di_cell)
+    assert code == 0
+    assert message == ''
+    assert_almost_equal(desired, actual, decimal=4, verbose=True)
+
+def test_get_u_from_betas():
+    betas = np.array([0.0025, 0.0025, 0.0025, 0.0, 0.0, 0.0], dtype='f')
+    di_cell = copy.deepcopy(DI_CELL)
+    desired = np.array([0.0127, 0.0127, 0.0127, 0.0, 0.0, 0.0], dtype='f')
+    code, message, actual = py_cfml_metrics.get_u_from_betas(betas, di_cell)
+    assert code == 0
+    assert message == ''
+    assert_almost_equal(desired, actual, decimal=4, verbose=True)
+
 def test_set_crystal_cell():
     nd_abc = np.array([10.0, 10.0, 10.0], dtype='f')
     nd_albega = np.array([90.0, 90.0, 90.0], dtype='f')
@@ -56,3 +74,72 @@ def test_set_crystal_cell():
             assert_almost_equal(desired[key], actual[key], decimal=4, verbose=True)
         else:
             assert desired[key] == actual[key]
+
+def test_get_twofold_axes():
+    di_cell = copy.deepcopy(DI_CELL)
+
+    desired = {'fortran_type': 'twofold_axes_type',
+               'ntwo': 9,
+               'tol': 1.0,
+               'caxes': np.array([[0., 0., 10., 0., 10., 0., 10., 10., 10., 0., 0., 0.],
+                                  [10., 0., 0., 10., 10., 10., 0., 0., -10., 0., 0., 0.],
+                                  [0., 10., 0., -10., 0., 10., 10., -10., 0., 0., 0., 0.]],
+                                 dtype=np.float32),
+               'dtwofold': np.array([[0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0],
+                                     [1, 0, 0, 1, 1, 1, 0, 0, -1, 0, 0, 0],
+                                     [0, 1, 0, -1, 0, 1, 1, -1, 0, 0, 0, 0]],
+                                    dtype=np.int32),
+               'rtwofold': np.array([[0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0],
+                                     [1, 0, 0, 1, 1, 1, 0, 0, -1, 0, 0, 0],
+                                     [0, 1, 0, -1, 0, 1, 1, -1, 0, 0, 0, 0]],
+                                    dtype=np.int32),
+               'dot': np.array([1, 1, 1, 2, 2, 2, 2, 2, 2, 0, 0, 0], dtype=np.int32),
+               'cross': np.array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                                 dtype=np.float32),
+               'maxes': np.array([10., 10., 10.,
+                                  14.142136, 14.142136, 14.142136,
+                                  14.142136, 14.142136, 14.142136,
+                                  0., 0., 0.],
+                                 dtype=np.float32),
+               'a': np.array([10., -0., 0.], dtype=np.float32),
+               'b': np.array([0., 10., 0.], dtype=np.float32),
+               'c': np.array([0., 0., 10.], dtype=np.float32)}
+
+    code, message, actual = py_cfml_metrics.get_twofold_axes(di_cell, 1.0)
+    assert code == 0
+    assert message == ''
+    assert DeepDiff(desired, actual) == {}
+
+def test_get_conventional_cell():
+    di_cell = copy.deepcopy(DI_CELL)
+    desired = {
+        'fortran_type': 'twofold_axes_type',
+        'ntwo': 9,
+        'tol': 10.0,
+        'caxes': np.array([[0., 0., 10., 0., 10., 0., 10., 10., 10., 0., 0., 0.],
+                           [10., 0., 0., 10., 10., 10., 0., 0., -10., 0., 0., 0.],
+                           [0., 10., 0., -10., 0., 10., 10., -10., 0., 0., 0., 0.]],
+                          dtype=np.float32),
+        'dtwofold': np.array([[0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0],
+                              [1, 0, 0, 1, 1, 1, 0, 0, -1, 0, 0, 0],
+                              [0,  1, 0, -1, 0, 1, 1, -1, 0, 0, 0, 0]],
+                             dtype=np.int32),
+        'rtwofold': np.array([[0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0],
+                              [1, 0, 0, 1, 1, 1, 0, 0, -1, 0, 0, 0],
+                              [0, 1, 0, -1, 0, 1, 1, -1, 0, 0, 0, 0]],
+                             dtype=np.int32),
+        'dot': np.array([1, 1, 1, 2, 2, 2, 2, 2, 2, 0, 0, 0], dtype=np.int32),
+        'cross': np.array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.], dtype=np.float32),
+        'maxes': np.array([10., 10., 10.,
+                           14.142136, 14.142136, 14.142136,
+                           14.142136, 14.142136, 14.142136,
+                           0., 0., 0.],
+                          dtype=np.float32),
+        'a': np.array([10., -0., 0.], dtype=np.float32),
+        'b': np.array([0., 10., 0.], dtype=np.float32),
+        'c': np.array([0., 0., 10.], dtype=np.float32)}
+
+    code, message, actual = py_cfml_metrics.get_twofold_axes(di_cell, 10.0)
+    assert code == 0
+    assert message == ''
+    assert DeepDiff(desired, actual) == {}

@@ -149,6 +149,7 @@ modes.debug = [
   '-fPIC',
   '-std08'
 ]
+shared-flag = '-shared'
 
 [[build-objs]]
 platforms = [
@@ -162,6 +163,7 @@ modes.debug = [
   '-DWIN32=ON',
   '/fpp',
 ]
+shared-flag = '?????'
 
 [[cfml-modules]]
 main-file = 'Forpy'

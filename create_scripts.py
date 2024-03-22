@@ -195,14 +195,17 @@ def parsed_args():
     parser.add_argument("--platform",
                         default="macos",
                         choices=['macos', 'linux', 'windows'],
+                        type=str.lower,
                         help="platform identifier")
     parser.add_argument("--compiler",
                         default="gfortran",
                         choices=['gfortran', 'nagfor', 'ifx', 'ifort'],
+                        type=str.lower,
                         help="fortran compiler")
     parser.add_argument("--mode",
                         default="debug",
                         choices=['debug', 'release'],
+                        type=str.lower,
                         help="compiling mode")
     parser.add_argument("--bash-syntax",
                         action='store_true',

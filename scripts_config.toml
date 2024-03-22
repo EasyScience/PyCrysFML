@@ -52,6 +52,7 @@ obj-ext = { macos = 'o', ubuntu = 'o', windows = 'obj' }
 lib-ext = { macos = 'a', ubuntu = 'a', windows = 'lib' }
 python-lib.macos = '`python3-config --ldflags --embed`'
 python-lib.ubuntu = ''
+python-lib.windows = 'C:\hostedtoolcache\windows\Python\3.11.8\x64\libs\python311.lib'
 
 [[build-objs]]
 platforms = [
@@ -158,8 +159,8 @@ compilers = [
   'ifx'
 ]
 modes.debug = [
+  '-DWIN32=ON',
   '/fpp',
-  '/warn:all'
 ]
 
 [[cfml-modules]]

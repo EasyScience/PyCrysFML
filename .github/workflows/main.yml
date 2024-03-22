@@ -125,7 +125,7 @@ jobs:
         run: |
           scripts/create_cfml_build_dir.sh
           scripts/compile_cfml_objs.sh
-          scripts/create_cfml_static_lib.sh
+          bash -x scripts/create_cfml_static_lib.sh
           scripts/create_cfml_dist_dir.sh
           scripts/copy_compiled_to_cfml_dist.sh
 

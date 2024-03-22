@@ -108,7 +108,12 @@ jobs:
 
       - name: Create scripts
         shell: bash
-        run: python3 create_scripts.py --shell bash --mode debug --compiler ${{ env.FC }}
+        run: >
+          python3 create_scripts.py
+          --platform ${{ runner.os }}
+          --compiler ${{ env.FC }}
+          --mode debug
+          --bash-syntax
 
       - name: Show info
         shell: bash

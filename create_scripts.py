@@ -48,15 +48,10 @@ def _echo_header(msg: str):
     return lines
 
 def _platform():
-    if sys.platform.startswith('darwin'):
-        return 'macos'
-    elif sys.platform.startswith('lin'):
-        return 'ubuntu'
-    elif sys.platform.startswith('win'):
-        return 'windows'
-    else:
-        print(f'- Unsupported platform: {sys.platform}')
-        return None
+    platform = 'macos'  # default
+    if ARGS.platform:
+        platform = ARGS.platform.lower()
+    return platform
 
 def _fix_file_permissions(path: str):
     os.chmod(path, 0o777)
@@ -65,7 +60,7 @@ def _write_lines_to_file(lines: list, name: str):
     path = os.path.join(_scripts_path(), name)
     with open(path, 'w') as file:
         for line in lines:
-            if _shell() == 'bash':
+            if _bash_syntax():
                 line = line.replace('\\', '/')
             file.write(line + '\n')
     _fix_file_permissions(path)
@@ -80,16 +75,16 @@ def _total_src_file_count(modules: str):
                 count += 1
     return count
 
-def _shell():
-    shell = 'bash'  # default
-    if ARGS.shell:
-        shell = ARGS.shell
-    return shell
+def _bash_syntax():
+    bash_syntax = False  # default
+    if ARGS.bash_syntax:
+        bash_syntax = ARGS.bash_syntax
+    return bash_syntax
 
 def _compiler_name():
     compiler = 'gfortran'  # default
     if ARGS.compiler:
-        compiler = ARGS.compiler
+        compiler = ARGS.compiler.lower()
     return compiler
 
 def _compiler_options():
@@ -98,7 +93,7 @@ def _compiler_options():
     options = ''
     for build in CONFIG['build-objs']:
         if _platform() in build['platforms'] and compiler in build['compilers']:
-            options = ' '.join(build['modes'][mode])
+            options = f"{build['modes']['base']} {build['modes'][mode]}"
             break
     return options
 
@@ -123,7 +118,7 @@ def _compiler_build_shared_template():
 def _compiling_mode():
     mode = 'debug'  # default
     if ARGS.mode:
-        mode = ARGS.mode
+        mode = ARGS.mode.lower()
     return mode
 
 def _compiling_progress(current: int, total: int):
@@ -196,16 +191,35 @@ def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):
     return lines
 
 def parsed_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--compiler", help="fortran compiler (gfortran, nagfor, ifx, ifort)")
-    parser.add_argument("--mode", help="build mode (debug, release)")
-    parser.add_argument("--shell", help="build mode (bash, powershell)")
+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument("--platform",
+                        default="macos",
+                        choices=['macos', 'linux', 'windows'],
+                        help="platform identifier")
+    parser.add_argument("--compiler",
+                        default="gfortran",
+                        choices=['gfortran', 'nagfor', 'ifx', 'ifort'],
+                        help="fortran compiler")
+    parser.add_argument("--mode",
+                        default="debug",
+                        choices=['debug', 'release'],
+                        help="compiling mode")
+    parser.add_argument("--bash-syntax",
+                        action='store_true',
+                        help="force bash shell syntax")
     return parser.parse_args()
 
 def loaded_config(name: str):
     path = _config_path(name)
     with open(path, 'rb') as f:
-        return tomllib.load(f)
+        config = tomllib.load(f)
+    if _bash_syntax():
+        for idx, build in enumerate(config['build-objs']):
+            config['build-objs'][idx]['build-shared'] = build['build-shared'].replace('/', '-')
+            config['build-objs'][idx]['modes']['base'] = build['modes']['base'].replace('/', '-')
+            config['build-objs'][idx]['modes']['debug'] = build['modes']['debug'].replace('/', '-')
+            config['build-objs'][idx]['modes']['release'] = build['modes']['release'].replace('/', '-')
+    return config
 
 def clear_main_script():
     path = _main_script_path()
@@ -220,7 +234,7 @@ def append_to_main_script(obj: str | list):
         lines = obj
     with open(path, 'a') as file:
         for line in lines:
-            if _shell() == 'bash':
+            if _bash_syntax():
                 line = line.replace('\\', '/')
             file.write(line + '\n')
     _fix_file_permissions(path)
@@ -327,20 +341,11 @@ def create_cfml_static_lib():
     lines.append(msg)
     cmd = f'cd {build_path}'
     lines.append(cmd)
-
-    lines.append(f'echo "11111"')
-    lines.append(f'ls -l {build_path}')
-
     msg = _echo_msg(f"Creating fortran static library '{lib_name}.{lib_ext}'")
     lines.append(msg)
     template_cmd = CONFIG['template']['build-static'][_platform()]
     cmd = template_cmd.replace('{LIB}', lib_name).replace('{OBJ_EXT}', _obj_ext())
     lines.append(cmd)
-
-    lines.append(f'echo "22222"')
-    lines.append(f'ls -l {build_path}')
-
-
     msg = _echo_msg(f"Exiting build dir '{build_dir}'")
     lines.append(msg)
     cmd = f'cd {_project_path()}'

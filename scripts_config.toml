@@ -169,6 +169,7 @@ modes.debug = [
   #/fpp',
   #'/heap-arrays',
   #'/stand:f08',
+  '/nologo',
   '-DWIN32=ON'
 ]
 obj-ext = 'obj'

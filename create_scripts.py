@@ -49,7 +49,7 @@ def _echo_header(msg: str):
 
 def _platform():
     if sys.platform.startswith('darwin'):
-        return 'macos'
+        return 'windows'#'macos'
     elif sys.platform.startswith('lin'):
         return 'ubuntu'
     elif sys.platform.startswith('win'):
@@ -321,11 +321,20 @@ def create_cfml_static_lib():
     lines.append(msg)
     cmd = f'cd {build_path}'
     lines.append(cmd)
+
+    lines.append(f'echo "11111"')
+    lines.append(f'ls -l {build_dir}')
+
     msg = _echo_msg(f"Creating fortran static library '{lib_name}.{lib_ext}'")
     lines.append(msg)
     template_cmd = CONFIG['template']['build-static'][_platform()]
     cmd = template_cmd.replace('{LIB}', lib_name)
     lines.append(cmd)
+
+    lines.append(f'echo "22222"')
+    lines.append(f'ls -l {build_dir}')
+
+
     msg = _echo_msg(f"Exiting build dir '{build_dir}'")
     lines.append(msg)
     cmd = f'cd {_project_path()}'

@@ -14,7 +14,7 @@ def _project_dir():
 def _project_path():
     return os.path.abspath(_project_dir())
 
-def _config_path(name):
+def _config_path(name: str):
     path = os.path.join(_project_dir(), name)
     path = os.path.abspath(path)
     return path
@@ -29,15 +29,15 @@ def _main_script_path():
     path = os.path.join(_scripts_path(), name)
     return path
 
-def _echo_msg(msg):
+def _echo_msg(msg: str):
     return f'echo "- {msg}"'
 
-def _echo_progress_msg(current, total, msg):
+def _echo_progress_msg(current: int, total: int, msg: str):
     progress = _compiling_progress(current, total)
     msg = f"[{progress:>3}%] {msg}"
     return f'echo "  {msg}"'
 
-def _echo_header(msg):
+def _echo_header(msg: str):
     msg = f':: {msg} ::'
     sep = ':' * len(msg)
     lines = []
@@ -58,23 +58,19 @@ def _platform():
         print(f'- Unsupported platform: {sys.platform}')
         return None
 
-def _fix_file_permissions(path):
+def _fix_file_permissions(path: str):
     os.chmod(path, 0o777)
 
-def _write_lines_to_file(lines, name):
+def _write_lines_to_file(lines: list, name: str):
     path = os.path.join(_scripts_path(), name)
     with open(path, 'w') as file:
         for line in lines:
-            print('-', line)
             if _shell() == 'bash':
-                line = line.replace('/', '\\')
-                print('.', line)
                 line = line.replace('\\', '/')
-            print('+', line)
             file.write(line + '\n')
     _fix_file_permissions(path)
 
-def _total_src_file_count(modules):
+def _total_src_file_count(modules: str):
     count = 0
     for module in CONFIG[modules]:
         if 'main-file' in module:
@@ -122,11 +118,11 @@ def _compiling_mode():
         mode = ARGS.mode
     return mode
 
-def _compiling_progress(current, total):
+def _compiling_progress(current: int, total: int):
     progress = round(current / total * 100)
     return progress
 
-def _compile_objs_script_lines(modules, src_path, include_path=None):
+def _compile_objs_script_lines(modules: str, src_path: str, include_path: str=None):
     src_ext = CONFIG['build']['src-ext'][modules]
     modules = f'{modules}-modules'
     template_cmd = CONFIG['template']['build-obj']
@@ -161,7 +157,7 @@ def _compile_objs_script_lines(modules, src_path, include_path=None):
                 lines.append(cmd)
     return lines
 
-def _compile_shared_objs_or_dynamic_libs_script_lines(modules):
+def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):
     obj_ext = CONFIG['build']['obj-ext'][_platform()]
     cfml_dist_dir = CONFIG['cfml']['dir']['dist']
     cfml_dist_path = os.path.join(_project_path(), cfml_dist_dir)
@@ -202,7 +198,7 @@ def parsed_args():
     parser.add_argument("--shell", help="build mode (bash, powershell)")
     return parser.parse_args()
 
-def loaded_config(name):
+def loaded_config(name: str):
     path = _config_path(name)
     with open(path, 'rb') as f:
         return tomllib.load(f)
@@ -212,12 +208,14 @@ def clear_main_script():
     with open(path, 'w') as file:
         pass
 
-def append_to_main_script(obj):
+def append_to_main_script(obj: str | list):
     path = _main_script_path()
     if isinstance(obj, str):
-        obj = [obj]
+        lines = [obj]
+    if isinstance(obj, list):
+        lines = obj
     with open(path, 'a') as file:
-        for line in obj:
+        for line in lines:
             if _shell() == 'bash':
                 line = line.replace('\\', '/')
             file.write(line + '\n')

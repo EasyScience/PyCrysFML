@@ -4,6 +4,7 @@ import sys
 import json
 import tomllib
 import argparse
+import sysconfig
 
 global ARGS
 global CONFIG
@@ -52,6 +53,17 @@ def _platform():
     if ARGS.platform:
         platform = ARGS.platform.lower()
     return platform
+
+def _platform_tag():
+    tag = sysconfig.get_platform()
+    tag = tag.replace('-', '_')
+    tag = tag.replace('.', '_')
+    return tag
+
+def _python_tag():
+    version = sysconfig.get_config_var('py_version_nodot')
+    tag = f'py{version}'
+    return tag
 
 def _fix_file_permissions(path: str):
     os.chmod(path, 0o777)
@@ -285,8 +297,10 @@ def download_cfml_repo():
     lines = []
     msg = _echo_msg(f"Downloading {project_name} branch '{branch}' to '{out_dir}' from '{url}'")
     lines.append(msg)
-    template_cmd = CONFIG['template']['clone-repo']
-    cmd = template_cmd.replace('{BRANCH}', branch).replace('{URL}', url).replace('{OUT_PATH}', out_path)
+    cmd = CONFIG['template']['clone-repo']
+    cmd = cmd.replace('{BRANCH}', branch)
+    cmd = cmd.replace('{URL}', url)
+    cmd = cmd.replace('{OUT_PATH}', out_path)
     lines.append(cmd)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
@@ -346,8 +360,9 @@ def create_cfml_static_lib():
     lines.append(cmd)
     msg = _echo_msg(f"Creating fortran static library '{lib_name}.{lib_ext}'")
     lines.append(msg)
-    template_cmd = CONFIG['template']['build-static'][_platform()]
-    cmd = template_cmd.replace('{LIB}', lib_name).replace('{OBJ_EXT}', _obj_ext())
+    cmd = CONFIG['template']['build-static'][_platform()]
+    cmd = cmd.replace('{LIB}', lib_name)
+    cmd = cmd.replace('{OBJ_EXT}', _obj_ext())
     lines.append(cmd)
     msg = _echo_msg(f"Exiting build dir '{build_dir}'")
     lines.append(msg)
@@ -438,8 +453,10 @@ def download_pycfml_repo():
     lines = []
     msg = _echo_msg(f"Downloading {project_name} branch '{branch}' to '{out_dir}' from '{url}'")
     lines.append(msg)
-    template_cmd = CONFIG['template']['clone-repo']
-    cmd = template_cmd.replace('{BRANCH}', branch).replace('{URL}', url).replace('{OUT_PATH}', out_path)
+    cmd = CONFIG['template']['clone-repo']
+    cmd = cmd.replace('{BRANCH}', branch)
+    cmd = cmd.replace('{URL}', url)
+    cmd = cmd.replace('{OUT_PATH}', out_path)
     lines.append(cmd)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
@@ -650,12 +667,32 @@ def create_pycfml_python_wheel():
     lines = []
     msg = _echo_msg(f"Creating '{project_name}' python wheel in '{wheel_dir}'")
     lines.append(msg)
-    template_cmd = CONFIG['template']['build-wheel']
-    cmd = template_cmd.replace('{PATH}', wheel_path)
+    cmd = CONFIG['template']['build-wheel']
+    cmd = cmd.replace('{PATH}', wheel_path)
     lines.append(cmd)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
+
+def rename_pycfml_python_wheel():
+    project_name = CONFIG['pycfml']['name']
+    pycfml_package_dir = CONFIG['pycfml']['dir']['dist-package']
+    dist_package_version = CONFIG['build']['package-version']
+    initial_wheel_name = f'{pycfml_package_dir}-{dist_package_version}-py3-none-any.whl'
+    wheel_dir = CONFIG['pycfml']['dir']['wheel']
+    wheel_relpath = os.path.join(wheel_dir, initial_wheel_name)
+    wheel_abspath = os.path.join(_project_path(), wheel_relpath)
+    lines = []
+    msg = _echo_msg(f"Renaming '{project_name}' python wheel from '{wheel_relpath}'")
+    lines.append(msg)
+    cmd = CONFIG['template']['rename-wheel']
+    cmd = cmd.replace('{PYTHON_TAG}', _python_tag())  # https://packaging.python.org/en/latest/specifications/platform-compatibility-tags/
+    cmd = cmd.replace('{PLATFORM_TAG}', _platform_tag())
+    cmd = cmd.replace('{PATH}', wheel_abspath)
+    lines.append(cmd)
+    script_name = f'{sys._getframe().f_code.co_name}.sh'
+    _write_lines_to_file(lines, script_name)
+    #append_to_main_script(lines)
 
 def install_pycfml_from_wheel():
     project_name = CONFIG['pycfml']['name']
@@ -665,8 +702,9 @@ def install_pycfml_from_wheel():
     lines = []
     msg = _echo_msg(f"Installing '{project_name}' python wheel from '{wheel_dir}'")
     lines.append(msg)
-    template_cmd = CONFIG['template']['install-wheel']
-    cmd = template_cmd.replace('{PACKAGE}', package_name).replace('{PATH}', wheel_path)
+    cmd = CONFIG['template']['install-wheel']
+    cmd = cmd.replace('{PACKAGE}', package_name)
+    cmd = cmd.replace('{PATH}', wheel_path)
     lines.append(cmd)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
@@ -678,8 +716,8 @@ def run_pycfml_unit_tests():
     lines = []
     msg = _echo_msg(f"Running unit tests from '{relpath}'")
     lines.append(msg)
-    template_cmd = CONFIG['template']['run-tests']
-    cmd = template_cmd.replace('{PATH}', abspath)
+    cmd = CONFIG['template']['run-tests']
+    cmd = cmd.replace('{PATH}', abspath)
     lines.append(cmd)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
@@ -691,8 +729,8 @@ def run_powder_mod_tests():
     lines = []
     msg = _echo_msg(f"Running powder_mod tests from '{relpath}'")
     lines.append(msg)
-    template_cmd = CONFIG['template']['run-tests']
-    cmd = template_cmd.replace('{PATH}', abspath)
+    cmd = CONFIG['template']['run-tests']
+    cmd = cmd.replace('{PATH}', abspath)
     lines.append(cmd)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
@@ -704,8 +742,8 @@ def run_powder_mod_main():
     lines = []
     msg = _echo_msg(f"Running powder_mod main from '{relpath}'")
     lines.append(msg)
-    template_cmd = CONFIG['template']['run-python']
-    cmd = template_cmd.replace('{PATH}', abspath)
+    cmd = CONFIG['template']['run-python']
+    cmd = cmd.replace('{PATH}', abspath)
     lines.append(cmd)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
@@ -713,7 +751,7 @@ def run_powder_mod_main():
 
 if __name__ == '__main__':
     ARGS = parsed_args()
-    CONFIG = loaded_config('scripts_config.toml')
+    CONFIG = loaded_config('scripts.toml')
     cfml_project_name = CONFIG['cfml']['name']
     pycfml_project_name = CONFIG['pycfml']['name']
 
@@ -751,6 +789,7 @@ if __name__ == '__main__':
     add_cfml_databases_to_pycfml_dist()
     validate_pyproject_toml()
     create_pycfml_python_wheel()
+    rename_pycfml_python_wheel()
 
     headers = _echo_header(f"Installing {pycfml_project_name} from python wheel")
     append_to_main_script(headers)

@@ -14,12 +14,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, macos-12, windows-2022]  # [ubuntu-22.04, macos-12, windows-2022]
+        os: [ubuntu-22.04, macos-12, windows-2022]
         toolchain:
           - {compiler: gcc, version: 13}  # gfortran
           - {compiler: intel-classic, version: '2021.10'}  # ifort
           - {compiler: intel, version: '2023.2'}  # ifx
-        build_system: [cmake]  # [cmake, fpm]
         exclude:
           - os: macos-12
             toolchain: {compiler: intel, version: '2023.2'}  # ifx not supported
@@ -28,7 +27,7 @@ jobs:
       - name: Check-out repository
         uses: actions/checkout@v3
 
-      - name: Set up fortran (all exept Windows + gfortran)
+      - name: Set up fortran (all except Windows + gfortran)
         if: runner.os != 'Windows' || matrix.toolchain.compiler != 'gcc'  # let's use pre-installed gfortran
         uses: fortran-lang/setup-fortran@v1
         id: setup-fortran
@@ -50,66 +49,19 @@ jobs:
         with:
             python-version: 3.11
 
-      - name: Upgrade PIP
+      - name: Upgrade pip
         shell: bash
         run: python3 -m pip install --upgrade pip
 
-      - name: Declare env variables (independent)
+      - name: Declare env variables
+        if: runner.os == 'macOS'
         shell: bash
-        run: |
-          echo "PROJECTS_DIR=$GITHUB_WORKSPACE" >> $GITHUB_ENV
-          echo "CRYSFML_PROJECT=crysfml08" >> $GITHUB_ENV
-          echo "PYCRYSFML_PROJECT=pycrysfml08" >> $GITHUB_ENV
-          echo "DIST_PACKAGE_NAME=pycrysfml08" >> $GITHUB_ENV
-          echo "DIST_PACKAGE_VERSION=0.0.1a0" >> $GITHUB_ENV
-          echo "PYTHON_TAG=py311" >> $GITHUB_ENV
-          if [[ '${{ runner.os }}' == 'Linux' ]]; then
-            echo "SEP=/" >> $GITHUB_ENV
-            echo "PLATFORM_TAG=linux_x86_64" >> $GITHUB_ENV
-            echo "CMAKE_GENERATOR=-G 'Unix Makefiles'" >> $GITHUB_ENV
-            echo "SITE_PACKAGES=/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages" >> $GITHUB_ENV
-          elif [[ '${{ runner.os }}' == 'macOS' ]]; then
-            echo "SEP=/" >> $GITHUB_ENV
-            echo "PLATFORM_TAG=macosx_12_0_x86_64" >> $GITHUB_ENV
-            echo "CMAKE_GENERATOR=-G 'Unix Makefiles'" >> $GITHUB_ENV
-            echo "SITE_PACKAGES=/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages" >> $GITHUB_ENV
-            echo "LIBPYTHON=-L/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/config-3.11-darwin -lpython3.11" >> $GITHUB_ENV
-            echo "MACOSX_DEPLOYMENT_TARGET=$(sw_vers -productVersion)" >> $GITHUB_ENV  # needed because of `brew reinstall gcc`
-          elif [[ '${{ runner.os }}' == 'Windows' ]]; then
-            echo "SEP=\\" >> $GITHUB_ENV
-            echo "PLATFORM_TAG=win_amd64" >> $GITHUB_ENV
-            echo "CMAKE_GENERATOR=-G 'NMake Makefiles'" >> $GITHUB_ENV
-            echo "SITE_PACKAGES=c:/hostedtoolcache/windows/python/3.11.8/x64/lib/site-packages" >> $GITHUB_ENV
-            echo "LIBPYTHON=${{ env.Python_ROOT_DIR }}\\libs\\python311.lib" >> $GITHUB_ENV
-          fi
-          if [[ '${{ env.FC }}' == 'gfortran' ]]; then
-            #echo "COMPILER_OPTIONS=-cpp -std=f2008 -ffree-line-length-none -fPIC" >> $GITHUB_ENV
-            echo "COMPILER_OPTIONS=-cpp -ffree-line-length-none -fPIC -frecursive" >> $GITHUB_ENV
-          elif [[ '${{ env.FC }}' == 'ifort' || '${{ env.FC }}' == 'ifx' ]]; then
-            if [[ '${{ runner.os }}' == 'Windows' ]]; then
-              echo "COMPILER_OPTIONS=/fpp /warn:all -DWIN32=ON" >> $GITHUB_ENV
-            elif [[ '${{ runner.os }}' == 'Linux' || '${{ runner.os }}' == 'macOS' ]]; then
-              echo "COMPILER_OPTIONS=-fpp -warn all -fPIC" >> $GITHUB_ENV
-            fi
-          fi
-
-      - name: Declare env variables (dependent)
-        shell: bash
-        run: |
-          echo "CRYSFML_REPO=${{ env.PROJECTS_DIR }}${{ env.SEP }}${{ env.CRYSFML_PROJECT }}_repo" >> $GITHUB_ENV
-          echo "PYCRYSFML_REPO=${{ env.PROJECTS_DIR }}${{ env.SEP }}${{ env.PYCRYSFML_PROJECT }}_repo" >> $GITHUB_ENV
-          echo "CRYSFML_BUILD=${{ env.PROJECTS_DIR }}${{ env.SEP }}${{ env.CRYSFML_PROJECT }}_build" >> $GITHUB_ENV
-          echo "PYCRYSFML_BUILD=${{ env.PROJECTS_DIR }}${{ env.SEP }}${{ env.PYCRYSFML_PROJECT }}_build" >> $GITHUB_ENV
-          echo "CRYSFML_DIST=${{ env.PROJECTS_DIR }}${{ env.SEP }}${{ env.CRYSFML_PROJECT }}_dist" >> $GITHUB_ENV
-          echo "PYCRYSFML_DIST=${{ env.PROJECTS_DIR }}${{ env.SEP }}${{ env.PYCRYSFML_PROJECT }}_dist" >> $GITHUB_ENV
-          echo "PYCRYSFML_WHEEL=${{ env.PROJECTS_DIR }}${{ env.SEP }}${{ env.PYCRYSFML_PROJECT }}_wheel" >> $GITHUB_ENV
-          echo "ORIGINAL_WHEEL_NAME=${{ env.DIST_PACKAGE_NAME }}-${{ env.DIST_PACKAGE_VERSION }}-py3-none-any.whl" >> $GITHUB_ENV
-          echo "FIXED_WHEEL_NAME=${{ env.DIST_PACKAGE_NAME }}-${{ env.DIST_PACKAGE_VERSION }}-${{ env.PYTHON_TAG }}-none-${{ env.PLATFORM_TAG }}.whl" >> $GITHUB_ENV
+        run: echo "MACOSX_DEPLOYMENT_TARGET=$(sw_vers -productVersion)" >> $GITHUB_ENV  # needed because of `brew reinstall gcc`
 
       - name: Create scripts
         shell: bash
         run: >
-          python3 create_scripts.py
+          python3 scripts.py
           --platform ${{ runner.os }}
           --compiler ${{ env.FC }}
           --mode debug
@@ -178,12 +130,8 @@ jobs:
 
       - name: Rename pycfml wheel
         run: |
-          echo '::::: python3 -m pip install wheel'
           python3 -m pip install wheel
-          echo '::::: python3 -m wheel tags --python-tag ${{ env.PYTHON_TAG }} --platform-tag ${{ env.PLATFORM_TAG }} --remove ${{ env.PYCRYSFML_WHEEL }}${{ env.SEP }}${{ env.ORIGINAL_WHEEL_NAME }}'
-          python3 -m wheel tags --python-tag ${{ env.PYTHON_TAG }} --platform-tag ${{ env.PLATFORM_TAG }} --remove ${{ env.PYCRYSFML_WHEEL }}${{ env.SEP }}${{ env.ORIGINAL_WHEEL_NAME }}
-          echo "::::: ls -l ${{ env.PYCRYSFML_WHEEL }}"
-          ls -l ${{ env.PYCRYSFML_WHEEL }}
+          scripts/rename_pycfml_python_wheel.sh
 
       - name: Install pycfml from local wheel (with dev extras)
         shell: bash

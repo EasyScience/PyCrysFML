@@ -98,7 +98,8 @@ modes.debug = [
                               # including the additions of the Technical Specification (TS) 29113 on Further Interoperability of Fortran with C and TS 18508 on Additional Parallel
                               # Features in Fortran.
 ]
-shared-flag = '-shared'
+obj-ext = 'o'
+build-shared = '{COMPILER} -shared {PATH}.o -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {PYTHON_LIB}'
 
 [[build-objs]]
 platforms = [
@@ -135,7 +136,8 @@ modes.debug = [
                             # -filelist=file1,file2,file3.  Note that options specified with -Wl, are appended to the linking command; for options that need to be in a specific
                             # place, the -xldarg option can be used.
 ]
-shared-flag = '-Wl,-shared'
+obj-ext = 'o'
+build-shared = '{COMPILER} -Wl,-shared {PATH}.o -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {PYTHON_LIB}'
 
 [[build-objs]]
 platforms = [
@@ -152,7 +154,8 @@ modes.debug = [
   '-heap-arrays',
   #'-std08'
 ]
-shared-flag = '-shared'
+obj-ext = 'o'
+build-shared = '{COMPILER} -shared {PATH}.o -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {PYTHON_LIB}'
 
 [[build-objs]]
 platforms = [
@@ -163,12 +166,13 @@ compilers = [
   'ifx'
 ]
 modes.debug = [
-  '/fpp',
-  '/heap-arrays',
+  #/fpp',
+  #'/heap-arrays',
   #'/stand:f08',
   '-DWIN32=ON'
 ]
-shared-flag = '?????'
+obj-ext = 'obj'
+build-shared = 'link {PATH}.obj /out:"{PATH}.{EXT}" /libpath:{CFML_LIB_PATH} /dll {CFML_LIB_NAME} {PYTHON_LIB}'
 
 [[cfml-modules]]
 main-file = 'Forpy'

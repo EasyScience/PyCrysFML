@@ -139,8 +139,7 @@ jobs:
         shell: bash
         run: scripts/add_powder_mod_to_pycfml_repo.sh
 
-      - name: Build some pycfml modules one by one (Linux + macOS)
-        if: runner.os == 'Linux' || runner.os == 'macOS'
+      - name: Build some pycfml modules one by one
         shell: bash
         run: |
           scripts/create_pycfml_build_dir.sh
@@ -148,35 +147,6 @@ jobs:
           scripts/create_pycfml_shared_objs_or_dynamic_libs.sh
           scripts/create_pycfml_dist_dir.sh
           scripts/copy_compiled_to_pycfml_dist.sh
-
-      - name: Build some pycfml modules one by one (Windows + gfortran)
-        if: runner.os == 'Windows' && env.FC == 'gfortran'
-        shell: bash
-        run: |
-          scripts/create_pycfml_build_dir.sh
-          scripts/compile_pycfml_objs.sh
-          scripts/create_pycfml_shared_objs_or_dynamic_libs.sh
-          scripts/create_pycfml_dist_dir.sh
-          scripts/copy_compiled_to_pycfml_dist.sh
-
-      - name: Build some pycfml modules one by one (Windows + ifort/ifx)
-        if: runner.os == 'Windows' && (env.FC == 'ifort' || env.FC == 'ifx')
-        shell: cmd
-        run: |
-          echo '::::: mkdir ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}'
-          mkdir ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}
-          echo '::::: cd ${{ env.PYCRYSFML_REPO }}${{ env.SEP }}src'
-          cd ${{ env.PYCRYSFML_REPO }}${{ env.SEP }}src
-          for %%n in (py_cfml_metrics py_cfml_profiles py_cfml_sxtal_geom powder_mod) do (
-            echo "::::: ${{ env.FC }} ${{ env.COMPILER_OPTIONS }} /c %%n.f90 -I ${{ env.CRYSFML_DIST }}${{ env.SEP }}include"
-            ${{ env.FC }} ${{ env.COMPILER_OPTIONS }} /c %%n.f90 -I ${{ env.CRYSFML_DIST }}${{ env.SEP }}include
-            echo "::::: link %%n.obj /out:"%%n.dll" /libpath:${{ env.CRYSFML_DIST }}${{ env.SEP }}lib /dll CrysFML08.lib ${{ env.LIBpython3 }}"
-            link %%n.obj /out:"%%n.pyd" /libpath:${{ env.CRYSFML_DIST }}${{ env.SEP }}lib /dll CrysFML08.lib ${{ env.LIBpython3 }}
-            echo "::::: move %%n.pyd ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}"
-            move %%n.pyd ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}
-          )
-          echo '::::: dir ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}'
-          dir ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}
 
       - name: Add required system DLLs (Windows)
         if: runner.os == 'Windows'

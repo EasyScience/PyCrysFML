@@ -102,15 +102,23 @@ def _compiler_options():
             break
     return options
 
-def _compiler_shared_flag():
+def _obj_ext():
     compiler = _compiler_name()
-    mode = _compiling_mode()
-    shared_flag = ''
+    ext = ''
     for build in CONFIG['build-objs']:
         if _platform() in build['platforms'] and compiler in build['compilers']:
-            shared_flag = build['shared-flag']
+            ext = build['obj-ext']
             break
-    return shared_flag
+    return ext
+
+def _compiler_build_shared_template():
+    compiler = _compiler_name()
+    template = ''
+    for build in CONFIG['build-objs']:
+        if _platform() in build['platforms'] and compiler in build['compilers']:
+            template = build['build-shared']
+            break
+    return template
 
 def _compiling_mode():
     mode = 'debug'  # default
@@ -158,16 +166,15 @@ def _compile_objs_script_lines(modules: str, src_path: str, include_path: str=No
     return lines
 
 def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):
-    obj_ext = CONFIG['build']['obj-ext'][_platform()]
+    obj_ext = _obj_ext()
     cfml_lib_name = CONFIG['cfml']['static-lib']['name']
     cfml_dist_dir = CONFIG['cfml']['dir']['dist']
     cfml_dist_path = os.path.join(_project_path(), cfml_dist_dir)
     cfml_lib_dist_dir = CONFIG['cfml']['dir']['dist-lib']
     cfml_lib_dist_path = os.path.join(cfml_dist_path, cfml_lib_dist_dir)
-    template_cmd = CONFIG['template']['build-shared']
     python_lib = CONFIG['build']['python-lib'][_platform()]
     compiler = _compiler_name()
-    shared_flag = _compiler_shared_flag()
+    template_cmd = _compiler_build_shared_template()
     shared_lib_ext = CONFIG['build']['shared-lib-ext'][_platform()]
     total = _total_src_file_count(modules)
     current = 0
@@ -180,14 +187,12 @@ def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):
             lines.append(msg)
             cmd = template_cmd
             cmd = cmd.replace('{COMPILER}', compiler)
-            cmd = cmd.replace('{SHARED_FLAG}', shared_flag)
             cmd = cmd.replace('{PATH}', name)
             cmd = cmd.replace('{EXT}', shared_lib_ext)
             cmd = cmd.replace('{CFML_LIB_PATH}', cfml_lib_dist_path)
             cmd = cmd.replace('{CFML_LIB_NAME}', cfml_lib_name)
             cmd = cmd.replace('{PYTHON_LIB}', python_lib)
             lines.append(cmd)
-
     return lines
 
 def parsed_args():

@@ -67,6 +67,8 @@ def _write_lines_to_file(lines, name):
         for line in lines:
             print('-', line)
             if _shell() == 'bash':
+                line = line.replace('/', '\\')
+                print('.', line)
                 line = line.replace('\\', '/')
             print('+', line)
             file.write(line + '\n')
@@ -83,10 +85,10 @@ def _total_src_file_count(modules):
     return count
 
 def _shell():
-    mode = 'bash'  # default
-    if ARGS.mode:
-        mode = ARGS.mode
-    return mode
+    shell = 'bash'  # default
+    if ARGS.shell:
+        shell = ARGS.shell
+    return shell
 
 def _compiler_name():
     compiler = 'gfortran'  # default

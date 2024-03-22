@@ -381,7 +381,7 @@ components-files = [
 main-file = 'CFML_Simulated_Annealing'
 
 [[cfml-modules]]
-main-file = 'CFML_DiffPatt'
+main-file = 'CFML_Diffpatt'
 components-dir = 'CFML_DiffPatt'
 components-files = [
   'DiffP_ReadPatt_ILL',

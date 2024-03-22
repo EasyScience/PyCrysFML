@@ -6,10 +6,10 @@ import numpy as np
 from deepdiff import DeepDiff
 from numpy.testing import assert_almost_equal
 
-from pycrysfml08 import powder_mod
+from pycrysfml08 import powder_mod_2
 
 
-os.environ['CRYSFML_DB'] = os.path.join(os.path.dirname(powder_mod.__file__), 'Databases')  # access to Databases/magnetic_data.txt
+os.environ['CRYSFML_DB'] = os.path.join(os.path.dirname(powder_mod_2.__file__), 'Databases')  # access to Databases/magnetic_data.txt
 
 STUDY_DICT = {
   "phases": [
@@ -111,24 +111,21 @@ def set_space_group_by_phase_idx(study_dict:dict, phase_idx:int, space_group:str
     phase_name = phase_name_by_idx(study_dict, phase_idx)
     study_dict['phases'][phase_idx][phase_name]['_space_group_name_H-M_alt'] = space_group
 
+def compute_pattern(study_dict:dict):
+    return powder_mod_2.simulation(study_dict)
+
 def clean_after_compute(study_dict:dict):
     files = ['powder_pattern.dat', 'fort.77', f'{phase_name_by_idx(study_dict)}.powder']
     for f in files:
         try:
-            print(f':: Deleting tmp file: {os.path.abspath(f)}')
             os.remove(f)
         except:
             pass
 
-def compute_pattern(study_dict:dict):
-    res = powder_mod.simulation(study_dict)
-    clean_after_compute(study_dict)
-    return res
-
 # Tests
 
 def test_magnetic_data_txt_exists():
-    fpath = os.path.abspath(os.path.join(os.path.dirname(powder_mod.__file__), 'Databases', 'magnetic_data.txt'))
+    fpath = os.path.abspath(os.path.join(os.path.dirname(powder_mod_2.__file__), 'Databases', 'magnetic_data.txt'))
     assert os.path.isfile(fpath) == True
 
 def test_phase_name_SrTiO3():
@@ -149,37 +146,42 @@ def test_set_space_group_Pnma():
 
 def _test_compute_pattern_SrTiO3_Pm3m():
     _, desired = np.loadtxt(os.path.join(os.path.dirname(__file__), 'srtio3-pm3m-pattern_Nebil-ifort.xy'), unpack=True)
+    desired = desired - 20.0  # remove background
     study_dict = copy.deepcopy(STUDY_DICT)
     set_space_group_by_phase_idx(study_dict, phase_idx=0, space_group='P m -3 m')
     pattern = compute_pattern(study_dict)
-    actual = pattern[1].astype(np.float64)
+    actual = pattern[0].astype(np.float64)
     # compensate for a 1-element shift in y data between Nebil windows build and my gfortran build
     desired = desired[1:]
     actual = actual[:-1]
     assert_almost_equal(desired, actual, decimal=0, verbose=True)
 
-def _test_compute_pattern_SrTiO3_Pnma():
+def test_compute_pattern_SrTiO3_Pnma():
     desired = np.loadtxt(os.path.join(os.path.dirname(__file__), 'srtio3-pmmm-pattern_Andrew-ifort.xy'), unpack=True)
+    desired = desired - 20.0  # remove background
     study_dict = copy.deepcopy(STUDY_DICT)
     set_space_group_by_phase_idx(study_dict, phase_idx=0, space_group='P n m a')
     pattern = compute_pattern(study_dict)
-    actual = pattern[1].astype(np.float64)
+    actual = pattern[0].astype(np.float64)
     assert_almost_equal(desired, actual, decimal=2, verbose=True)
 
 # Debug
 
 if __name__ == '__main__':
-    #np.set_printoptions(precision=5, threshold = np.inf)
+    np.set_printoptions(precision=5, threshold = np.inf)
     study_dict = copy.deepcopy(STUDY_DICT)
 
+    #clean_after_compute(study_dict)
+    study_dict["phases"][0]["SrTiO3"]["_space_group_name_H-M_alt"] = 'P m -3 m'
+    ycalc = powder_mod_2.simulation(study_dict)
+    print('::::: Y calculated (P m -3 m):', ycalc)
+
     study_dict["phases"][0]["SrTiO3"]["_space_group_name_H-M_alt"] = 'P n m a'
-    _, ycalc = powder_mod.simulation(study_dict)
-    print()
-    print(':::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::')
-    print('::')
-    clean_after_compute(study_dict)
-    print('::')
-    print(f':: Y calculated (P n m a) array: {ycalc}',)
-    print(f':: Y calculated (P n m a) array size: {np.size(ycalc)}, min: {np.min(ycalc)}, max: {np.max(ycalc)}')
-    print('::')
-    print(':::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::')
+    ycalc = powder_mod_2.simulation(study_dict)
+    print('::::: Y calculated (P n m a):', ycalc)
+    #np.savetxt('ycalc.dat', ycalc, fmt='%12.6f')
+
+    study_dict["phases"][0]["SrTiO3"]["_space_group_name_H-M_alt"] = 'I 4 3 2'
+    ycalc = powder_mod_2.simulation(study_dict)
+    print('::::: Y calculated (I 4 3 2):', ycalc)
+    #np.savetxt('ycalc.dat', ycalc, fmt='%12.6f')

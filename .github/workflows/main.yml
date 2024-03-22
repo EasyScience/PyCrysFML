@@ -111,7 +111,12 @@ jobs:
       - name: Show info
         run: scripts/show_info.sh
 
-      - name: Download pycfml (nagfor branch)
+      - name: Show info (try again on Windows)
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: scripts/show_info.sh
+
+      - name: Download cfml repo
         run: |
           scripts/create_cfml_repo_dir.sh
           scripts/download_cfml_repo.sh
@@ -124,12 +129,12 @@ jobs:
           scripts/create_cfml_dist_dir.sh
           scripts/copy_compiled_to_cfml_dist.sh
 
-      - name: Download pycfml (master branch)
+      - name: Download pycfml repo
         run: |
           scripts/create_pycfml_repo_dir.sh
           scripts/download_pycfml_repo.sh
 
-      - name: Copy powder_mod to from cfml to pycfml src folder
+      - name: Copy powder_mod to from cfml to pycfml
         run: scripts/add_powder_mod_to_pycfml_repo.sh
 
       - name: Build some pycfml modules one by one (Linux + macOS)
@@ -143,22 +148,12 @@ jobs:
 
       - name: Build some pycfml modules one by one (Windows + gfortran)
         if: runner.os == 'Windows' && env.FC == 'gfortran'
-        shell: cmd
         run: |
-          echo '::::: mkdir ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}'
-          mkdir ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}
-          echo '::::: cd ${{ env.PYCRYSFML_REPO }}${{ env.SEP }}src'
-          cd ${{ env.PYCRYSFML_REPO }}${{ env.SEP }}src
-          for %%n in (py_cfml_metrics py_cfml_profiles py_cfml_sxtal_geom powder_mod) do (
-            echo "::::: ${{ env.FC }} ${{ env.COMPILER_OPTIONS }} -c %%n.f90 -I ${{ env.CRYSFML_DIST }}${{ env.SEP }}include"
-            ${{ env.FC }} ${{ env.COMPILER_OPTIONS }} -c %%n.f90 -I ${{ env.CRYSFML_DIST }}${{ env.SEP }}include
-            echo "::::: ${{ env.FC }} -shared %%n.o -o %%n.pyd -L ${{ env.CRYSFML_DIST }}${{ env.SEP }}lib -l CrysFML08 ${{ env.LIBpython3 }}"
-            ${{ env.FC }} -shared %%n.o -o %%n.pyd -L ${{ env.CRYSFML_DIST }}${{ env.SEP }}lib -l CrysFML08 ${{ env.LIBpython3 }}
-            echo "::::: move %%n.pyd ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}"
-            move %%n.pyd ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}
-          )
-          echo '::::: dir ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}'
-          dir ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}
+          scripts/create_pycfml_build_dir.sh
+          scripts/compile_pycfml_objs.sh
+          scripts/create_pycfml_shared_objs_or_dynamic_libs.sh
+          scripts/create_pycfml_dist_dir.sh
+          scripts/copy_compiled_to_pycfml_dist.sh
 
       - name: Build some pycfml modules one by one (Windows + ifort/ifx)
         if: runner.os == 'Windows' && (env.FC == 'ifort' || env.FC == 'ifx')

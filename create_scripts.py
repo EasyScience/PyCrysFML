@@ -151,7 +151,6 @@ def _compile_objs_script_lines(modules, src_path, include_path=None):
     return lines
 
 def _compile_shared_objs_or_dynamic_libs_script_lines(modules):
-    #build-shared = '{COMPILER} {SHARED_FLAG} {FILE}.o -o {FILE}.so -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {PYTHON_LIB}'
     obj_ext = CONFIG['build']['obj-ext'][_platform()]
     cfml_dist_dir = CONFIG['cfml']['dir']['dist']
     cfml_dist_path = os.path.join(_project_path(), cfml_dist_dir)
@@ -163,6 +162,7 @@ def _compile_shared_objs_or_dynamic_libs_script_lines(modules):
     python_lib = CONFIG['build']['python-lib'][_platform()]
     compiler = _compiler_name()
     shared_flag = _compiler_shared_flag()
+    shared_lib_ext = CONFIG['build']['shared-lib-ext'][_platform()]
     total = _total_src_file_count(modules)
     current = 0
     lines = []
@@ -176,6 +176,7 @@ def _compile_shared_objs_or_dynamic_libs_script_lines(modules):
             cmd = cmd.replace('{COMPILER}', compiler)
             cmd = cmd.replace('{SHARED_FLAG}', shared_flag)
             cmd = cmd.replace('{PATH}', name)
+            cmd = cmd.replace('{EXT}', shared_lib_ext)
             cmd = cmd.replace('{CFML_LIB_PATH}', cfml_lib_dist_path)
             cmd = cmd.replace('{CFML_LIB_NAME}', cfml_lib_name)
             cmd = cmd.replace('{PYTHON_LIB}', python_lib)
@@ -302,7 +303,7 @@ def create_cfml_static_lib():
     build_dir = CONFIG['cfml']['dir']['build']
     build_path = os.path.join(_project_path(), build_dir)
     lib_name = CONFIG['cfml']['static-lib']['name']
-    lib_ext = CONFIG['build']['lib-ext'][_platform()]
+    lib_ext = CONFIG['build']['static-lib-ext'][_platform()]
     lines = []
     msg = _echo_msg(f"Entering build dir '{build_dir}'")
     lines.append(msg)
@@ -351,7 +352,7 @@ def create_cfml_dist_dir():
 
 def copy_compiled_to_cfml_dist():
     lib_name = CONFIG['cfml']['static-lib']['name']
-    lib_ext = CONFIG['build']['lib-ext'][_platform()]
+    lib_ext = CONFIG['build']['static-lib-ext'][_platform()]
     build_dir = CONFIG['cfml']['dir']['build']
     build_path = os.path.join(_project_path(), build_dir)
     dist_dir = CONFIG['cfml']['dir']['dist']

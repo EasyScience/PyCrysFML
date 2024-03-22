@@ -173,7 +173,7 @@ modes.debug = [
   '-DWIN32=ON'
 ]
 obj-ext = 'obj'
-build-shared = 'link {PATH}.obj /out:"{PATH}.{EXT}" /libpath:{CFML_LIB_PATH} -dll {CFML_LIB_NAME}.lib {PYTHON_LIB}'
+build-shared = 'link {PATH}.obj /out:"{PATH}.{EXT}" -libpath:{CFML_LIB_PATH} -dll {CFML_LIB_NAME}.lib {PYTHON_LIB}'
 
 [[cfml-modules]]
 main-file = 'Forpy'

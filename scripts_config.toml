@@ -39,7 +39,7 @@ clone-repo = 'git clone --single-branch --branch {BRANCH} {URL} {OUT_PATH}'
 build-obj = '{COMPILER} {OPTIONS} -c {PATH} -I {INCLUDE}'
 build-static.macos = 'ar -r {LIB}.a *.o'
 build-static.ubuntu = 'ar -r {LIB}.a *.o'
-build-static.windows = 'lib /out:{LIB}.lib *.obj'
+build-static.windows = 'lib /out:{LIB}.lib *.o'  # gfortran: *.o, ifort/ifx: *.obj
 build-shared = '{COMPILER} {SHARED_FLAG} {PATH}.o -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {PYTHON_LIB}'
 build-wheel = 'python3 -m build --wheel --outdir {PATH}'
 install-wheel = 'python3 -m pip install "{PACKAGE}[dev]" --force-reinstall --find-links={PATH}'
@@ -48,7 +48,7 @@ run-tests = 'pytest {PATH} -v'
 
 [build]
 src-ext = { cfml = 'f90', pycfml = 'F90' }
-obj-ext = { macos = 'o', ubuntu = 'o', windows = 'obj' }
+obj-ext = { macos = 'o', ubuntu = 'o', windows = 'o' }  # gfortran: *.o, ifort/ifx: *.obj
 static-lib-prefix = { macos = 'lib', ubuntu = 'lib', windows = '' }
 static-lib-ext = { macos = 'a', ubuntu = 'a', windows = 'lib' }
 shared-lib-ext = { macos = 'so', ubuntu = 'so', windows = 'pyd' }
@@ -163,10 +163,10 @@ compilers = [
   'ifx'
 ]
 modes.debug = [
-  '-DWIN32=ON',
   '/fpp',
   '/heap-arrays',
-  #'/stand:f08'
+  #'/stand:f08',
+  '-DWIN32=ON'
 ]
 shared-flag = '?????'
 

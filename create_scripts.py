@@ -159,9 +159,7 @@ def _compile_objs_script_lines(modules: str, src_path: str, include_path: str=No
 
 def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):
     obj_ext = CONFIG['build']['obj-ext'][_platform()]
-    static_lib_prefix = CONFIG['build']['static-lib-prefix'][_platform()]
     cfml_lib_name = CONFIG['cfml']['static-lib']['name']
-    cfml_lib_name = f'{static_lib_prefix}{cfml_lib_name}'
     cfml_dist_dir = CONFIG['cfml']['dir']['dist']
     cfml_dist_path = os.path.join(_project_path(), cfml_dist_dir)
     cfml_lib_dist_dir = CONFIG['cfml']['dir']['dist-lib']

@@ -106,7 +106,7 @@ jobs:
           echo "FIXED_WHEEL_NAME=${{ env.DIST_PACKAGE_NAME }}-${{ env.DIST_PACKAGE_VERSION }}-${{ env.PYTHON_TAG }}-none-${{ env.PLATFORM_TAG }}.whl" >> $GITHUB_ENV
 
       - name: Create scripts
-        run: python3 create_scripts.py
+        run: python3 create_scripts.py --mode debug --compiler ${{ env.FC }}
 
       - name: Show info
         run: scripts/show_info.sh

@@ -65,6 +65,8 @@ def _write_lines_to_file(lines, name):
     path = os.path.join(_scripts_path(), name)
     with open(path, 'w') as file:
         for line in lines:
+            if _shell() == 'bash':
+                line = line.replace(os.sep, '/')
             file.write(line + '\n')
     _fix_file_permissions(path)
 
@@ -77,6 +79,12 @@ def _total_src_file_count(modules):
             for component_file in module['components-files']:
                 count += 1
     return count
+
+def _shell():
+    mode = 'bash'  # default
+    if ARGS.mode:
+        mode = ARGS.mode
+    return mode
 
 def _compiler_name():
     compiler = 'gfortran'  # default
@@ -109,7 +117,6 @@ def _compiling_mode():
     if ARGS.mode:
         mode = ARGS.mode
     return mode
-    #build_script.append(_echo_msg(f'- Build mode: {mode}'))
 
 def _compiling_progress(current, total):
     progress = round(current / total * 100)
@@ -188,6 +195,7 @@ def parsed_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--compiler", help="fortran compiler (gfortran, nagfor, ifx, ifort)")
     parser.add_argument("--mode", help="build mode (debug, release)")
+    parser.add_argument("--shell", help="build mode (bash, powershell)")
     return parser.parse_args()
 
 def loaded_config(name):
@@ -206,6 +214,8 @@ def append_to_main_script(obj):
         obj = [obj]
     with open(path, 'a') as file:
         for line in obj:
+            if _shell() == 'bash':
+                line = line.replace(os.sep, '/')
             file.write(line + '\n')
     _fix_file_permissions(path)
 

@@ -130,9 +130,9 @@ jobs:
         run: |
           scripts/create_cfml_build_dir.sh
           scripts/compile_cfml_objs.sh
-          bash -x scripts/create_cfml_static_lib.sh
+          scripts/create_cfml_static_lib.sh
           scripts/create_cfml_dist_dir.sh
-          bash -x scripts/copy_compiled_to_cfml_dist.sh
+          scripts/copy_compiled_to_cfml_dist.sh
 
       - name: Download pycfml repo
         shell: bash
@@ -148,10 +148,10 @@ jobs:
         shell: bash
         run: |
           scripts/create_pycfml_build_dir.sh
-          bash -x scripts/compile_pycfml_objs.sh
-          bash -x scripts/create_pycfml_shared_objs_or_dynamic_libs.sh
+          scripts/compile_pycfml_objs.sh
+          scripts/create_pycfml_shared_objs_or_dynamic_libs.sh
           scripts/create_pycfml_dist_dir.sh
-          bash -x scripts/copy_compiled_to_pycfml_dist.sh
+          scripts/copy_compiled_to_pycfml_dist.sh
 
       - name: Add extra system libs to pycfml dist
         shell: bash
@@ -167,10 +167,8 @@ jobs:
 
       - name: Validate pyproject.toml
         run: |
-          echo "::::: python3 -m pip install 'validate-pyproject[all]'"
           python3 -m pip install 'validate-pyproject[all]'
-          echo "::::: validate-pyproject pyproject.toml"
-          validate-pyproject pyproject.toml
+          scripts/validate_pyproject_toml.sh
 
       - name: Create pycfml python3 wheel
         shell: bash

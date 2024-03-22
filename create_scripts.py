@@ -630,6 +630,16 @@ def add_cfml_databases_to_pycfml_dist():
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
 
+def validate_pyproject_toml():
+    lines = []
+    msg = _echo_msg(f"Validating pyproject.toml")
+    lines.append(msg)
+    cmd = 'validate-pyproject pyproject.toml'
+    lines.append(cmd)
+    script_name = f'{sys._getframe().f_code.co_name}.sh'
+    _write_lines_to_file(lines, script_name)
+    append_to_main_script(lines)
+
 def create_pycfml_python_wheel():
     project_name = CONFIG['pycfml']['name']
     wheel_dir = CONFIG['pycfml']['dir']['wheel']
@@ -736,6 +746,7 @@ if __name__ == '__main__':
     add_extra_libs_to_pycfml_dist()
     add_init_file_to_pycfml_dist()
     add_cfml_databases_to_pycfml_dist()
+    validate_pyproject_toml()
     create_pycfml_python_wheel()
 
     headers = _echo_header(f"Installing {pycfml_project_name} from python wheel")

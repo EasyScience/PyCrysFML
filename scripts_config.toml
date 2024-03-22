@@ -5,7 +5,7 @@ scripts = 'scripts'
 name = 'CrysFML2008'
 
 [cfml.static-lib]
-name = 'libCrysFML08'
+name = 'CrysFML08'  # without 'lib' prefix on Unix
 
 [cfml.git]
 url = 'https://code.ill.fr/rodriguez-carvajal/crysfml2008.git'
@@ -49,6 +49,7 @@ run-tests = 'pytest {PATH} -v'
 [build]
 src-ext = { cfml = 'f90', pycfml = 'F90' }
 obj-ext = { macos = 'o', ubuntu = 'o', windows = 'obj' }
+static-lib-prefix = { macos = 'lib', ubuntu = 'lib', windows = '' }
 static-lib-ext = { macos = 'a', ubuntu = 'a', windows = 'lib' }
 shared-lib-ext = { macos = 'so', ubuntu = 'so', windows = 'pyd' }
 python-lib.macos = '`python3-config --ldflags --embed`'

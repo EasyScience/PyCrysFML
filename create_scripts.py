@@ -49,7 +49,7 @@ def _echo_header(msg: str):
 
 def _platform():
     if sys.platform.startswith('darwin'):
-        return 'windows'#'macos'
+        return 'macos'
     elif sys.platform.startswith('lin'):
         return 'ubuntu'
     elif sys.platform.startswith('win'):
@@ -159,12 +159,13 @@ def _compile_objs_script_lines(modules: str, src_path: str, include_path: str=No
 
 def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):
     obj_ext = CONFIG['build']['obj-ext'][_platform()]
+    static_lib_prefix = CONFIG['build']['static-lib-prefix'][_platform()]
+    cfml_lib_name = CONFIG['cfml']['static-lib']['name']
+    cfml_lib_name = f'{static_lib_prefix}{cfml_lib_name}'
     cfml_dist_dir = CONFIG['cfml']['dir']['dist']
     cfml_dist_path = os.path.join(_project_path(), cfml_dist_dir)
     cfml_lib_dist_dir = CONFIG['cfml']['dir']['dist-lib']
     cfml_lib_dist_path = os.path.join(cfml_dist_path, cfml_lib_dist_dir)
-    cfml_lib_name = CONFIG['cfml']['static-lib']['name']
-    cfml_lib_name = re.sub('^lib', '', cfml_lib_name)  # remove 'lib' prefix
     template_cmd = CONFIG['template']['build-shared']
     python_lib = CONFIG['build']['python-lib'][_platform()]
     compiler = _compiler_name()
@@ -312,10 +313,12 @@ def compile_cfml_objs():
     append_to_main_script(lines)
 
 def create_cfml_static_lib():
+    lib_ext = CONFIG['build']['static-lib-ext'][_platform()]
+    static_lib_prefix = CONFIG['build']['static-lib-prefix'][_platform()]
+    lib_name = CONFIG['cfml']['static-lib']['name']
+    lib_name = f'{static_lib_prefix}{lib_name}'
     build_dir = CONFIG['cfml']['dir']['build']
     build_path = os.path.join(_project_path(), build_dir)
-    lib_name = CONFIG['cfml']['static-lib']['name']
-    lib_ext = CONFIG['build']['static-lib-ext'][_platform()]
     lines = []
     msg = _echo_msg(f"Entering build dir '{build_dir}'")
     lines.append(msg)
@@ -323,7 +326,7 @@ def create_cfml_static_lib():
     lines.append(cmd)
 
     lines.append(f'echo "11111"')
-    lines.append(f'ls -l {build_dir}')
+    lines.append(f'ls -l {build_path}')
 
     msg = _echo_msg(f"Creating fortran static library '{lib_name}.{lib_ext}'")
     lines.append(msg)
@@ -332,7 +335,7 @@ def create_cfml_static_lib():
     lines.append(cmd)
 
     lines.append(f'echo "22222"')
-    lines.append(f'ls -l {build_dir}')
+    lines.append(f'ls -l {build_path}')
 
 
     msg = _echo_msg(f"Exiting build dir '{build_dir}'")
@@ -372,8 +375,10 @@ def create_cfml_dist_dir():
     append_to_main_script(lines)
 
 def copy_compiled_to_cfml_dist():
-    lib_name = CONFIG['cfml']['static-lib']['name']
     lib_ext = CONFIG['build']['static-lib-ext'][_platform()]
+    static_lib_prefix = CONFIG['build']['static-lib-prefix'][_platform()]
+    lib_name = CONFIG['cfml']['static-lib']['name']
+    lib_name = f'{static_lib_prefix}{lib_name}'
     build_dir = CONFIG['cfml']['dir']['build']
     build_path = os.path.join(_project_path(), build_dir)
     dist_dir = CONFIG['cfml']['dir']['dist']

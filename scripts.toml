@@ -1,11 +1,9 @@
-[dir]
+[project.dir]
 scripts = 'scripts'
 
 [cfml]
 name = 'CrysFML2008'
-
-[cfml.static-lib]
-name = 'CrysFML08'  # without 'lib' prefix on unix-based platforms
+static-lib.name = 'CrysFML08'  # without 'lib' prefix on unix-based platforms
 
 [cfml.git]
 url = 'https://code.ill.fr/rodriguez-carvajal/crysfml2008.git'
@@ -40,7 +38,6 @@ build-obj = '{COMPILER} {OPTIONS} -c {PATH} -I {INCLUDE}'
 build-static.macos = 'ar -r {LIB}.a *.{OBJ_EXT}'
 build-static.linux = 'ar -r {LIB}.a *.{OBJ_EXT}'
 build-static.windows = 'lib /out:{LIB}.lib *.{OBJ_EXT}'
-build-shared = '{COMPILER} {SHARED_FLAG} {PATH}.o -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {PYTHON_LIB}'
 build-wheel = 'python3 -m build --wheel --outdir {PATH}'
 rename-wheel = 'python3 -m wheel tags --python-tag {PYTHON_TAG} --platform-tag {PLATFORM_TAG} --remove {PATH}'
 install-wheel = 'python3 -m pip install "{PACKAGE}[dev]" --force-reinstall --find-links={PATH}'

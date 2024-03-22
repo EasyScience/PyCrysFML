@@ -21,7 +21,7 @@ def _config_path(name: str):
     return path
 
 def _scripts_path():
-    dir = CONFIG['dir']['scripts']
+    dir = CONFIG['project']['dir']['scripts']
     path = os.path.abspath(dir)
     return path
 

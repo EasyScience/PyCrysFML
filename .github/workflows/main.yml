@@ -105,46 +105,40 @@ jobs:
           echo "ORIGINAL_WHEEL_NAME=${{ env.DIST_PACKAGE_NAME }}-${{ env.DIST_PACKAGE_VERSION }}-py3-none-any.whl" >> $GITHUB_ENV
           echo "FIXED_WHEEL_NAME=${{ env.DIST_PACKAGE_NAME }}-${{ env.DIST_PACKAGE_VERSION }}-${{ env.PYTHON_TAG }}-none-${{ env.PLATFORM_TAG }}.whl" >> $GITHUB_ENV
 
-      - name: Download CrysFML (powder_mod_fix branch)
-        run: git clone --single-branch --branch powder_mod_fix https://code.ill.fr/rodriguez-carvajal/crysfml2008.git ${{ env.CRYSFML_REPO }}
+      - name: Create scripts
+        run: python create_scripts.py
 
-      - name: Build CrysFML using CMake
+      - name: Download pycfml (nagfor branch)
         run: |
-          echo "::::: cmake ${{ env.CMAKE_GENERATOR }} -D ARCH32=OFF -D PYTHON_API=OFF -D CMAKE_BUILD_TYPE=Debug -D CMAKE_POSITION_INDEPENDENT_CODE=ON -D CMAKE_Fortran_COMPILER=${{ env.FC }} -D CMAKE_INSTALL_PREFIX=${{ env.CRYSFML_DIST }} -S ${{ env.CRYSFML_REPO }} -B ${{ env.CRYSFML_BUILD }}"
-          cmake ${{ env.CMAKE_GENERATOR }} -D ARCH32=OFF -D PYTHON_API=OFF -D CMAKE_BUILD_TYPE=Debug -D CMAKE_POSITION_INDEPENDENT_CODE=ON -D CMAKE_Fortran_COMPILER=${{ env.FC }} -D CMAKE_INSTALL_PREFIX=${{ env.CRYSFML_DIST }} -S ${{ env.CRYSFML_REPO }} -B ${{ env.CRYSFML_BUILD }}
-          echo '::::: cmake --build ${{ env.CRYSFML_BUILD }} --parallel'
-          cmake --build ${{ env.CRYSFML_BUILD }} --parallel
-          echo '::::: cmake --install ${{ env.CRYSFML_BUILD }}'
-          cmake --install ${{ env.CRYSFML_BUILD }}
+          scripts/create_cfml_repo_dir.sh
+          scripts/download_cfml_repo.sh
 
-      - name: Download PyCrysFML (master branch)
-        run: git clone --single-branch --branch master https://code.ill.fr/scientific-software/pycrysfml08.git ${{ env.PYCRYSFML_REPO }}
-
-      - name: Copy powder_mod.f90 to PyCrysFML src folder
+      - name: Build cfml
         run: |
-          echo '::::: cp ${{ env.CRYSFML_REPO }}${{ env.SEP }}Testing${{ env.SEP }}Powder${{ env.SEP }}Test_2${{ env.SEP }}fortran${{ env.SEP }}src${{ env.SEP }}powder_mod.f90 ${{ env.PYCRYSFML_REPO }}${{ env.SEP }}src${{ env.SEP }}powder_mod.F90'
-          cp ${{ env.CRYSFML_REPO }}${{ env.SEP }}Testing${{ env.SEP }}Powder${{ env.SEP }}Test_2${{ env.SEP }}fortran${{ env.SEP }}src${{ env.SEP }}powder_mod.f90 ${{ env.PYCRYSFML_REPO }}${{ env.SEP }}src${{ env.SEP }}powder_mod.F90
+          scripts/create_cfml_build_dir.sh
+          scripts/compile_cfml_objs.sh
+          scripts/create_cfml_static_lib.sh
+          scripts/create_cfml_dist_dir.sh
+          scripts/copy_compiled_to_cfml_dist.sh
 
-      - name: Build some PyCrysFML modules one by one (Linux + macOS)
+      - name: Download pycfml (master branch)
+        run: |
+          scripts/create_pycfml_repo_dir.sh
+          scripts/download_pycfml_repo.sh
+
+      - name: Copy powder_mod to from cfml to pycfml src folder
+        run: scripts/add_powder_mod_to_pycfml_repo.sh
+
+      - name: Build some pycfml modules one by one (Linux + macOS)
         if: runner.os == 'Linux' || runner.os == 'macOS'
         run: |
-          echo '::::: mkdir -p ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}'
-          mkdir -p ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}
-          echo '::::: cd ${{ env.PYCRYSFML_REPO }}${{ env.SEP }}src'
-          cd ${{ env.PYCRYSFML_REPO }}${{ env.SEP }}src
-          #for n in py_cfml_metrics py_cfml_profiles py_cfml_sxtal_geom powder_mod; do
-          for n in py_cfml_metrics py_cfml_profiles py_cfml_sxtal_geom powder_mod; do
-            echo "::::: ${{ env.FC }} ${{ env.COMPILER_OPTIONS }} -c $n.F90 -I ${{ env.CRYSFML_DIST }}/include"
-            ${{ env.FC }} ${{ env.COMPILER_OPTIONS }} -c $n.F90 -I ${{ env.CRYSFML_DIST }}/include
-            echo "::::: ${{ env.FC }} -shared $n.o -o $n.so -L ${{ env.CRYSFML_DIST }}/lib -l CrysFML08 ${{ env.LIBPYTHON }}"
-            ${{ env.FC }} -shared $n.o -o $n.so -L ${{ env.CRYSFML_DIST }}/lib -l CrysFML08 ${{ env.LIBPYTHON }}
-            echo "::::: mv $n.so ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}"
-            mv $n.so ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}
-          done
-          echo '::::: ls -l ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}'
-          ls -l ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}
+          scripts/create_pycfml_build_dir.sh
+          scripts/compile_pycfml_objs.sh
+          scripts/create_pycfml_shared_objs_or_dynamic_libs.sh
+          scripts/create_pycfml_dist_dir.sh
+          scripts/copy_compiled_to_pycfml_dist.sh
 
-      - name: Build some PyCrysFML modules one by one (Windows + gfortran)
+      - name: Build some pycfml modules one by one (Windows + gfortran)
         if: runner.os == 'Windows' && env.FC == 'gfortran'
         shell: cmd
         run: |
@@ -163,7 +157,7 @@ jobs:
           echo '::::: dir ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}'
           dir ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}
 
-      - name: Build some PyCrysFML modules one by one (Windows + ifort/ifx)
+      - name: Build some pycfml modules one by one (Windows + ifort/ifx)
         if: runner.os == 'Windows' && (env.FC == 'ifort' || env.FC == 'ifx')
         shell: cmd
         run: |
@@ -193,23 +187,11 @@ jobs:
             echo '::::: dir ${{ env.PYCRYSFML_DIST }}\${{ env.DIST_PACKAGE_NAME }}'
             ls -l ${{ env.PYCRYSFML_DIST }}\${{ env.DIST_PACKAGE_NAME }}
 
-      - name: Add __init__.py
-        run: |
-          echo '::::: cp ${{ env.PYCRYSFML_REPO }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}${{ env.SEP }}__init__.py ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}'
-          cp ${{ env.PYCRYSFML_REPO }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}${{ env.SEP }}__init__.py ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}
-          echo '::::: ls -l ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}'
-          ls -l ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}
+      - name: Add __init__.py from pycfml repo to dist
+        run: scripts/add_init_file_to_pycfml_dist.sh
 
-      - name: Add magnetic_data.txt database
-        run: |
-          #echo '::::: mkdir ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}${{ env.SEP }}Databases'
-          #mkdir ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}${{ env.SEP }}Databases
-          #echo '::::: cp ${{ env.CRYSFML_REPO }}${{ env.SEP }}Src${{ env.SEP }}Databases${{ env.SEP }}magnetic_data.txt ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}${{ env.SEP }}Databases'
-          #cp ${{ env.CRYSFML_REPO }}${{ env.SEP }}Src${{ env.SEP }}Databases${{ env.SEP }}magnetic_data.txt ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}${{ env.SEP }}Databases
-          echo '::::: cp -r ${{ env.CRYSFML_REPO }}${{ env.SEP }}Src${{ env.SEP }}Databases ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}'
-          cp -r ${{ env.CRYSFML_REPO }}${{ env.SEP }}Src${{ env.SEP }}Databases ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}
-          echo '::::: ls -l ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}${{ env.SEP }}Databases'
-          ls -l ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}${{ env.SEP }}Databases
+      - name: Add magnetic_data.txt database from cfml to pycfml
+        run: scripts/add_cfml_databases_to_pycfml_dist.sh
 
       - name: Validate pyproject.toml
         run: |
@@ -218,14 +200,10 @@ jobs:
           echo "::::: validate-pyproject pyproject.toml"
           validate-pyproject pyproject.toml
 
-      - name: Build PyCrysFML python wheel
-        run: |
-          echo '::::: python -m pip install build'
-          python -m pip install build
-          echo '::::: python -m build --wheel --outdir ${{ env.PYCRYSFML_WHEEL }}'
-          python -m build --wheel --outdir ${{ env.PYCRYSFML_WHEEL }}
+      - name: Create pycfml python wheel
+        run: scripts/create_pycfml_python_wheel.sh
 
-      - name: Rename wheel
+      - name: Rename pycfml wheel
         run: |
           echo '::::: python -m pip install wheel'
           python -m pip install wheel
@@ -234,31 +212,30 @@ jobs:
           echo "::::: ls -l ${{ env.PYCRYSFML_WHEEL }}"
           ls -l ${{ env.PYCRYSFML_WHEEL }}
 
-      - name: Install PyCrysFML from local wheel (with dev extras)
-        run: |
-          echo "::::: ls -l ${{ env.PYCRYSFML_WHEEL }}"
-          ls -l ${{ env.PYCRYSFML_WHEEL }}
-          echo '::::: python3 -m pip install "${{ env.DIST_PACKAGE_NAME }}[dev]" --find-links=${{ env.PYCRYSFML_WHEEL }}'
-          python3 -m pip install "${{ env.DIST_PACKAGE_NAME }}[dev]" --find-links=${{ env.PYCRYSFML_WHEEL }}
+      - name: Install pycfml from local wheel (with dev extras)
+        run: scripts/install_pycfml_from_wheel.sh
 
-      - name: Upload wheel
-        if: matrix.compiler == 'gfortran'
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.FIXED_WHEEL_NAME }}
-          path: ${{ env.PYCRYSFML_WHEEL }}${{ env.SEP }}${{ env.FIXED_WHEEL_NAME }}
+      #- name: Upload wheel
+      #  if: matrix.compiler == 'gfortran'
+      #  uses: actions/upload-artifact@v4
+      #  with:
+      #    name: ${{ env.FIXED_WHEEL_NAME }}
+      #    path: ${{ env.PYCRYSFML_WHEEL }}${{ env.SEP }}${{ env.FIXED_WHEEL_NAME }}
 
-      - name: Run unit tests
-        run: pytest tests${{ env.SEP }}unit_tests -vv
+      - name: Run pycfml unit tests
+        run: scripts/run_pycfml_unit_tests.sh
 
-      - name: Calc pattern with powder_mod for SG Pnma
-        run: python tests${{ env.SEP }}powder_mod_tests${{ env.SEP }}test_powder_mod.py
+      #- name: Calc pattern with powder_mod for SG Pnma
+      #  run: python tests${{ env.SEP }}powder_mod_tests${{ env.SEP }}test_powder_mod.py
 
-      - name: Upload calculated pattern
-        uses: actions/upload-artifact@v4
-        with:
-          name: ycalc_${{ runner.os }}_${{ env.FC }}_${{ matrix.build_system }}.dat
-          path: ycalc.dat
+      #- name: Upload calculated pattern
+      #  uses: actions/upload-artifact@v4
+      #  with:
+      #    name: ycalc_${{ runner.os }}_${{ env.FC }}_${{ matrix.build_system }}.dat
+      #    path: ycalc.dat
 
       - name: Run powder_mod tests
-        run: pytest tests${{ env.SEP }}powder_mod_tests -vv
+        run: scripts/run_powder_mod_tests.sh
+
+      - name: Run powder_mod main
+        run: scripts/run_powder_mod_main.sh

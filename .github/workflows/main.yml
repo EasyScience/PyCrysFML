@@ -127,7 +127,7 @@ jobs:
           scripts/compile_cfml_objs.sh
           bash -x scripts/create_cfml_static_lib.sh
           scripts/create_cfml_dist_dir.sh
-          scripts/copy_compiled_to_cfml_dist.sh
+          bash -x scripts/copy_compiled_to_cfml_dist.sh
 
       - name: Download pycfml repo
         shell: bash
@@ -143,10 +143,10 @@ jobs:
         shell: bash
         run: |
           scripts/create_pycfml_build_dir.sh
-          scripts/compile_pycfml_objs.sh
-          scripts/create_pycfml_shared_objs_or_dynamic_libs.sh
+          bash -x scripts/compile_pycfml_objs.sh
+          bash -x scripts/create_pycfml_shared_objs_or_dynamic_libs.sh
           scripts/create_pycfml_dist_dir.sh
-          scripts/copy_compiled_to_pycfml_dist.sh
+          bash -x scripts/copy_compiled_to_pycfml_dist.sh
 
       - name: Add required system DLLs (Windows)
         if: runner.os == 'Windows'

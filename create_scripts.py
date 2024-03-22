@@ -334,7 +334,7 @@ def create_cfml_static_lib():
     msg = _echo_msg(f"Creating fortran static library '{lib_name}.{lib_ext}'")
     lines.append(msg)
     template_cmd = CONFIG['template']['build-static'][_platform()]
-    cmd = template_cmd.replace('{LIB}', lib_name)
+    cmd = template_cmd.replace('{LIB}', lib_name).replace('{OBJ_EXT}', _obj_ext())
     lines.append(cmd)
 
     lines.append(f'echo "22222"')

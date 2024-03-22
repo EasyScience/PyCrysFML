@@ -166,10 +166,10 @@ compilers = [
   'ifx'
 ]
 modes.debug = [
-  #/fpp',
-  #'/heap-arrays',
+  '-fpp',
+  '-heap-arrays',
   #'/stand:f08',
-  '/nologo',
+  '-nologo',  # /nologo
   '-DWIN32=ON'
 ]
 obj-ext = 'obj'

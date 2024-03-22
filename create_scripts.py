@@ -66,7 +66,7 @@ def _write_lines_to_file(lines, name):
     with open(path, 'w') as file:
         for line in lines:
             if _shell() == 'bash':
-                line = line.replace(os.sep, '/')
+                line = line.replace('\\', '/')
             file.write(line + '\n')
     _fix_file_permissions(path)
 
@@ -215,7 +215,7 @@ def append_to_main_script(obj):
     with open(path, 'a') as file:
         for line in obj:
             if _shell() == 'bash':
-                line = line.replace(os.sep, '/')
+                line = line.replace('\\', '/')
             file.write(line + '\n')
     _fix_file_permissions(path)
 

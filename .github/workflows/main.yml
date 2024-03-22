@@ -113,7 +113,7 @@ jobs:
 
       - name: Show info (try again on Windows)
         if: runner.os == 'Windows'
-        shell: cmd
+        shell: bash
         run: scripts/show_info.sh
 
       - name: Download cfml repo

@@ -153,22 +153,15 @@ jobs:
           scripts/create_pycfml_dist_dir.sh
           bash -x scripts/copy_compiled_to_pycfml_dist.sh
 
-      - name: Add required system DLLs (Windows)
-        if: runner.os == 'Windows'
-        run: |
-            cp ${{ env.Python_ROOT_DIR }}\python311.dll ${{ env.PYCRYSFML_DIST }}\${{ env.DIST_PACKAGE_NAME }}
-            cp c:\mingw64\bin\libgcc_s_seh-1.dll ${{ env.PYCRYSFML_DIST }}\${{ env.DIST_PACKAGE_NAME }}
-            cp c:\mingw64\bin\libgfortran-5.dll ${{ env.PYCRYSFML_DIST }}\${{ env.DIST_PACKAGE_NAME }}
-            cp c:\mingw64\bin\libquadmath-0.dll ${{ env.PYCRYSFML_DIST }}\${{ env.DIST_PACKAGE_NAME }}
-            cp c:\mingw64\bin\libwinpthread-1.dll ${{ env.PYCRYSFML_DIST }}\${{ env.DIST_PACKAGE_NAME }}
-            echo '::::: dir ${{ env.PYCRYSFML_DIST }}\${{ env.DIST_PACKAGE_NAME }}'
-            ls -l ${{ env.PYCRYSFML_DIST }}\${{ env.DIST_PACKAGE_NAME }}
+      - name: Add extra system libs to pycfml dist
+        shell: bash
+        run: scripts/add_extra_libs_to_pycfml_dist.sh
 
-      - name: Add __init__.py from pycfml repo to dist
+      - name: Add __init__.py from pycfml repo to pycfml dist
         shell: bash
         run: scripts/add_init_file_to_pycfml_dist.sh
 
-      - name: Add magnetic_data.txt database from cfml to pycfml
+      - name: Add magnetic_data.txt database from cfml to pycfml dist
         shell: bash
         run: scripts/add_cfml_databases_to_pycfml_dist.sh
 

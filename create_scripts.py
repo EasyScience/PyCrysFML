@@ -570,6 +570,22 @@ def copy_compiled_to_pycfml_dist():
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
 
+def add_extra_libs_to_pycfml_dist():
+    extra_libs = CONFIG['build']['extra-libs'][_platform()]
+    dist_dir = CONFIG['pycfml']['dir']['dist']
+    package_dir = CONFIG['pycfml']['dir']['dist-package']
+    package_relpath = os.path.join(dist_dir, package_dir)
+    package_abspath = os.path.join(_project_path(), package_relpath)
+    lines = []
+    for lib_path in extra_libs:
+        msg = _echo_msg(f"Copying {lib_path} to dist dir '{package_relpath}'")
+        lines.append(msg)
+        cmd = f'cp {lib_path} {package_abspath}'
+        lines.append(cmd)
+    script_name = f'{sys._getframe().f_code.co_name}.sh'
+    _write_lines_to_file(lines, script_name)
+    append_to_main_script(lines)
+
 def add_init_file_to_pycfml_dist():
     project_name = CONFIG['pycfml']['name']
     repo_dir = CONFIG['pycfml']['dir']['repo']
@@ -717,6 +733,7 @@ if __name__ == '__main__':
 
     headers = _echo_header(f"Creating {pycfml_project_name} python package wheel")
     append_to_main_script(headers)
+    add_extra_libs_to_pycfml_dist()
     add_init_file_to_pycfml_dist()
     add_cfml_databases_to_pycfml_dist()
     create_pycfml_python_wheel()

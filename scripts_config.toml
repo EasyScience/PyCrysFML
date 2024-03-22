@@ -1,0 +1,723 @@
+[dir]
+scripts = 'scripts'
+
+[cfml]
+name = 'CrysFML2008'
+
+[cfml.static-lib]
+name = 'libCrysFML08'
+
+[cfml.git]
+url = 'https://code.ill.fr/rodriguez-carvajal/crysfml2008.git'
+branch = 'nagfor'
+
+[cfml.dir]
+repo = 'crysfml08_repo'
+repo-src = 'Src'
+build = 'crysfml08_build'
+dist = 'crysfml08_dist'
+dist-lib = 'lib'
+dist-include = 'include'
+
+[pycfml]
+name = 'PyCrysFML08'
+
+[pycfml.git]
+url = 'https://code.ill.fr/scientific-software/pycrysfml08.git'
+branch = 'master'
+
+[pycfml.dir]
+repo = 'pycrysfml08_repo'
+repo-src = 'src'
+build = 'pycrysfml08_build'
+dist = 'pycrysfml08_dist'
+dist-package = 'pycrysfml08'
+wheel = 'pycrysfml08_wheel'
+
+[template]
+clone-repo = 'git clone --single-branch --branch {BRANCH} {URL} {OUT_PATH}'
+build-obj = '{COMPILER} {OPTIONS} -c {PATH} -I {INCLUDE}'
+build-static.macos = 'ar -r {LIB}.a *.o'
+build-static.ubuntu = 'ar -r {LIB}.a *.o'
+build-static.windows = 'lib {LIB}.lib *.obj'
+build-shared = '{COMPILER} {SHARED_FLAG} {PATH}.o -o {PATH}.so -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {PYTHON_LIB}'
+build-wheel = 'python3 -m build --wheel --outdir {PATH}'
+install-wheel = 'python3 -m pip install "{PACKAGE}[dev]" --force-reinstall --find-links={PATH}'
+run-python = 'python3 {PATH}'
+run-tests = 'pytest {PATH} -v'
+
+[build]
+src-ext = 'f90'
+obj-ext = { macos = 'o', ubuntu = 'o', windows = 'obj' }
+lib-ext = { macos = 'a', ubuntu = 'a', windows = 'lib' }
+python-lib.macos = '`python3-config --ldflags --embed`'
+
+[[build-objs]]
+platforms = [
+  'macos',
+  'ubuntu',
+  'windows'
+]
+compilers = [
+  'gfortran'
+]
+modes.debug = [
+  '-cpp',                     # Enable preprocessing. The preprocessor is automatically invoked if the file extension is .fpp, .FPP, .F, .FOR, .FTN, .F90, .F95, .F03 or .F08.
+                              # Use this option to manually enable preprocessing of any kind of Fortran file.
+                              # To disable preprocessing of files with any of the above listed extensions, use the negative form: -nocpp.
+                              # The preprocessor is run in traditional mode. Any restrictions of the file-format, especially the limits on line length, apply for preprocessed output
+                              # as well, so it might be advisable to use the -ffree-line-length-none or -ffixed-line-length-none options.
+  #'-fall-intrinsics',        # This option causes all intrinsic procedures (including the GNU-specific extensions) to be accepted. This can be useful with -std=f95 to force
+                              # standard-compliance but get access to the full range of intrinsics available with gfortran. As a consequence, -Wintrinsics-std will be ignored
+                              # and no user-defined procedure with the same name as any intrinsic will be called except when it is explicitly declared EXTERNAL
+  #'-fdec-math',              # Enable legacy math intrinsics such as COTAN and degree-valued trigonometric functions (e.g. TAND, ATAND, etc...) for compatability with older code.
+  '-ffree-line-length-none',  # Set column after which characters are ignored in typical free-form lines in the source file. The default value is 132. n may be ‘none’, meaning
+                              # that the entire line is meaningful. -ffree-line-length-0 means the same thing as -ffree-line-length-none.
+  '-fno-stack-arrays',        # Enabled: Put all local arrays, even those of unknown size onto stack memory.
+                              # The -fno- form disables the behavior.
+  #'-fpic',                   # Generate position-independent code (PIC) suitable for use in a shared library, if supported for the target machine. Such code accesses all constant
+                              # addresses through a global offset table (GOT). The dynamic loader resolves the GOT entries when the program starts (the dynamic loader is not part
+                              # of GCC; it is part of the operating system). If the GOT size for the linked executable exceeds a machine-specific maximum size, you get an error
+                              # message from the linker indicating that -fpic does not work; in that case, recompile with -fPIC instead. (These maximums are 8k on the SPARC, 28k on
+                              # AArch64 and 32k on the m68k and RS/6000. The x86 has no such limit.)
+                              # Position-independent code requires special support, and therefore works only on certain machines. For the x86, GCC supports PIC for System V but not
+                              # for the Sun 386i. Code generated for the IBM RS/6000 is always position-independent.
+  '-fPIC',                    # If supported for the target machine, emit position-independent code, suitable for dynamic linking and avoiding any limit on the size of the global
+                              # offset table. This option makes a difference on AArch64, m68k, PowerPC and SPARC.
+                              # Position-independent code requires special support, and therefore works only on certain machines.
+  '-std=f2008'                # Specify the standard to which the program is expected to conform, which may be one of ‘f95’, ‘f2003’, ‘f2008’, ‘gnu’, or ‘legacy’. The default
+                              # value for std is ‘gnu’, which specifies a superset of the Fortran 95 standard that includes all of the extensions supported by GNU Fortran, although
+                              # warnings will be given for obsolete extensions not recommended for use in new code. The ‘legacy’ value is equivalent but without the warnings for
+                              # obsolete extensions, and may be useful for old non-standard programs. The ‘f95’, ‘f2003’ and ‘f2008’ values specify strict conformance to the
+                              # Fortran 95, Fortran 2003 and Fortran 2008 standards, respectively; errors are given for all extensions beyond the relevant language standard, and
+                              # warnings are given for the Fortran 77 features that are permitted but obsolescent in later standards. ‘-std=f2008ts’ allows the Fortran 2008 standard
+                              # including the additions of the Technical Specification (TS) 29113 on Further Interoperability of Fortran with C and TS 18508 on Additional Parallel
+                              # Features in Fortran.
+]
+shared-flag = '-shared'
+
+[[build-objs]]
+platforms = [
+  'macos'
+]
+compilers = [
+  'nagfor'
+]
+modes.debug = [
+  '-colour',                # Colour the message output from the compiler using ANSI escape sequences and the default foreground colouring scheme which is: red for error messages (including
+                            # fatal errors), blue for warning messages and green for information messages.
+  #'-compatible',           # Make external linkages compatible with other compilers where possible; on Windows this is Microsoft Fortran (32-bit mode) or Intel Fortran (64-bit mode), on MacOS
+                            # and Linux this is g77, g95 and gfortran, and on other systems this is the operating system vendor's compiler.  This affects the naming convention and procedure
+                            # calling convention (for example, on Windows it causes use of the "STDCALL" calling convention that is commonly used for most DLLs, and the names are in upper case
+                            # with no added trailing underscore).  On Windows in 64-bit mode, -compatible is always in effect.
+  #'-dusty',                # Allows the compilation and execution of "legacy" software by downgrading the category of common errors found in such software from "Error" to "Warning" (which may
+                            # then be suppressed entirely with the -w option).  This option disables -C=calls, and also enables Hollerith i/o (see the -hollerith_io option).
+  '-f2008',                 # Specify that the base language is Fortran 2008.  This is the default.
+  '-fpp',                   # Preprocess the source files using fpp even if the suffix would normally indicate an ordinary Fortran file.
+  #'-gline',                # Compile code to produce a traceback when a runtime error message is generated.  Only routines compiled with this option will appear in such a traceback.  This
+                            # option increases both executable file size and execution time.
+  #'-mismatch_all',         # Further downgrade consistency checking of procedure argument lists so that calls to routines in the same file which are incorrect will produce warnings instead of
+                            # error messages.  This option disables -C=calls.
+  #'-mtrace=on',            # Trace memory allocation and deallocation.  This option is a synonym for -mtrace=on.
+  #'-no_underflow_warning', # Suppress the warning message that normally appears if a floating-point underflow occurred during execution.  This option is only effective if specified when
+                            # compiling the main program.
+  #'-nonstrict',            # Do not check for strict conformance to the Fortran standard
+  #'-pic',                  # Produce position-independent code (small model), for use in a shared library.  If the shared library is too big for the small model, use -PIC.
+  '-PIC',                   # Produce position-independent code (large model), for use in a shared library.
+  '-quiet',                 # Suppress the compiler banner and the summary line, so that only diagnostic messages will appear,
+  '-w=all',                 # suppresses all warning messages;
+  #'-Wl,option'             # Pass option directly to the host C compiler when linking (producing the executable).  Multiple options may be specified in a single -Wl, option by
+                            # separating them with commas.  A comma may be included in an option by repeating it, e.g.  -Wl,-filelist=file1,,file2,,file3 becomes the linker option
+                            # -filelist=file1,file2,file3.  Note that options specified with -Wl, are appended to the linking command; for options that need to be in a specific
+                            # place, the -xldarg option can be used.
+]
+shared-flag = '-Wl,-shared'
+
+[[build-objs]]
+platforms = [
+  'macos',
+  'ubuntu'
+]
+compilers = [
+  'ifort',
+  'ifx'
+]
+modes.debug = [
+  '-fpp',
+  '-fPIC',
+  '-std08'
+]
+
+[[build-objs]]
+platforms = [
+  'windows'
+]
+compilers = [
+  'ifort',
+  'ifx'
+]
+modes.debug = [
+  '/fpp',
+  '/warn:all'
+]
+
+[[cfml-modules]]
+main-file = 'Forpy'
+
+[[cfml-modules]]
+main-file = 'CFML_Degree_Trigonometric'
+
+[[cfml-modules]]
+main-file = 'CFML_GlobalDeps_MacOS_GFOR'
+
+[[cfml-modules]]
+main-file = 'CFML_FFT'
+components-dir = 'CFML_FFT'
+components-files = [
+  'FFT_Gen',
+  'FFT_Convol'
+]
+
+[[cfml-modules]]
+main-file = 'CFML_Maths'
+components-dir = 'CFML_Maths'
+components-files = [
+  'Math_Diagonalize_GEN',
+  'Math_Equal_Vector',
+  'Math_Determinant',
+  'Math_Co_Prime',
+  'Math_Cross_Product',
+  'Math_Debye',
+  'Math_Co_Linear',
+  'Math_Erfc_Der',
+  'Math_Diagonalize_SH',
+  'Math_Factorial',
+  'Math_Equal_Matrix',
+  'Math_Inverse_Matrix',
+  'Math_Is_Diagonal_Matrix',
+  'Math_Equal_Vector',
+  'Math_Determinant',
+  'Math_PolynomialFit',
+  'Math_Lower_Triangular',
+  'Math_Is_Null_Vector',
+  'Math_Norm',
+  'Math_Locate',
+  'Math_Tensor_Product',
+  'Math_Linear_Dependent',
+  'Math_Polyhedron_Volume',
+  'Math_Resolv_System',
+  'Math_SistCoord_Changes',
+  'Math_Rotation_Axes',
+  'Math_Modulo_Lat',
+  'Math_Negligible',
+  'Math_Trace',
+  'Math_Scalar',
+  'Math_Outerprod',
+  'Math_Smoothing_Interpol',
+  'Math_Zbelong',
+  'Math_Spher_Harm',
+  'Math_Pgcd',
+  'Math_Mat_Cross',
+  'Math_Poly_Legendre',
+  'Math_Upper_Triangular',
+  'Math_Points_In_Line2D',
+  'Math_RowEchelon',
+  'Math_Swap',
+  'Math_Rank',
+  'Math_Sort'
+]
+
+[[cfml-modules]]
+main-file = 'CFML_ExtinCorr'
+components-dir = 'CFML_ExtinCorr'
+components-files = [
+  'Ext_BeckerCoppens',
+  'Ext_FlippingRatios',
+  'Ext_ShelxCorr'
+]
+
+[[cfml-modules]]
+main-file = 'CFML_Random'
+components-dir = 'CFML_Random'
+components-files = [
+  'Random_Beta_Sm',
+  'Random_Binomial_Sm',
+  'Random_VonMises_Sm',
+  'Random_InvGauss_Sm',
+  'Random_Poisson_Sm',
+  'Random_Gamma_Sm',
+  'Random_Normal_Sm',
+  'Random_Cauchy_Sm',
+  'Random_T_Sm'
+]
+
+[[cfml-modules]]
+main-file = 'CFML_Messages'
+components-dir = 'CFML_Messages'
+components-files = [
+  'Con_Print_Message',
+  'Con_Info_Message',
+  'Con_Err_Message',
+  'Con_Write_ScrollMsg',
+  'Con_Wait_Message'
+]
+
+[[cfml-modules]]
+main-file = 'CFML_Strings'
+components-dir = 'CFML_Strings'
+components-files = [
+  'StringFullp',
+  'StringNum',
+  'StringReadKey',
+  'StringTools'
+]
+
+[[cfml-modules]]
+main-file = 'CFML_Rational'
+components-dir = 'CFML_Rational'
+components-files = [
+  'RAT_constructor',
+  'RAT_generic',
+  'RAT_is_integer',
+  'RAT_assignment',
+  'RAT_operator_add',
+  'RAT_operator_eq',
+  'RAT_operator_ge',
+  'RAT_Equal_rational',
+  'RAT_operator_divisor',
+  'RAT_operator_gt',
+  'RAT_operator_le',
+  'RAT_operator_minus',
+  'RAT_rowechelon',
+  'RAT_operator_lt',
+  'RAT_overloads',
+  'RAT_operator_multiply',
+  'RAT_operator_neq'
+]
+
+[[cfml-modules]]
+main-file = 'CFML_SuperSpace_Database'
+
+[[cfml-modules]]
+main-file = 'CFML_Magnetic_Database'
+
+[[cfml-modules]]
+main-file = 'CFML_BVS_Tables'
+
+[[cfml-modules]]
+main-file = 'CFML_Scattering_Tables'
+
+[[cfml-modules]]
+main-file = 'CFML_Bonds_Tables'
+
+[[cfml-modules]]
+main-file = 'CFML_Symmetry_Tables'
+
+[[cfml-modules]]
+components-dir = 'CFML_Tables'
+components-files = [
+  'Tab_Del_BVST',
+  'Tab_Set_BVST',
+  'Tab_Set_ScatterT',
+  'Tab_Get_ScatterT',
+  'Tab_Del_ScatterT',
+  'Tab_Get_SpgT',
+  'Tab_Del_SpgT',
+  'Tab_Set_SpgT',
+  'Tab_Get_SpgSymbols',
+  'Tab_Get_BondsT',
+  'Tab_Del_BondsT',
+  'Tab_Set_BondsT',
+  'Tab_Allocating_SuperSpaceDBase',
+  'Tab_Read_SSG_DBase',
+  'Tab_Allocating_MagneticDBase',
+  'Tab_Read_MagneticDBase',
+]
+
+[[cfml-modules]]
+main-file = 'CFML_Profiles'
+components-dir = 'CFML_Profiles'
+components-files = [
+  'Profile_BacktoBack',
+  'Profile_Exponential',
+  'Profile_Finger',
+  'Profile_Gaussian',
+  'Profile_Init_ProfVal',
+  'Profile_IkedaCarpenter',
+  'Profile_TCHpVoigt',
+  'Profile_Hat',
+  'Profile_PseudoVoigt',
+  'Profile_Lorentzian',
+  'Profile_TOF_Jorgensen',
+  'Profile_TOF_Jorg_Vondreele',
+  'Profile_TOF_Carpenter'
+]
+
+[[cfml-modules]]
+main-file = 'CFML_Optimization_LSQ'
+components-dir = 'CFML_Optimization_LSQ'
+components-files = [
+  'OPT_LSQ_LevebergMarquardt_AnalyDer',
+  'OPT_LSQ_Marquardt_Fit',
+  'OPT_LSQ_Output',
+  'OPT_LSQ_LevebergMarquardt_NumDer'
+]
+
+[[cfml-modules]]
+main-file = 'CFML_Optimization'
+components-dir = 'CFML_Optimization'
+components-files = [
+  'OPT_Global_Csendes',
+  'OPT_Cg_Quasi_Newton',
+  'OPT_Local_Optim',
+  'OPT_Simplex'
+]
+
+[[cfml-modules]]
+main-file = 'CFML_Simulated_Annealing'
+
+[[cfml-modules]]
+main-file = 'CFML_Diffpatt'
+components-dir = 'CFML_Diffpatt'
+components-files = [
+  'DiffP_ReadPatt_ILL',
+  'DiffP_ReadPatt_CIF',
+  'DiffP_FWHM_Peak',
+  'DiffP_BackgPatt',
+  'DiffP_ReadPatt_LLB',
+  'DiffP_NoisyPoints',
+  'DiffP_ReadPatt_GSAS',
+  'DiffP_ReadPatt_ISIS',
+  'DiffP_ReadPatt_NLS',
+  'DiffP_ReadPatt_PAN',
+  'DiffP_ReadPatt_FREE',
+  'DiffP_ReadPatt_PSI',
+  'DiffP_ReadPatt_Socabim',
+  'DiffP_ReadPatt_TimeVar',
+  'DiffP_ReadPatt_XYSIG',
+  'DiffP_WritePatterns',
+  'DiffP_ReadPatterns'
+]
+
+[[cfml-modules]]
+main-file = 'CFML_Metrics'
+components-dir = 'CFML_Metrics'
+components-files = [
+  'Metrics_Tensor',
+  'Metrics_Gen',
+  'Metrics_ThConver',
+  'Metrics_IO',
+  'Metrics_NiggliCell'
+]
+
+[[cfml-modules]]
+components-dir = 'CFML_Optimization_SAnn'
+components-files = [
+  'SAnn_General',
+  'SAnn_LocalOpt',
+  'SAnn_MultiConf',
+  'SAnn_SetnCheck',
+  'SAnn_inout'
+]
+
+[[cfml-modules]]
+main-file = 'CFML_EoS'
+components-dir = 'CFML_EoS'
+components-files = [
+  'EoS_Calc',
+  'EoS_CopyEDat',
+  'EoS_Get_APL',
+  'EoS_Get_HeatCap',
+  'EoS_CellPar',
+  'EoS_PrincipalEoS',
+  'Eos_Allocate',
+  'EoS_Transform_ESD',
+  'EoS_ModDir',
+  'Eos_DerivPartial',
+  'EoS_Get_Tensor',
+  'Eos_Get_Bulk',
+  'Eos_Checks',
+  'EoS_Get_Angle',
+  'Eos_AlphaCalc',
+  'Eos_Conlev',
+  'Eos_FfCalc',
+  'EoS_LinEoS_Allowed',
+  'Eos_Get_Pressure',
+  'Eos_Get_Temperature',
+  'Eos_Get_Tait',
+  'Eos_Gruneisen',
+  'Eos_NormPressure',
+  'Eos_Set',
+  'Eos_Get_Properties',
+  'Eos_Read',
+  'Eos_Get_Volume',
+  'Eos_PVT_Table',
+  'Eos_Get_Transition',
+  'Eos_Init',
+  'Eos_K_Cal',
+  'Eos_Pthermal',
+  'Eos_Strain',
+  'Eos_Write',
+  'Eos_dKdTCalc'
+]
+
+[[cfml-modules]]
+main-file = 'CFML_gSpaceGroups'
+components-dir = 'CFML_gSpaceGroups'
+components-files = [
+  'gS_Allocate_Opers',
+  'gS_Allocate_SpaceG',
+  'gS_ApplySO',
+  'gS_Get_Cosets',
+  'gS_CheckGener',
+  'gS_Get_CrystalSys',
+  'gS_Get_GenerStr',
+  'gS_Get_Dimension',
+  'gS_Get_Generators',
+  'gS_Get_Hall_Gener',
+  'gS_Get_HM_Standard',
+  'gS_Get_LattType',
+  'gS_Get_OriginShift',
+  'gS_Is_LattCentring',
+  'gS_Get_X_Matrix',
+  'gS_Is_InversionCentre',
+  'gS_Get_Oper_Symb',
+  'gS_Reorder_Oper',
+  'gS_Smallest_IntegralVec',
+  'gS_Identify_Groups',
+  'gS_Get_Mult_OPTable',
+  'gS_Get_Orb_Stabilizer_Constr',
+  'gS_Get_PseudoStdBase',
+  'gS_Match_Spg3D',
+  'gS_Get_Mat_Symb',
+  'gS_Get_Symb_Mat',
+  'gS_Set_SpaceG',
+  'gS_Inverse_OP',
+  'gS_Get_LauePG',
+  'gS_Get_SubGrp',
+  'gS_Init_Procedures',
+  'gS_Match_Shubnikov_Grp',
+  'gS_Get_Rotations',
+  'gS_Get_Ops_Gener',
+  'gS_Spg_Const_VGen',
+  'gS_Rational_RedTraslation',
+  'gS_Get_Symb_Oper',
+  'gS_operator_equal',
+  'gS_Sort_Operator',
+  'gS_operator_mult',
+  'gS_Write_SpaceG',
+  'gS_Is_Antilattice',
+  'gS_Spg_Const_Str',
+  'gS_Symm_Symbols',
+  'gS_OnePrimeOp'
+]
+
+[[cfml-modules]]
+main-file = 'CFML_BckPeaks'
+
+[[cfml-modules]]
+main-file = 'CFML_ILL_Instrm_Data'
+
+[[cfml-modules]]
+main-file = 'CFML_Atoms'
+components-dir = 'CFML_Atoms'
+components-files = [
+  'Atm_ExtendList',
+  'Atm_ChangeList',
+  'Atm_Allocating_Atoms',
+  'Atm_PointList',
+  'Atm_RW_Bin_AtmList',
+  'Atm_Write_AtmList',
+  'Atm_SymmetryConstraints'
+]
+
+[[cfml-modules]]
+main-file = 'CFML_Propagation_Vectors'
+
+[[cfml-modules]]
+main-file = 'CFML_Reflections'
+components-dir = 'CFML_Reflections'
+components-files = [
+  'Refl_H_Convent',
+  'Refl_AsymUnit',
+  'Refl_Generate',
+  'Refl_H_EquivList',
+  'Refl_H_Equal',
+  'Refl_Conditions',
+  'Refl_H_Equiv',
+  'Refl_H_S',
+  'Refl_H_Absent',
+  'Refl_MaxNum',
+  'Refl_Write_List',
+  'Refl_UnitaryVec',
+  'Refl_Init_RefList',
+  'Refl_H_Mult'
+]
+
+[[cfml-modules]]
+main-file = 'CFML_Structure_Factors'
+components-dir = 'CFML_Structure_Factors'
+components-files = [
+  'SF_AtomicFactors',
+  'SF_Calculations',
+  'SF_Scattering_Species',
+  'SF_Initialize',
+  'SF_Write_SF',
+  'SF_Create_Tables'
+]
+
+[[cfml-modules]]
+main-file = 'CFML_Geom'
+components-dir = 'CFML_Geom'
+components-files = [
+  'Geom_Angles',
+  'Geom_Allocations',
+  'Geom_Matrices',
+  'Geom_Coordination',
+  'Geom_Orbits',
+  'Geom_Distances'
+]
+
+[[cfml-modules]]
+main-file = 'CFML_kvec_Symmetry'
+components-dir = 'CFML_kvec_Symmetry'
+components-files = [
+  'ksym_auxsub',
+  'ksym_init',
+  'ksym_functions',
+  'ksym_suscept',
+  'ksym_read',
+  'ksym_write'
+]
+
+[[cfml-modules]]
+main-file = 'CFML_Maps'
+components-dir = 'CFML_Maps'
+components-files = [
+  'Maps_Mapping',
+  'Maps_MarchingCubes',
+  'Maps_Percolation'
+]
+
+[[cfml-modules]]
+main-file = 'CFML_Molecules'
+components-dir = 'CFML_Molecules'
+components-files = [
+  'Mol_Formula',
+  'Mol_Cartesian_to',
+  'Mol_Fractional_to',
+  'Mol_IndexList',
+  'Mol_Orientation',
+  'Mol_Initialize',
+  'Mol_WriteInfo',
+  'Mol_Spherical_to',
+  'Mol_ReadInfo',
+  'Mol_ZMatrix_to',
+  'Mol_to_AtList'
+]
+
+[[cfml-modules]]
+main-file = 'CFML_Keywords_Code_Parser'
+components-dir = 'CFML_Keywords_Code_Parser'
+components-files = [
+  'KWC_FillCodes_Gen',
+  'KWC_Allocation',
+  'KWC_Deletion',
+  'KWC_WriteRefCodes',
+  'KWC_FillCodes_MolX',
+  'KWC_FillCodes_FAtm',
+  'KWC_SplitOperations',
+  'KWC_GetConCodes',
+  'KWC_VStateToAtomPar',
+  'KWC_ReadCodes',
+  'KWC_GetRestrCodes',
+  'KWC_RefCodes'
+]
+
+[[cfml-modules]]
+main-file = 'CFML_IOForm'
+components-dir = 'CFML_IOForm'
+components-files = [
+  'Format_GEN',
+  'Format_MCIF',
+  'Format_Blocks',
+  'Format_CIF',
+  'Format_CFL',
+  'Format_FST',
+  'Format_SHX'
+]
+
+[[cfml-modules]]
+main-file = 'CFML_KeyCodes'
+components-dir = 'CFML_KeyCodes'
+components-files = [
+  'KeyCod_VecRef',
+  'KeyCod_RGB',
+  'KeyCod_Atm',
+  'KeyCod_Patt',
+  'KeyCod_GenPar',
+  'keyCod_Phas',
+  'KeyCod_WriteInfo',
+  'KeyCod_Restraints',
+  'KeyCod_Molec'
+]
+
+[[cfml-modules]]
+main-file = 'CFML_Python'
+components-dir = 'CFML_Python'
+components-files = [
+  'Python_Common',
+  'Python_Atoms',
+  'Python_DiffPatt',
+  'Python_Metrics',
+  'Python_Reflections',
+  'Python_gSpaceGroups',
+  'Python_Ndarray'
+]
+
+[[cfml-modules]]
+main-file = 'CFML_VTK'
+components-dir = 'CFML_VTK'
+components-files = [
+  'VTK_Scan_Utils'
+]
+
+[[cfml-modules]]
+main-file = 'CFML_SXTAL_Geom'
+components-dir = 'CFML_SXTAL_Geom'
+components-files = [
+  'SXTAL_Angles',
+  'SXTAL_IO',
+  'SXTAL_Matx_Zvect',
+  'SXTAL_PSD',
+  'SXTAL_FlatCone',
+  'SXTAL_UB'
+]
+
+[[cfml-modules]]
+main-file = 'CFML_Export_VTK'
+
+[[cfml-modules]]
+main-file = 'CFML_EnBVS'
+components-dir = 'CFML_EnBVS'
+components-files = [
+  'EnBVS_CostF',
+  'EnBVS_Energy',
+  'EnBVS_Maps',
+  'EnBVS_SetTab'
+]
+
+[[pycfml-modules]]
+main-file = 'py_cfml_metrics'
+
+[[pycfml-modules]]
+main-file = 'py_cfml_profiles'
+
+[[pycfml-modules]]
+main-file = 'py_cfml_sxtal_geom'
+
+[[pycfml-modules]]
+main-file = 'powder_mod'
+
+[[pycfml-modules]]
+main-file = 'powder_mod_2'

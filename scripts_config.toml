@@ -146,7 +146,7 @@ compilers = [
 ]
 modes.debug = [
   '-fpp',
-  '-fPIC',
+  '-heap-arrays',
   '-std08'
 ]
 shared-flag = '-shared'
@@ -162,6 +162,7 @@ compilers = [
 modes.debug = [
   '-DWIN32=ON',
   '/fpp',
+  '/heap-arrays'
 ]
 shared-flag = '?????'
 

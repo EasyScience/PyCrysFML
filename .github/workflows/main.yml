@@ -45,13 +45,13 @@ jobs:
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1
 
-      - name: Set up Python environment
+      - name: Set up python3 environment
         uses: actions/setup-python@v4
         with:
             python-version: 3.11
 
       - name: Upgrade PIP
-        run: python -m pip install --upgrade pip
+        run: python3 -m pip install --upgrade pip
 
       - name: Declare env variables (independent)
         shell: bash
@@ -106,7 +106,10 @@ jobs:
           echo "FIXED_WHEEL_NAME=${{ env.DIST_PACKAGE_NAME }}-${{ env.DIST_PACKAGE_VERSION }}-${{ env.PYTHON_TAG }}-none-${{ env.PLATFORM_TAG }}.whl" >> $GITHUB_ENV
 
       - name: Create scripts
-        run: python create_scripts.py
+        run: python3 create_scripts.py
+
+      - name: Show info
+        run: scripts/show_info.sh
 
       - name: Download pycfml (nagfor branch)
         run: |
@@ -149,8 +152,8 @@ jobs:
           for %%n in (py_cfml_metrics py_cfml_profiles py_cfml_sxtal_geom powder_mod) do (
             echo "::::: ${{ env.FC }} ${{ env.COMPILER_OPTIONS }} -c %%n.f90 -I ${{ env.CRYSFML_DIST }}${{ env.SEP }}include"
             ${{ env.FC }} ${{ env.COMPILER_OPTIONS }} -c %%n.f90 -I ${{ env.CRYSFML_DIST }}${{ env.SEP }}include
-            echo "::::: ${{ env.FC }} -shared %%n.o -o %%n.pyd -L ${{ env.CRYSFML_DIST }}${{ env.SEP }}lib -l CrysFML08 ${{ env.LIBPYTHON }}"
-            ${{ env.FC }} -shared %%n.o -o %%n.pyd -L ${{ env.CRYSFML_DIST }}${{ env.SEP }}lib -l CrysFML08 ${{ env.LIBPYTHON }}
+            echo "::::: ${{ env.FC }} -shared %%n.o -o %%n.pyd -L ${{ env.CRYSFML_DIST }}${{ env.SEP }}lib -l CrysFML08 ${{ env.LIBpython3 }}"
+            ${{ env.FC }} -shared %%n.o -o %%n.pyd -L ${{ env.CRYSFML_DIST }}${{ env.SEP }}lib -l CrysFML08 ${{ env.LIBpython3 }}
             echo "::::: move %%n.pyd ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}"
             move %%n.pyd ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}
           )
@@ -168,8 +171,8 @@ jobs:
           for %%n in (py_cfml_metrics py_cfml_profiles py_cfml_sxtal_geom powder_mod) do (
             echo "::::: ${{ env.FC }} ${{ env.COMPILER_OPTIONS }} /c %%n.f90 -I ${{ env.CRYSFML_DIST }}${{ env.SEP }}include"
             ${{ env.FC }} ${{ env.COMPILER_OPTIONS }} /c %%n.f90 -I ${{ env.CRYSFML_DIST }}${{ env.SEP }}include
-            echo "::::: link %%n.obj /out:"%%n.dll" /libpath:${{ env.CRYSFML_DIST }}${{ env.SEP }}lib /dll CrysFML08.lib ${{ env.LIBPYTHON }}"
-            link %%n.obj /out:"%%n.pyd" /libpath:${{ env.CRYSFML_DIST }}${{ env.SEP }}lib /dll CrysFML08.lib ${{ env.LIBPYTHON }}
+            echo "::::: link %%n.obj /out:"%%n.dll" /libpath:${{ env.CRYSFML_DIST }}${{ env.SEP }}lib /dll CrysFML08.lib ${{ env.LIBpython3 }}"
+            link %%n.obj /out:"%%n.pyd" /libpath:${{ env.CRYSFML_DIST }}${{ env.SEP }}lib /dll CrysFML08.lib ${{ env.LIBpython3 }}
             echo "::::: move %%n.pyd ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}"
             move %%n.pyd ${{ env.PYCRYSFML_DIST }}${{ env.SEP }}${{ env.DIST_PACKAGE_NAME }}
           )
@@ -195,20 +198,22 @@ jobs:
 
       - name: Validate pyproject.toml
         run: |
-          echo "::::: python -m pip install 'validate-pyproject[all]'"
-          python -m pip install 'validate-pyproject[all]'
+          echo "::::: python3 -m pip install 'validate-pyproject[all]'"
+          python3 -m pip install 'validate-pyproject[all]'
           echo "::::: validate-pyproject pyproject.toml"
           validate-pyproject pyproject.toml
 
-      - name: Create pycfml python wheel
-        run: scripts/create_pycfml_python_wheel.sh
+      - name: Create pycfml python3 wheel
+        run: |
+          python3 -m pip install build
+          scripts/create_pycfml_python_wheel.sh
 
       - name: Rename pycfml wheel
         run: |
-          echo '::::: python -m pip install wheel'
-          python -m pip install wheel
-          echo '::::: python -m wheel tags --python-tag ${{ env.PYTHON_TAG }} --platform-tag ${{ env.PLATFORM_TAG }} --remove ${{ env.PYCRYSFML_WHEEL }}${{ env.SEP }}${{ env.ORIGINAL_WHEEL_NAME }}'
-          python -m wheel tags --python-tag ${{ env.PYTHON_TAG }} --platform-tag ${{ env.PLATFORM_TAG }} --remove ${{ env.PYCRYSFML_WHEEL }}${{ env.SEP }}${{ env.ORIGINAL_WHEEL_NAME }}
+          echo '::::: python3 -m pip install wheel'
+          python3 -m pip install wheel
+          echo '::::: python3 -m wheel tags --python-tag ${{ env.PYTHON_TAG }} --platform-tag ${{ env.PLATFORM_TAG }} --remove ${{ env.PYCRYSFML_WHEEL }}${{ env.SEP }}${{ env.ORIGINAL_WHEEL_NAME }}'
+          python3 -m wheel tags --python-tag ${{ env.PYTHON_TAG }} --platform-tag ${{ env.PLATFORM_TAG }} --remove ${{ env.PYCRYSFML_WHEEL }}${{ env.SEP }}${{ env.ORIGINAL_WHEEL_NAME }}
           echo "::::: ls -l ${{ env.PYCRYSFML_WHEEL }}"
           ls -l ${{ env.PYCRYSFML_WHEEL }}
 
@@ -226,7 +231,7 @@ jobs:
         run: scripts/run_pycfml_unit_tests.sh
 
       #- name: Calc pattern with powder_mod for SG Pnma
-      #  run: python tests${{ env.SEP }}powder_mod_tests${{ env.SEP }}test_powder_mod.py
+      #  run: python3 tests${{ env.SEP }}powder_mod_tests${{ env.SEP }}test_powder_mod.py
 
       #- name: Upload calculated pattern
       #  uses: actions/upload-artifact@v4

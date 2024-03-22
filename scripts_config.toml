@@ -51,6 +51,7 @@ src-ext = 'f90'
 obj-ext = { macos = 'o', ubuntu = 'o', windows = 'obj' }
 lib-ext = { macos = 'a', ubuntu = 'a', windows = 'lib' }
 python-lib.macos = '`python3-config --ldflags --embed`'
+python-lib.ubuntu = ''
 
 [[build-objs]]
 platforms = [

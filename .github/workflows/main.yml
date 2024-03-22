@@ -51,6 +51,7 @@ jobs:
             python-version: 3.11
 
       - name: Upgrade PIP
+        shell: bash
         run: python3 -m pip install --upgrade pip
 
       - name: Declare env variables (independent)
@@ -106,22 +107,21 @@ jobs:
           echo "FIXED_WHEEL_NAME=${{ env.DIST_PACKAGE_NAME }}-${{ env.DIST_PACKAGE_VERSION }}-${{ env.PYTHON_TAG }}-none-${{ env.PLATFORM_TAG }}.whl" >> $GITHUB_ENV
 
       - name: Create scripts
+        shell: bash
         run: python3 create_scripts.py --mode debug --compiler ${{ env.FC }}
 
       - name: Show info
-        run: scripts/show_info.sh
-
-      - name: Show info (try again on Windows)
-        if: runner.os == 'Windows'
         shell: bash
         run: scripts/show_info.sh
 
       - name: Download cfml repo
+        shell: bash
         run: |
           scripts/create_cfml_repo_dir.sh
           scripts/download_cfml_repo.sh
 
       - name: Build cfml
+        shell: bash
         run: |
           scripts/create_cfml_build_dir.sh
           scripts/compile_cfml_objs.sh
@@ -130,15 +130,18 @@ jobs:
           scripts/copy_compiled_to_cfml_dist.sh
 
       - name: Download pycfml repo
+        shell: bash
         run: |
           scripts/create_pycfml_repo_dir.sh
           scripts/download_pycfml_repo.sh
 
       - name: Copy powder_mod to from cfml to pycfml
+        shell: bash
         run: scripts/add_powder_mod_to_pycfml_repo.sh
 
       - name: Build some pycfml modules one by one (Linux + macOS)
         if: runner.os == 'Linux' || runner.os == 'macOS'
+        shell: bash
         run: |
           scripts/create_pycfml_build_dir.sh
           scripts/compile_pycfml_objs.sh
@@ -148,6 +151,7 @@ jobs:
 
       - name: Build some pycfml modules one by one (Windows + gfortran)
         if: runner.os == 'Windows' && env.FC == 'gfortran'
+        shell: bash
         run: |
           scripts/create_pycfml_build_dir.sh
           scripts/compile_pycfml_objs.sh
@@ -186,9 +190,11 @@ jobs:
             ls -l ${{ env.PYCRYSFML_DIST }}\${{ env.DIST_PACKAGE_NAME }}
 
       - name: Add __init__.py from pycfml repo to dist
+        shell: bash
         run: scripts/add_init_file_to_pycfml_dist.sh
 
       - name: Add magnetic_data.txt database from cfml to pycfml
+        shell: bash
         run: scripts/add_cfml_databases_to_pycfml_dist.sh
 
       - name: Validate pyproject.toml
@@ -199,6 +205,7 @@ jobs:
           validate-pyproject pyproject.toml
 
       - name: Create pycfml python3 wheel
+        shell: bash
         run: |
           python3 -m pip install build
           scripts/create_pycfml_python_wheel.sh
@@ -213,6 +220,7 @@ jobs:
           ls -l ${{ env.PYCRYSFML_WHEEL }}
 
       - name: Install pycfml from local wheel (with dev extras)
+        shell: bash
         run: scripts/install_pycfml_from_wheel.sh
 
       #- name: Upload wheel
@@ -223,6 +231,7 @@ jobs:
       #    path: ${{ env.PYCRYSFML_WHEEL }}${{ env.SEP }}${{ env.FIXED_WHEEL_NAME }}
 
       - name: Run pycfml unit tests
+        shell: bash
         run: scripts/run_pycfml_unit_tests.sh
 
       #- name: Calc pattern with powder_mod for SG Pnma
@@ -235,7 +244,9 @@ jobs:
       #    path: ycalc.dat
 
       - name: Run powder_mod tests
+        shell: bash
         run: scripts/run_powder_mod_tests.sh
 
       - name: Run powder_mod main
+        shell: bash
         run: scripts/run_powder_mod_main.sh

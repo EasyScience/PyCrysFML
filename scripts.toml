@@ -69,16 +69,16 @@ platforms = ['macos', 'linux', 'windows']
 compilers = ['gfortran']
 obj-ext = 'o'
 build-shared = '{COMPILER} -shared {PATH}.o -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {PYTHON_LIB}'
-modes.base = '-cpp -ffree-line-length-none -fno-stack-arrays -fPIC -std=f2008'
-modes.debug = '-cpp -ffree-line-length-none -fno-stack-arrays -fPIC -std=f2008'
-modes.release = '-cpp -ffree-line-length-none -fno-stack-arrays -fPIC -std=f2008'
+modes.base = '-std=f2008 -cpp -fPIC -fno-stack-arrays -ffree-line-length-none'
+modes.debug = ''
+modes.release = ''
 
 [[build-objs]]
 platforms = ['macos']
 compilers = ['nagfor']
 obj-ext = 'o'
 build-shared = '{COMPILER} -Wl,-shared {PATH}.o -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {PYTHON_LIB}'
-modes.base = '-colour -f2008 -fpp -PIC -quiet -w=all'
+modes.base = '-f2008 -fpp -PIC -quiet -w=all -colour'
 modes.debug = ''
 modes.release = ''
 
@@ -96,7 +96,7 @@ platforms = ['windows']
 compilers = ['ifort', 'ifx']
 obj-ext = 'obj'
 build-shared = 'link {PATH}.obj /out:"{PATH}.{EXT}" /libpath:{CFML_LIB_PATH} /dll {CFML_LIB_NAME}.lib {PYTHON_LIB}'
-modes.base = '-DWIN32=ON /fpp /heap-arrays /nologo'
+modes.base = '/fpp /heap-arrays /nologo -DWIN32=ON'
 modes.debug = ''
 modes.release = ''
 
@@ -107,7 +107,7 @@ main-file = 'Forpy'
 main-file = 'CFML_Degree_Trigonometric'
 
 [[cfml-modules]]
-main-file = 'CFML_GlobalDeps_MacOS_GFOR'
+main-file = 'CFML_GlobalDeps'
 
 [[cfml-modules]]
 main-file = 'CFML_FFT'

@@ -31,15 +31,15 @@ def _main_script_path():
     return path
 
 def _echo_msg(msg: str):
-    return f'echo "- {msg}"'
+    return f'echo ":::::: {msg}"'
 
 def _echo_progress_msg(current: int, total: int, msg: str):
     progress = _compiling_progress(current, total)
     msg = f"[{progress:>3}%] {msg}"
-    return f'echo "  {msg}"'
+    return f'echo "{msg}"'
 
 def _echo_header(msg: str):
-    msg = f':: {msg} ::'
+    msg = f':::::: {msg} ::::::'
     sep = ':' * len(msg)
     lines = []
     lines.append(f'echo ""')
@@ -322,6 +322,37 @@ def create_cfml_build_dir():
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
 
+def rename_global_deps_file():
+    repo_dir = CONFIG['cfml']['dir']['repo']
+    src_ext = CONFIG['build']['src-ext']['cfml']
+    src_dir = CONFIG['cfml']['dir']['repo-src']
+    platform = _platform()
+    if platform == 'macos':
+        platform_suffix = 'MacOS'
+    elif platform == 'linux':
+        platform_suffix = 'Linux'
+    elif platform == 'windows':
+        platform_suffix = 'Windows'
+    compiler = _compiler_name()
+    if compiler in ['gfortran', 'nagfor']:
+        compiler_suffix = 'GFOR'
+    elif compiler in ['ifort', 'ifx']:
+        compiler_suffix = 'IFOR'
+    from_name = f'CFML_GlobalDeps_{platform_suffix}_{compiler_suffix}.{src_ext}'
+    from_relpath = os.path.join(repo_dir, src_dir, from_name)
+    from_abspath = os.path.join(_project_path(), from_relpath)
+    to_name = f'CFML_GlobalDeps.{src_ext}'
+    to_relpath = os.path.join(repo_dir, src_dir, to_name)
+    to_abspath = os.path.join(_project_path(), to_relpath)
+    lines = []
+    msg = _echo_msg(f"Copying '{from_relpath}' to '{to_relpath}'")
+    lines.append(msg)
+    cmd = f'cp {from_abspath} {to_abspath}'
+    lines.append(cmd)
+    script_name = f'{sys._getframe().f_code.co_name}.sh'
+    _write_lines_to_file(lines, script_name)
+    append_to_main_script(lines)
+
 def compile_cfml_objs():
     project_name = CONFIG['cfml']['name']
     repo_dir = CONFIG['cfml']['dir']['repo']
@@ -341,6 +372,22 @@ def compile_cfml_objs():
     msg = _echo_msg(f"Exiting build dir '{build_dir}'")
     lines.append(msg)
     cmd = f'cd {_project_path()}'
+    lines.append(cmd)
+    script_name = f'{sys._getframe().f_code.co_name}.sh'
+    _write_lines_to_file(lines, script_name)
+    append_to_main_script(lines)
+
+def delete_renamed_global_deps_file():
+    repo_dir = CONFIG['cfml']['dir']['repo']
+    src_ext = CONFIG['build']['src-ext']['cfml']
+    src_dir = CONFIG['cfml']['dir']['repo-src']
+    name = f'CFML_GlobalDeps.{src_ext}'
+    relpath = os.path.join(repo_dir, src_dir, name)
+    abspath = os.path.join(_project_path(), relpath)
+    lines = []
+    msg = _echo_msg(f"Deleting previously created '{relpath}'")
+    lines.append(msg)
+    cmd = f'rm {abspath}'
     lines.append(cmd)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
@@ -766,7 +813,9 @@ if __name__ == '__main__':
     create_cfml_repo_dir()
     download_cfml_repo()
     create_cfml_build_dir()
+    rename_global_deps_file()
     compile_cfml_objs()
+    delete_renamed_global_deps_file()
     create_cfml_static_lib()
     create_cfml_dist_dir()
     copy_compiled_to_cfml_dist()

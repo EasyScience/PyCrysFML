@@ -542,6 +542,7 @@ def create_pycfml_dist_dir():
     append_to_main_script(lines)
 
 def copy_compiled_to_pycfml_dist():
+    shared_lib_ext = CONFIG['build']['shared-lib-ext'][_platform()]
     project_name = CONFIG['pycfml']['name']
     build_dir = CONFIG['pycfml']['dir']['build']
     build_path = os.path.join(_project_path(), build_dir)
@@ -552,7 +553,7 @@ def copy_compiled_to_pycfml_dist():
     lines = []
     msg = _echo_msg(f"Copying compiled {project_name} shared objects or dynamic libs to '{package_relpath}'")
     lines.append(msg)
-    from_path = os.path.join(build_path, '*.so')
+    from_path = os.path.join(build_path, f'*.{shared_lib_ext}')
     cmd = f'cp {from_path} {package_abspath}'
     lines.append(cmd)
     script_name = f'{sys._getframe().f_code.co_name}.sh'

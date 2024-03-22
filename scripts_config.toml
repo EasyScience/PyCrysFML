@@ -47,7 +47,7 @@ run-python = 'python3 {PATH}'
 run-tests = 'pytest {PATH} -v'
 
 [build]
-src-ext = 'f90'
+src-ext = { cfml = 'f90', pycfml = 'F90' }
 obj-ext = { macos = 'o', ubuntu = 'o', windows = 'obj' }
 lib-ext = { macos = 'a', ubuntu = 'a', windows = 'lib' }
 python-lib.macos = '`python3-config --ldflags --embed`'
@@ -379,8 +379,8 @@ components-files = [
 main-file = 'CFML_Simulated_Annealing'
 
 [[cfml-modules]]
-main-file = 'CFML_Diffpatt'
-components-dir = 'CFML_Diffpatt'
+main-file = 'CFML_DiffPatt'
+components-dir = 'CFML_DiffPatt'
 components-files = [
   'DiffP_ReadPatt_ILL',
   'DiffP_ReadPatt_CIF',

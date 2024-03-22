@@ -116,7 +116,8 @@ def _compiling_progress(current, total):
     return progress
 
 def _compile_objs_script_lines(modules, src_path, include_path=None):
-    src_ext = CONFIG['build']['src-ext']
+    src_ext = CONFIG['build']['src-ext'][modules]
+    modules = f'{modules}-modules'
     template_cmd = CONFIG['template']['build-obj']
     if include_path is None:
         template_cmd = template_cmd.replace(' -I {INCLUDE}', '')
@@ -287,7 +288,7 @@ def compile_cfml_objs():
     lines.append(cmd)
     msg = _echo_msg(f"Building fortran objects for {project_name}:")
     lines.append(msg)
-    compile_lines = _compile_objs_script_lines('cfml-modules', src_path)
+    compile_lines = _compile_objs_script_lines('cfml', src_path)
     lines.extend(compile_lines)
     msg = _echo_msg(f"Exiting build dir '{build_dir}'")
     lines.append(msg)
@@ -414,7 +415,7 @@ def add_powder_mod_to_pycfml_repo():
     pycfml_repo_dir = CONFIG['pycfml']['dir']['repo']
     pycfml_src_dir = CONFIG['pycfml']['dir']['repo-src']
     pycfml_src_path = os.path.join(_project_path(), pycfml_repo_dir, pycfml_src_dir)
-    src_ext = CONFIG['build']['src-ext']
+    src_ext = CONFIG['build']['src-ext']['pycfml']
     lines = []
     from_relpath = os.path.join('Testing', 'Powder', 'Test_2', 'fortran', 'src', f'powder_mod.{src_ext}')
     from_abspath = os.path.join(cfml_repo_path, from_relpath)
@@ -465,7 +466,7 @@ def compile_pycfml_objs():
     lines.append(cmd)
     msg = _echo_msg(f"Building fortran objects for {project_name}:")
     lines.append(msg)
-    compile_lines = _compile_objs_script_lines('pycfml-modules', src_path, include_dist_path)
+    compile_lines = _compile_objs_script_lines('pycfml', src_path, include_dist_path)
     lines.extend(compile_lines)
     msg = _echo_msg(f"Exiting build dir '{build_dir}'")
     lines.append(msg)

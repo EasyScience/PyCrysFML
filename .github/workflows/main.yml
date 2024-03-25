@@ -6,7 +6,7 @@ on:
   #  - cron: '*/120 8-18 * * *'  # every 2 hours from 8:00 to 18:00 every day
 
 jobs:
-  main:
+  make-wheel:
     timeout-minutes: 30
 
     runs-on: ${{ matrix.os }}
@@ -135,29 +135,49 @@ jobs:
           python3 -m pip install wheel
           scripts/rename_pycfml_python_wheel.sh
 
+      - name: Upload zipped wheel for next job
+        uses: actions/upload-artifact@v4
+        id: artifact-upload-step
+        with:
+          name: pycrysfml08-wheel_${{ matrix.os }}_${{ matrix.toolchain.compiler }}.zip
+          path: tests/unit_tests/test_py_cfml_sxtal*.py
+          if-no-files-found: 'error'
+          compression-level: 0
+
+  run-tests:
+    timeout-minutes: 30
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, macos-12, windows-2022]
+        toolchain:
+          - {compiler: gcc, version: 13}  # gfortran
+          - {compiler: intel-classic, version: '2021.10'}  # ifort
+          - {compiler: intel, version: '2023.2'}  # ifx
+        exclude:
+          - os: macos-12
+            toolchain: {compiler: intel, version: '2023.2'}  # ifx not supported
+
+    steps:
+      - name: Check-out repository
+        uses: actions/checkout@v3
+
+      - name: Download zipped wheel from previous job
+        uses: actions/download-artifact@v4
+        with:
+          path: pycrysfml08_wheel
+          pattern: pycrysfml08*${{ matrix.os }}*{{ matrix.toolchain.compiler }}*
+
       - name: Install pycfml from local wheel (with dev extras)
         shell: bash
         run: scripts/install_pycfml_from_wheel.sh
 
-      #- name: Upload wheel
-      #  if: matrix.compiler == 'gfortran'
-      #  uses: actions/upload-artifact@v4
-      #  with:
-      #    name: ${{ env.FIXED_WHEEL_NAME }}
-      #    path: ${{ env.PYCRYSFML_WHEEL }}${{ env.SEP }}${{ env.FIXED_WHEEL_NAME }}
-
       - name: Run pycfml unit tests
         shell: bash
         run: scripts/run_pycfml_unit_tests.sh
-
-      #- name: Calc pattern with powder_mod for SG Pnma
-      #  run: python3 tests${{ env.SEP }}powder_mod_tests${{ env.SEP }}test_powder_mod.py
-
-      #- name: Upload calculated pattern
-      #  uses: actions/upload-artifact@v4
-      #  with:
-      #    name: ycalc_${{ runner.os }}_${{ env.FC }}_${{ matrix.build_system }}.dat
-      #    path: ycalc.dat
 
       - name: Run powder_mod tests
         shell: bash
@@ -166,3 +186,9 @@ jobs:
       - name: Run powder_mod main
         shell: bash
         run: scripts/run_powder_mod_main.sh
+
+      #- name: Upload calculated pattern
+      #  uses: actions/upload-artifact@v4
+      #  with:
+      #    name: ycalc_${{ runner.os }}_${{ env.FC }}_${{ matrix.build_system }}.dat
+      #    path: ycalc.dat

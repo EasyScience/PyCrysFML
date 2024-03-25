@@ -140,7 +140,7 @@ jobs:
         id: artifact-upload-step
         with:
           name: pycrysfml08-wheel_${{ matrix.os }}_${{ matrix.toolchain.compiler }}.zip
-          path: tests/unit_tests/test_py_cfml_sxtal*.py
+          path: pycrysfml08_wheel/*.whl
           if-no-files-found: 'error'
           compression-level: 0
 

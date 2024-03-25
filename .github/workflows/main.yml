@@ -145,6 +145,8 @@ jobs:
           compression-level: 0
 
   run-tests:
+    needs: make-wheel
+
     timeout-minutes: 30
 
     runs-on: ${{ matrix.os }}

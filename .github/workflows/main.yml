@@ -168,7 +168,7 @@ jobs:
           ls -l ${{ env.WHEEL_DIR }}
           echo 'bbbb'
           echo `basename ${{ env.WHEEL_DIR }}/*.whl .whl`
-          echo "WHEEL_NAME=`basename ${{ env.WHEEL_DIR }}/*.whl .whl`" >> $GITHUB_ENV
+          echo "WHEEL_NAME=`basename $(python3 scripts.py --print-wheel-dir)/*.whl .whl`" >> $GITHUB_ENV
 
       - name: Upload zipped pycfml wheel for next job
         uses: actions/upload-artifact@v4

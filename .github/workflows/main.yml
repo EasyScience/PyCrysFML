@@ -9,8 +9,6 @@ jobs:
   make-wheel:
     timeout-minutes: 30
 
-    runs-on: ${{ matrix.os }}
-
     strategy:
       fail-fast: false
       matrix:
@@ -22,6 +20,16 @@ jobs:
         exclude:
           - os: macos-12
             toolchain: {compiler: intel, version: '2023.2'}  # ifx not supported
+
+    runs-on: ${{ matrix.os }}
+
+    env:
+      wheel-dir: pycrysfml08_wheel
+      wheel-name: pycrysfml08-wheel_${{ matrix.os }}_${{ matrix.toolchain.compiler }}.zip
+
+    outputs:
+      wheel-dir: ${{ env.wheel-dir }}
+      wheel-name: ${{ env.wheel-name }}
 
     steps:
       - name: Check-out repository
@@ -137,19 +145,14 @@ jobs:
 
       - name: Upload zipped wheel for next job
         uses: actions/upload-artifact@v4
-        id: artifact-upload-step
         with:
-          name: pycrysfml08-wheel_${{ matrix.os }}_${{ matrix.toolchain.compiler }}.zip
-          path: pycrysfml08_wheel/*.whl
+          name: ${{ env.wheel-name }}
+          path: ${{ env.wheel-dir }}
           if-no-files-found: 'error'
           compression-level: 0
 
   run-tests:
-    needs: make-wheel
-
     timeout-minutes: 30
-
-    runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
@@ -163,6 +166,10 @@ jobs:
           - os: macos-12
             toolchain: {compiler: intel, version: '2023.2'}  # ifx not supported
 
+    runs-on: ${{ matrix.os }}
+
+    needs: make-wheel
+
     steps:
       - name: Check-out repository
         uses: actions/checkout@v3
@@ -170,8 +177,8 @@ jobs:
       - name: Download zipped wheel from previous job
         uses: actions/download-artifact@v4
         with:
-          path: pycrysfml08_wheel
-          pattern: pycrysfml08*${{ matrix.os }}*{{ matrix.toolchain.compiler }}*
+          name: ${{ needs.make-wheel.outputs.wheel-name }}
+          path: ${{ needs.make-wheel.outputs.wheel-dir }}
 
       - name: Install pycfml from local wheel (with dev extras)
         shell: bash

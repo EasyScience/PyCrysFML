@@ -88,7 +88,7 @@ platforms = ['macos', 'linux']
 compilers = ['ifort', 'ifx']
 obj-ext = 'o'
 build-shared = '{COMPILER} -shared {PATH}.o -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {IFC_LIB} {PYTHON_LIB}'
-modes.base = "-fpp -fPIC -heap-arrays -Wl,-rpath,'$ORIGIN'"
+modes.base = '-fpp -fPIC -heap-arrays -Wl,-rpath,.'
 modes.debug = ''
 modes.release = ''
 

@@ -216,9 +216,8 @@ jobs:
 
       - name: DEBUG
         shell: bash
-        run:
-        #  ls -l ${{ env.LD_LIBRARY_PATH }}/python3.11/site-packages/pycrysfml08
-          ls -l /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08
+        run: |
+          ls -l /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08  # ls -l ${{ env.LD_LIBRARY_PATH }}/python3.11/site-packages/pycrysfml08
           ldd /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08/py_cfml_metrics.so
           patchelf --print-needed /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08/py_cfml_metrics.so
 

@@ -184,6 +184,7 @@ def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):
     cfml_lib_dist_dir = CONFIG['cfml']['dir']['dist-lib']
     cfml_lib_dist_path = os.path.join(cfml_dist_path, cfml_lib_dist_dir)
     python_lib = CONFIG['build']['python-lib'][_platform()]
+    ifc_lib = "-L/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin -lifport"
     compiler = _compiler_name()
     template_cmd = _compiler_build_shared_template()
     shared_lib_ext = CONFIG['build']['shared-lib-ext'][_platform()]
@@ -202,6 +203,7 @@ def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):
             cmd = cmd.replace('{EXT}', shared_lib_ext)
             cmd = cmd.replace('{CFML_LIB_PATH}', cfml_lib_dist_path)
             cmd = cmd.replace('{CFML_LIB_NAME}', cfml_lib_name)
+            cmd = cmd.replace('{IFC_LIB}', ifc_lib)
             cmd = cmd.replace('{PYTHON_LIB}', python_lib)
             lines.append(cmd)
     return lines

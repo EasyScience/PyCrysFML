@@ -108,7 +108,7 @@ jobs:
         run: |
           scripts/create_pycfml_build_dir.sh
           scripts/build_pycfml_objs.sh
-          scripts/build_pycfml_shared_objs_or_dynamic_libs.sh
+          bash -x scripts/build_pycfml_shared_objs_or_dynamic_libs.sh
           scripts/create_pycfml_dist_dir.sh
           scripts/copy_built_to_pycfml_dist.sh
 

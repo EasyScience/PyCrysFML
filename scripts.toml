@@ -55,7 +55,10 @@ python-lib.linux = ''
 python-lib.windows = 'C:\hostedtoolcache\windows\Python\3.11.8\x64\libs\python311.lib'
 extra-libs.macos.ifort = ['/System/Volumes/Data/opt/intel/oneapi/compiler/2023.2.0/mac/compiler/lib/libifcoremt.dylib']
 extra-libs.macos.ifx = ['/System/Volumes/Data/opt/intel/oneapi/compiler/2023.2.0/mac/compiler/lib/libifcoremt.dylib']
-extra-libs.linux.ifort = ['/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin/libifport.so.5']
+extra-libs.linux.ifort = ['/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin/libifport.so',
+                          '/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin/libifport.so.5',
+                          '/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin/libifcore.so',
+                          '/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin/libifcoremt.so.5']
 extra-libs.linux.ifx = ['/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin/libifport.so.5']
 extra-libs.windows.gfortran = ['C:\mingw64\bin\libgcc_s_seh-1.dll',
                                'C:\mingw64\bin\libgfortran-5.dll',
@@ -84,7 +87,7 @@ modes.release = ''
 platforms = ['macos', 'linux']
 compilers = ['ifort', 'ifx']
 obj-ext = 'o'
-build-shared = '{COMPILER} -shared {PATH}.o -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {PYTHON_LIB} -L/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin -lifport'
+build-shared = '{COMPILER} -shared {PATH}.o -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {IFC_LIB} {PYTHON_LIB}'
 modes.base = '-fpp -fPIC -heap-arrays'
 modes.debug = ''
 modes.release = ''

@@ -153,6 +153,8 @@ jobs:
         run: |
           python3 -m pip install wheel
           bash -x scripts/rename_pycfml_python_wheel.sh
+          ls -l /home/runner/work/TEST_PyCrysFML/TEST_PyCrysFML
+          ls -l ${{ env.wheel-dir }}
 
       - name: Upload zipped wheel for next job
         uses: actions/upload-artifact@v4
@@ -192,9 +194,17 @@ jobs:
           name: ${{ needs.make-wheel.outputs.wheel-name }}
           path: ${{ needs.make-wheel.outputs.wheel-dir }}
 
+      - name: Debugggggg
+        run: |
+          pwd
+          ls -l
+          ls -l /home/runner/work/TEST_PyCrysFML
+          ls -l /home/runner/work/TEST_PyCrysFML/TEST_PyCrysFML
+          ls -l ${{ needs.make-wheel.outputs.wheel-dir }}
+
       - name: Install pycfml from local wheel (with dev extras)
         shell: bash
-        run: scripts/install_pycfml_from_wheel.sh
+        run: bash -x scripts/install_pycfml_from_wheel.sh
 
       - name: Run pycfml unit tests
         shell: bash

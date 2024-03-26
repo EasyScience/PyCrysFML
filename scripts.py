@@ -650,6 +650,7 @@ def copy_extra_libs_to_pycfml_dist():
     except KeyError:
         msg = f"No extra libraries are needed for platform '{_platform()}' and compiler '{_compiler_name()}'"
         lines = [msg]
+        script_name = f'{sys._getframe().f_code.co_name}.sh'
         _write_lines_to_file(lines, script_name)
         append_to_main_script(lines)
         return

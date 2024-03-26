@@ -1,4 +1,4 @@
-name: main
+name: build-and-test
 
 on:
   push:
@@ -36,6 +36,9 @@ jobs:
         with:
           compiler: ${{ matrix.toolchain.compiler }}
           version: ${{ matrix.toolchain.version }}
+
+      - name: DEBUG
+        run: sudo find / -iname "libifport*"
 
       - name: Set up NMake build tool [Windows]
         if: runner.os == 'Windows'

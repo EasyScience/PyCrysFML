@@ -37,8 +37,9 @@ jobs:
           compiler: ${{ matrix.toolchain.compiler }}
           version: ${{ matrix.toolchain.version }}
 
-      - name: DEBUG
-        run: sudo find / -iname "libif*"
+      #- name: DEBUG
+      #  shell: bash
+      #  run: sudo find / -iname "libif*"
 
       - name: Set up NMake build tool [Windows]
         if: runner.os == 'Windows'
@@ -54,6 +55,7 @@ jobs:
         run: python3 -m pip install --upgrade pip
 
       - name: Install Python dependences
+        shell: bash
         run: python3 -m pip install 'validate-pyproject[all]' build wheel
 
       - name: Fix reinstalling gcc [macOS] # needed because of `brew reinstall gcc`

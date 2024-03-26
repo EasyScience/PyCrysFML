@@ -807,7 +807,7 @@ if __name__ == '__main__':
     ARGS = parsed_args()
     CONFIG = loaded_config('scripts.toml')
 
-    if ARGS.print_wheel_dir:
+    if ARGS.print_wheel_dir:  # NEED FIX. Maybe save extras to toml as in EDA?
         _print_pcfml_wheel_dir()
         exit(0)
 

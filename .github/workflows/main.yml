@@ -14,12 +14,12 @@ jobs:
       matrix:
         os: [ubuntu-22.04, macos-12, windows-2022]
         toolchain:
-          - {compiler: gcc, version: 13}  # gfortran
-          - {compiler: intel-classic, version: '2021.10'}  # ifort
-          - {compiler: intel, version: '2023.2'}  # ifx
+          - {exe: gfortran, compiler: gcc, version: 13}
+          - {exe: ifort, compiler: intel-classic, version: '2021.10'}
+          - {exe: ifx, compiler: intel, version: '2023.2'}
         exclude:
           - os: macos-12
-            toolchain: {compiler: intel, version: '2023.2'}  # ifx not supported
+            toolchain: {exe: ifx, compiler: intel, version: '2023.2'}  # no support for macOS
 
     runs-on: ${{ matrix.os }}
 
@@ -29,20 +29,15 @@ jobs:
       - name: Check-out repository
         uses: actions/checkout@v4
 
-      - name: Set up Fortran compiler (FC) [all except Windows + gfortran]
-        if: runner.os != 'Windows' || matrix.toolchain.compiler != 'gcc'  # let's use pre-installed gfortran
+      - name: Set up Fortran compiler (FC) [all except Windows + gfortran]  # except: use pre-installed gfortran
+        if: runner.os != 'Windows' || matrix.toolchain.exe != 'gfortran'
         uses: fortran-lang/setup-fortran@v1
         id: setup-fortran
         with:
           compiler: ${{ matrix.toolchain.compiler }}
           version: ${{ matrix.toolchain.version }}
 
-      - name: Set up Fortran compiler (FC) [Windows + gfortran]  # use pre-installed gfortran
-        if: runner.os == 'Windows' && matrix.toolchain.compiler == 'gcc'
-        shell: bash
-        run: echo "FC=gfortran" >> $GITHUB_ENV
-
-      - name: Set up Nmake build tool [Windows]
+      - name: Set up NMake build tool [Windows]
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1
 
@@ -68,7 +63,7 @@ jobs:
         run: >
           python3 scripts.py
           --platform ${{ runner.os }}
-          --compiler ${{ env.FC }}
+          --compiler ${{ matrix.toolchain.exe }}
           --mode debug
           --bash-syntax
 
@@ -143,7 +138,7 @@ jobs:
       - name: Upload zipped Python package wheel of pycfml for next job
         uses: actions/upload-artifact@v4
         with:  # if name or path modified, remember to UPDATE those in the download step of the next job
-          name: pycfml-${{ matrix.os }}-${{ env.FC }}  # name (without .zip) of the zip file to be uploaded
+          name: pycfml-wheel_${{ matrix.os }}_${{ matrix.toolchain.exe }}  # name (without .zip) of the zip file to be uploaded
           path: ${{ env.WHEEL_DIR }}  # all files from this directory are zipped
           if-no-files-found: 'error'
           compression-level: 0
@@ -155,12 +150,12 @@ jobs:
       matrix:
         os: [ubuntu-22.04, macos-12, windows-2022]
         toolchain:
-          - {compiler: gcc, version: 13}  # gfortran
-          - {compiler: intel-classic, version: '2021.10'}  # ifort
-          - {compiler: intel, version: '2023.2'}  # ifx
+          - {exe: gfortran, compiler: gcc, version: 13}
+          - {exe: ifort, compiler: intel-classic, version: '2021.10'}
+          - {exe: ifx, compiler: intel, version: '2023.2'}
         exclude:
           - os: macos-12
-            toolchain: {compiler: intel, version: '2023.2'}  # ifx not supported
+            toolchain: {exe: ifx, compiler: intel, version: '2023.2'}  # no support for macOS
 
     runs-on: ${{ matrix.os }}
 
@@ -186,6 +181,7 @@ jobs:
         run: >
           python3 scripts.py
           --platform ${{ runner.os }}
+          --compiler ${{ matrix.toolchain.exe }}
           --mode debug
           --bash-syntax
 
@@ -196,7 +192,7 @@ jobs:
       - name: Download zipped pcfml wheel from previous job
         uses: actions/download-artifact@v4
         with:  # name or path are taken from the upload step of the previous job
-          name: pycfml-${{ matrix.os }}-${{ env.FC }}  # name (without .zip) of the zipped artifact uploaded on the previous jobs
+          name: pycfml-wheel_${{ matrix.os }}_${{ matrix.toolchain.exe }}  # name (without .zip) of the zipped artifact uploaded on the previous jobs
           path: ${{ env.WHEEL_DIR }}  # directory to extract downloaded zipped artifacts
 
       - name: Install pycfml from downloaded Python package wheel (with dev extras)

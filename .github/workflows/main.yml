@@ -145,49 +145,32 @@ jobs:
           ls -l pycrysfml08_dist/pycrysfml08
 
           echo '::::: patchelf --print-rpath ...'
-          patchelf --debug  --print-rpath pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          patchelf --print-rpath pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          echo '::::: patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
+          patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          echo '::::: ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
+          ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
 
           #echo '::::: patchelf --no-default-lib ...'
           #patchelf --debug  --no-default-lib pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-
-
-          echo '::::: ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-
-          echo '::::: patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          patchelf --debug  --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-
-
           echo '::::: patchelf --set-rpath'
-          patchelf --debug --set-rpath '$ORIGIN' pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-
-          echo '::::: patchelf --print-rpath ...'
-          patchelf --debug  --print-rpath pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-
-
+          patchelf --set-rpath '$ORIGIN' pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
           echo '::::: patchelf --replace-needed libifport.so.5 ...'
           patchelf --replace-needed libifport.so.5 /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08/libifport.so.5 pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          #echo '::::: patchelf --replace-needed libifcoremt.so.5 ...'
-          #patchelf --replace-needed libifcoremt.so.5 ./libifcoremt.so.5 pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          echo '::::: ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          echo '::::: patchelf --replace-needed libifcoremt.so.5 ...'
+          patchelf --replace-needed libifcoremt.so.5 ./libifcoremt.so.5 pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+
+          echo '::::: patchelf --print-rpath ...'
+          patchelf --print-rpath pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
           echo '::::: patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
           patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          echo '::::: ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
+          ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
 
           #echo '::::: patchelf --remove-needed libifcoremt.so.5 ...'
           #patchelf --remove-needed libifcoremt.so.5 pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          #echo '::::: ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          #ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          #echo '::::: patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          #patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-
           #echo '::::: patchelf --add-needed ./libifcoremt.so.5  ...'
           #patchelf --add-needed --relative-to-file libifcoremt.so.5 pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-
-          echo '::::: ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          echo '::::: patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
 
       - name: Validate current project pyproject.toml
         shell: bash

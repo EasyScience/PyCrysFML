@@ -35,6 +35,14 @@ jobs:
       WHEEL_DIR: ${{ steps.set-output-variables.output.WHEEL_DIR }}
 
     steps:  # job steps
+
+      - name: QWE
+        shell: bash
+        run: |
+          echo "QWE=`basename scripts/download_pycfml_repo.sh .sh`" >> $GITHUB_ENV
+          echo "aaaa $QWE"
+          echo "bbbb ${{ env.QWE }}"
+
       - name: Check-out repository
         uses: actions/checkout@v4
 
@@ -67,7 +75,7 @@ jobs:
         shell: bash
         run: python3 -m pip install --upgrade pip
 
-      - name: Fix reinstall gcc [macOS] # needed because of `brew reinstall gcc`
+      - name: Fix reinstalling gcc [macOS] # needed because of `brew reinstall gcc`
         if: runner.os == 'macOS'
         shell: bash
         run: echo "MACOSX_DEPLOYMENT_TARGET=$(sw_vers -productVersion)" >> $GITHUB_ENV
@@ -152,8 +160,14 @@ jobs:
           scripts/rename_pycfml_python_wheel.sh
 
       - name: Prepare for uploading pycfml wheel
+        shell: bash
         run: |
           echo "WHEEL_DIR=$(python3 scripts.py --print-wheel-dir)" >> $GITHUB_ENV
+          echo "aaaa $WHEEL_DIR"
+          echo "bbbb ${{ env.WHEEL_DIR }}"
+          ls -l ${{ env.WHEEL_DIR }}
+          echo 'bbbb'
+          echo `basename ${{ env.WHEEL_DIR }}/*.whl .whl`
           echo "WHEEL_NAME=`basename ${{ env.WHEEL_DIR }}/*.whl .whl`" >> $GITHUB_ENV
 
       - name: Upload zipped pycfml wheel for next job

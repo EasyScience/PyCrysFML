@@ -33,7 +33,7 @@ jobs:
 
     steps:
       - name: Check-out repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up fortran (all except Windows + gfortran)
         if: runner.os != 'Windows' || matrix.toolchain.compiler != 'gcc'  # let's use pre-installed gfortran
@@ -172,7 +172,7 @@ jobs:
 
     steps:
       - name: Check-out repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Download zipped wheel from previous job
         uses: actions/download-artifact@v4

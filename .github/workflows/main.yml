@@ -155,10 +155,10 @@ jobs:
           #patchelf --debug  --no-default-lib pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
           echo '::::: patchelf --set-rpath'
           patchelf --set-rpath '$ORIGIN' pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          echo '::::: patchelf --replace-needed libifport.so.5 ...'
-          patchelf --replace-needed libifport.so.5 /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08/libifport.so.5 pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          echo '::::: patchelf --replace-needed libifcoremt.so.5 ...'
-          patchelf --replace-needed libifcoremt.so.5 ./libifcoremt.so.5 pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          #echo '::::: patchelf --replace-needed libifport.so.5 ...'
+          #patchelf --replace-needed libifport.so.5 /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08/libifport.so.5 pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          #echo '::::: patchelf --replace-needed libifcoremt.so.5 ...'
+          #patchelf --replace-needed libifcoremt.so.5 ./libifcoremt.so.5 pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
 
           echo '::::: patchelf --print-rpath ...'
           patchelf --print-rpath pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
@@ -255,9 +255,10 @@ jobs:
       - name: DEBUG
         shell: bash
         run: |
+          echo '::::: ls -l /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08'
           ls -l /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08  # ls -l ${{ env.LD_LIBRARY_PATH }}/python3.11/site-packages/pycrysfml08
+          echo '::::: lldd /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08/py_cfml_metrics.so'
           ldd /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08/py_cfml_metrics.so
-          patchelf --print-needed /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08/py_cfml_metrics.so
 
       - name: Run pycfml unit tests
         shell: bash

@@ -158,7 +158,7 @@ jobs:
       - name: Set variables to be accessible in the next jobs
         id: set-output-variables
         run: |
-          echo "FC={{ env.FC }}" >> $GITHUB_OUTPUT
+          echo "FC=${{ env.FC }}" >> $GITHUB_OUTPUT
           echo "WHEEL_NAME=${{ env.WHEEL_NAME }}" >> $GITHUB_OUTPUT
           echo "WHEEL_DIR=${{ env.WHEEL_DIR }}" >> $GITHUB_OUTPUT
 

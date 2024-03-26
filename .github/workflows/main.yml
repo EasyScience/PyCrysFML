@@ -150,7 +150,7 @@ jobs:
       - name: Upload zipped Python package wheel of pycfml for next job
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.WHEEL_NAME }}  #  name (without .zip) of the zip file to be uploaded
+          name: ${{ env.WHEEL_NAME }}_${{ env.FC }}  # name (without .zip) of the zip file to be uploaded
           path: ${{ env.WHEEL_DIR }}  # all files from this directory are zipped
           if-no-files-found: 'error'
           compression-level: 0
@@ -212,7 +212,7 @@ jobs:
       - name: Download zipped pcfml wheel from previous job
         uses: actions/download-artifact@v4
         with:
-          name: ${{ env.WHEEL_NAME }}  # name (without .zip) of the zipped artifact uploaded on the previous jobs
+          name: ${{ env.WHEEL_NAME }}_${{ env.FC }}  # name (without .zip) of the zipped artifact uploaded on the previous jobs
           path: ${{ env.WHEEL_DIR }}  # directory to extract downloaded zipped artifacts
 
       - name: Install pycfml from downloaded Python package wheel (with dev extras)

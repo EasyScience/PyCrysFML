@@ -125,7 +125,7 @@ jobs:
         run: scripts/copy_cfml_databases_to_pycfml_dist.sh
 
       - name: DEBUG
-        run: ls -l pycrysfml08_dist
+        run: ls -l pycrysfml08_dist/pycrysfml08
 
       - name: Validate current project pyproject.toml
         shell: bash

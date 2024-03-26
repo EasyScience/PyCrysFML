@@ -181,9 +181,6 @@ jobs:
           #echo '::::: patchelf --add-needed ./libifcoremt.so.5  ...'
           #patchelf --add-needed --relative-to-file libifcoremt.so.5 pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
 
-          echo '::::: patchelf --no-standard-lib-dirs --relative-to-file  ...'
-          patchelf --make-rpath-relative . --relative-to-file pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-
           echo '::::: ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
           ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
           echo '::::: patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'

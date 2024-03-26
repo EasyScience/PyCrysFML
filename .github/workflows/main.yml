@@ -217,7 +217,10 @@ jobs:
 
       - name: Install pycfml from downloaded Python package wheel (with dev extras)
         shell: bash
-        run: scripts/install_pycfml_from_wheel.sh
+        run: |
+          echo ${{ env.WHEEL_DIR }}
+          ls -l ${{ env.WHEEL_DIR }}
+          scripts/install_pycfml_from_wheel.sh
 
       - name: Run pycfml unit tests
         shell: bash

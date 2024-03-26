@@ -151,8 +151,8 @@ jobs:
           echo '::::: ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
           ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
 
-          #echo '::::: patchelf --no-default-lib ...'
-          #patchelf --debug  --no-default-lib pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          echo '::::: patchelf --no-default-lib ...'
+          patchelf --no-default-lib pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
           echo '::::: patchelf --set-rpath'
           patchelf --set-rpath '$ORIGIN' pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
           #echo '::::: patchelf --replace-needed libifport.so.5 ...'

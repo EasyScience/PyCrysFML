@@ -53,6 +53,8 @@ shared-lib-ext = { macos = 'so', linux = 'so', windows = 'pyd' }
 python-lib.macos = '`python3-config --ldflags --embed`'
 python-lib.linux = ''
 python-lib.windows = 'C:\hostedtoolcache\windows\Python\3.11.8\x64\libs\python311.lib'
+extra-libs.macos.ifort = ['/System/Volumes/Data/opt/intel/oneapi/compiler/2023.2.0/mac/compiler/lib/libifcoremt.dylib']
+extra-libs.macos.ifx = ['/System/Volumes/Data/opt/intel/oneapi/compiler/2023.2.0/mac/compiler/lib/libifcoremt.dylib']
 extra-libs.linux.ifort = ['/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin/libifport.so']
 extra-libs.linux.ifx = ['/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin/libifport.so']
 extra-libs.windows.gfortran = ['C:\hostedtoolcache\windows\Python\3.11.8\x64\libs\python311.lib',

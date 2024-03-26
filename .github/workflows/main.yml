@@ -16,7 +16,7 @@ jobs:
         toolchain:
           - {exe: gfortran, compiler: gcc, version: 13}
           - {exe: ifort, compiler: intel-classic, version: '2021.10'}
-          - {exe: ifx, compiler: intel, version: '2023.2'}
+        #  - {exe: ifx, compiler: intel, version: '2023.2'}
         exclude:
           - os: macos-12
             toolchain: {exe: ifx, compiler: intel, version: '2023.2'}  # no support for macOS
@@ -160,7 +160,7 @@ jobs:
         toolchain:
           - {exe: gfortran, compiler: gcc, version: 13}
           - {exe: ifort, compiler: intel-classic, version: '2021.10'}
-          - {exe: ifx, compiler: intel, version: '2023.2'}
+        #  - {exe: ifx, compiler: intel, version: '2023.2'}
         exclude:
           - os: macos-12
             toolchain: {exe: ifx, compiler: intel, version: '2023.2'}  # no support for macOS

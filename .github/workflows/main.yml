@@ -41,8 +41,8 @@ jobs:
         with:
           compiler: ${{ matrix.toolchain.compiler }}
           version: ${{ matrix.toolchain.version }}
-        run: |
-          echo '!!!!!!'
+          run: |
+            echo '!!!!!!'
 
       - name: Set up Fortran compiler (FC) [Windows + gfortran]  # use pre-installed gfortran
         if: runner.os == 'Windows' && matrix.toolchain.compiler == 'gcc'

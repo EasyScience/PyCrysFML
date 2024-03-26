@@ -29,6 +29,16 @@ jobs:
       - name: Check-out repository
         uses: actions/checkout@v4
 
+
+      - name: Upload zipped Python package wheel of pycfml for next job
+        uses: actions/upload-artifact@v4
+        with:  # if name or path modified, remember to UPDATE those in the download step of the next job
+          name: pycfml-${{ matrix.os }}-${{ env.FC }}  # name (without .zip) of the zip file to be uploaded
+          path: "$(python3 scripts.py --print-wheel-dir)"  # all files from this directory are zipped
+          if-no-files-found: 'error'
+          compression-level: 0
+
+
       - name: Set up Fortran compiler (FC) [all except Windows + gfortran]
         if: runner.os != 'Windows' || matrix.toolchain.compiler != 'gcc'  # let's use pre-installed gfortran
         uses: fortran-lang/setup-fortran@v1

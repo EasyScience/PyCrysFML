@@ -151,7 +151,7 @@ jobs:
           patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
 
           echo '::::: patchelf --add-needed ./libifcoremt.so.5  ...'
-          patchelf --add-needed ./libifcoremt.so.5 pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          patchelf --add-needed --relative-to-file ./libifcoremt.so.5 pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
           echo '::::: ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
           ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
           echo '::::: patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'

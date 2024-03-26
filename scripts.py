@@ -645,7 +645,10 @@ def copy_built_to_pycfml_dist():
     append_to_main_script(lines)
 
 def copy_extra_libs_to_pycfml_dist():
-    extra_libs = CONFIG['build']['extra-libs'][_platform()]
+    try:
+        extra_libs = CONFIG['build']['extra-libs'][_platform()][_compiler_name()]
+    except KeyError:
+        return
     dist_dir = CONFIG['pycfml']['dir']['dist']
     package_dir = CONFIG['pycfml']['dir']['dist-package']
     package_relpath = os.path.join(dist_dir, package_dir)

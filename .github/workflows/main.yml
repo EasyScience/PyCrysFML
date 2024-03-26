@@ -29,13 +29,16 @@ jobs:
       wheel-dir: pycrysfml08_wheel
       wheel-name: pycrysfml08-wheel_${{ matrix.os }}_${{ matrix.toolchain.compiler }}.zip
 
-    outputs:  # variables accessible on other jobs, dependent on the current job
-      wheel-dir: ${{ env.wheel-dir }}
-      wheel-name: ${{ env.wheel-name }}
+    #outputs:  # variables accessible on other jobs, dependent on the current job
+    #  wheel-dir: ${{ env.wheel-dir }}
+    #  wheel-name: ${{ env.wheel-name }}
 
     steps:  # job steps
       - name: Check-out repository
         uses: actions/checkout@v4
+
+      - name: Share all envs for the next jobs
+        run: $GITHUB_ENV >> $GITHUB_OUTPUT
 
       - name: Set up Fortran compiler (FC) [all except Windows + gfortran]
         if: runner.os != 'Windows' || matrix.toolchain.compiler != 'gcc'  # let's use pre-installed gfortran
@@ -68,7 +71,7 @@ jobs:
         shell: bash
         run: echo "MACOSX_DEPLOYMENT_TARGET=$(sw_vers -productVersion)" >> $GITHUB_ENV  # needed because of `brew reinstall gcc`
 
-      - name: Create scripts
+      - name: Create job step scripts
         shell: bash
         run: >
           python3 scripts.py
@@ -81,13 +84,13 @@ jobs:
         shell: bash
         run: scripts/show_info.sh  # bash -x scripts/show_info.sh for printing commands
 
-      - name: Download cfml repo
+      - name: Download cfml repository
         shell: bash
         run: |
           scripts/create_cfml_repo_dir.sh
           scripts/download_cfml_repo.sh
 
-      - name: Build cfml
+      - name: Build cfml static library
         shell: bash
         run: |
           scripts/create_cfml_build_dir.sh
@@ -98,7 +101,7 @@ jobs:
           scripts/create_cfml_dist_dir.sh
           scripts/copy_compiled_to_cfml_dist.sh
 
-      - name: Download pycfml repo
+      - name: Download pycfml repository
         shell: bash
         run: |
           scripts/create_pycfml_repo_dir.sh
@@ -135,25 +138,27 @@ jobs:
           python3 -m pip install 'validate-pyproject[all]'
           scripts/validate_pyproject_toml.sh
 
-      - name: Create pycfml python3 wheel
+      - name: Create pycfml python wheel
         shell: bash
         run: |
           python3 -m pip install build
           scripts/create_pycfml_python_wheel.sh
 
-      - name: Rename pycfml wheel
+      - name: Rename pycfml python wheel
         shell: bash
         run: |
           python3 -m pip install wheel
           scripts/rename_pycfml_python_wheel.sh
+          echo "WHEEL_NAME=`basename pycrysfml08_wheel/*.whl .whl` >> $GITHUB_ENV
 
-      - name: Upload zipped wheel for next job
+      - name: Upload zipped pycfml wheel for next job
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.wheel-name }}
-          path: ${{ env.wheel-dir }}
+          name: ${{ env.wheel-name }}  #  name (without .zip) of the zip file to be uploaded
+          path: ${{ env.wheel-dir }}  # all files from this directory are zipped
           if-no-files-found: 'error'
           compression-level: 0
+
 
   run-tests:  # the second job
 
@@ -179,6 +184,9 @@ jobs:
       - name: Check-out repository
         uses: actions/checkout@v4
 
+      - name: Load all envs saved in the first job
+        run: $GITHUB_OUTPUT >> $GITHUB_ENV
+
       - name: Set up python environment
         uses: actions/setup-python@v5
         with:
@@ -188,7 +196,7 @@ jobs:
         shell: bash
         run: python3 -m pip install --upgrade pip
 
-      - name: Create scripts
+      - name: Create job step scripts
         shell: bash
         run: >
           python3 scripts.py
@@ -196,11 +204,11 @@ jobs:
           --mode debug
           --bash-syntax
 
-      - name: Download zipped wheel from previous job
+      - name: Download zipped pcfml wheel from previous job
         uses: actions/download-artifact@v4
         with:
-          name: ${{ needs.make-wheel.outputs.wheel-name }}
-          path: ${{ needs.make-wheel.outputs.wheel-dir }}
+          name: ${{ needs.make-wheel.outputs.wheel-name }}  # name (without .zip) of the zipped artifact uploaded on the previous jobs
+          path: ${{ needs.make-wheel.outputs.wheel-dir }}  # directory to extract downloaded zipped artifacts
 
       - name: Install pycfml from local wheel (with dev extras)
         shell: bash

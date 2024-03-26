@@ -25,29 +25,14 @@ jobs:
 
     timeout-minutes: 30
 
-    #env:  # environment variables accessible on next steps in the current job
-    #  wheel-dir: pycrysfml08_wheel
-    #  wheel-name: pycrysfml08-wheel_${{ matrix.os }}_${{ matrix.toolchain.compiler }}.zip
-
     outputs:  # variables accessible on other jobs, dependent on the current job
       FC: ${{ steps.set-output-variables.output.FC }}
       WHEEL_NAME: ${{ steps.set-output-variables.output.WHEEL_NAME }}
       WHEEL_DIR: ${{ steps.set-output-variables.output.WHEEL_DIR }}
 
     steps:  # job steps
-
-      - name: QWE
-        shell: bash
-        run: |
-          echo "QWE=`basename scripts/download_pycfml_repo.sh .sh`" >> $GITHUB_ENV
-          echo "aaaa $QWE"
-          echo "bbbb ${{ env.QWE }}"
-
       - name: Check-out repository
         uses: actions/checkout@v4
-
-      #- name: Share all envs for the next jobs
-      #  run: cat .env >> $GITHUB_OUTPUT
 
       - name: Set up Fortran compiler (FC) [all except Windows + gfortran]
         if: runner.os != 'Windows' || matrix.toolchain.compiler != 'gcc'  # let's use pre-installed gfortran
@@ -163,11 +148,6 @@ jobs:
         shell: bash
         run: |
           echo "WHEEL_DIR=$(python3 scripts.py --print-wheel-dir)" >> $GITHUB_ENV
-          echo "aaaa $WHEEL_DIR"
-          echo "bbbb ${{ env.WHEEL_DIR }}"
-          ls -l ${{ env.WHEEL_DIR }}
-          echo 'bbbb'
-          echo `basename ${{ env.WHEEL_DIR }}/*.whl .whl`
           echo "WHEEL_NAME=`basename $(python3 scripts.py --print-wheel-dir)/*.whl .whl`" >> $GITHUB_ENV
 
       - name: Upload zipped pycfml wheel for next job
@@ -205,7 +185,7 @@ jobs:
 
     needs: make-wheel  # previous job need to be finished first
 
-    outputs:  # variables defined in the first job
+    env:  # variables defined in the first job
       FC: ${{ needs.make-wheel.outputs.FC }}
       WHEEL_NAME: ${{ needs.make-wheel.outputs.WHEEL_NAME }}
       WHEEL_DIR: ${{ needs.make-wheel.outputs.WHEEL_DIR }}

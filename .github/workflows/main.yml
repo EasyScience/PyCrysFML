@@ -38,7 +38,7 @@ jobs:
           version: ${{ matrix.toolchain.version }}
 
       - name: DEBUG
-        run: sudo find / -iname "libifport*"
+        run: sudo find / -iname "libif*"
 
       - name: Set up NMake build tool [Windows]
         if: runner.os == 'Windows'
@@ -121,6 +121,9 @@ jobs:
       - name: Copy magnetic_data.txt database from cfml to pycfml dist
         shell: bash
         run: scripts/copy_cfml_databases_to_pycfml_dist.sh
+
+      - name: DEBUG
+        run: ls -l pycrysfml08_dist
 
       - name: Validate current project pyproject.toml
         shell: bash

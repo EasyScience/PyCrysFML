@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, macos-12, windows-2022]
+        os: [ubuntu-22.04] #, macos-12, windows-2022]
         toolchain:
           - {exe: gfortran, compiler: gcc, version: 13}
           - {exe: ifort, compiler: intel-classic, version: '2021.10'}
@@ -156,7 +156,7 @@ jobs:
     strategy:  # current job matrix. copy of the strategy from the previous job
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, macos-12, windows-2022]
+        os: [ubuntu-22.04] #, macos-12, windows-2022]
         toolchain:
           - {exe: gfortran, compiler: gcc, version: 13}
           - {exe: ifort, compiler: intel-classic, version: '2021.10'}
@@ -206,6 +206,10 @@ jobs:
       - name: Install pycfml from downloaded Python package wheel (with dev extras)
         shell: bash
         run: scripts/install_pycfml_from_wheel.sh
+
+      - name: DEBUG
+        shell: bash
+        run: ls -l ${{ env.LD_LIBRARY_PATH }}/python3.11/site-packages/pycrysfml08
 
       - name: Run pycfml unit tests
         shell: bash

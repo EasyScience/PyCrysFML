@@ -25,20 +25,21 @@ jobs:
 
     timeout-minutes: 30
 
-    env:  # environment variables accessible on next steps in the current job
-      wheel-dir: pycrysfml08_wheel
-      wheel-name: pycrysfml08-wheel_${{ matrix.os }}_${{ matrix.toolchain.compiler }}.zip
+    #env:  # environment variables accessible on next steps in the current job
+    #  wheel-dir: pycrysfml08_wheel
+    #  wheel-name: pycrysfml08-wheel_${{ matrix.os }}_${{ matrix.toolchain.compiler }}.zip
 
-    #outputs:  # variables accessible on other jobs, dependent on the current job
-    #  wheel-dir: ${{ env.wheel-dir }}
-    #  wheel-name: ${{ env.wheel-name }}
+    outputs:  # variables accessible on other jobs, dependent on the current job
+      FC: ${{ steps.set-output-variables.output.FC }}
+      WHEEL_NAME: ${{ steps.set-output-variables.output.WHEEL_NAME }}
+      WHEEL_DIR: ${{ steps.set-output-variables.output.WHEEL_DIR }}
 
     steps:  # job steps
       - name: Check-out repository
         uses: actions/checkout@v4
 
-      - name: Share all envs for the next jobs
-        run: $GITHUB_ENV >> $GITHUB_OUTPUT
+      #- name: Share all envs for the next jobs
+      #  run: cat .env >> $GITHUB_OUTPUT
 
       - name: Set up Fortran compiler (FC) [all except Windows + gfortran]
         if: runner.os != 'Windows' || matrix.toolchain.compiler != 'gcc'  # let's use pre-installed gfortran
@@ -48,8 +49,8 @@ jobs:
           compiler: ${{ matrix.toolchain.compiler }}
           version: ${{ matrix.toolchain.version }}
 
-      - name: Set up Fortran compiler (FC) [Windows + gfortran]
-        if: runner.os == 'Windows' && matrix.toolchain.compiler == 'gcc'  # let's use pre-installed gfortran
+      - name: Set up Fortran compiler (FC) [Windows + gfortran]  # use pre-installed gfortran
+        if: runner.os == 'Windows' && matrix.toolchain.compiler == 'gcc'
         shell: bash
         run: echo "FC=gfortran" >> $GITHUB_ENV
 
@@ -66,10 +67,10 @@ jobs:
         shell: bash
         run: python3 -m pip install --upgrade pip
 
-      - name: Declare os-specific environment variables
+      - name: Fix reinstall gcc [macOS] # needed because of `brew reinstall gcc`
         if: runner.os == 'macOS'
         shell: bash
-        run: echo "MACOSX_DEPLOYMENT_TARGET=$(sw_vers -productVersion)" >> $GITHUB_ENV  # needed because of `brew reinstall gcc`
+        run: echo "MACOSX_DEPLOYMENT_TARGET=$(sw_vers -productVersion)" >> $GITHUB_ENV
 
       - name: Create job step scripts
         shell: bash
@@ -149,16 +150,26 @@ jobs:
         run: |
           python3 -m pip install wheel
           scripts/rename_pycfml_python_wheel.sh
-          echo "WHEEL_NAME=`basename pycrysfml08_wheel/*.whl .whl` >> $GITHUB_ENV
+
+      - name: Prepare for uploading pycfml wheel
+        run: |
+          echo "WHEEL_DIR=$(python3 scripts.py --print-wheel-dir)" >> $GITHUB_ENV
+          echo "WHEEL_NAME=`basename ${{ env.WHEEL_DIR }}/*.whl .whl`" >> $GITHUB_ENV
 
       - name: Upload zipped pycfml wheel for next job
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.wheel-name }}  #  name (without .zip) of the zip file to be uploaded
-          path: ${{ env.wheel-dir }}  # all files from this directory are zipped
+          name: ${{ env.WHEEL_NAME }}  #  name (without .zip) of the zip file to be uploaded
+          path: ${{ env.WHEEL_DIR }}  # all files from this directory are zipped
           if-no-files-found: 'error'
           compression-level: 0
 
+      - name: Set variables to be accessible in the next jobs
+        id: set-output-variables
+        run: |
+          echo "FC={{ env.FC }}"
+          echo "WHEEL_NAME=${{ env.WHEEL_NAME }}" >> $GITHUB_OUTPUT
+          echo "WHEEL_DIR=${{ env.WHEEL_DIR }}" >> $GITHUB_OUTPUT
 
   run-tests:  # the second job
 
@@ -180,12 +191,17 @@ jobs:
 
     needs: make-wheel  # previous job need to be finished first
 
+    outputs:  # variables defined in the first job
+      FC: ${{ needs.make-wheel.outputs.FC }}
+      WHEEL_NAME: ${{ needs.make-wheel.outputs.WHEEL_NAME }}
+      WHEEL_DIR: ${{ needs.make-wheel.outputs.WHEEL_DIR }}
+
     steps:  # job steps
       - name: Check-out repository
         uses: actions/checkout@v4
 
       - name: Load all envs saved in the first job
-        run: $GITHUB_OUTPUT >> $GITHUB_ENV
+        run: cat .output >> $GITHUB_ENV
 
       - name: Set up python environment
         uses: actions/setup-python@v5
@@ -201,14 +217,15 @@ jobs:
         run: >
           python3 scripts.py
           --platform ${{ runner.os }}
+          --compiler ${{ env.FC }}
           --mode debug
           --bash-syntax
 
       - name: Download zipped pcfml wheel from previous job
         uses: actions/download-artifact@v4
         with:
-          name: ${{ needs.make-wheel.outputs.wheel-name }}  # name (without .zip) of the zipped artifact uploaded on the previous jobs
-          path: ${{ needs.make-wheel.outputs.wheel-dir }}  # directory to extract downloaded zipped artifacts
+          name: ${{ env.WHEEL_NAME }}  # name (without .zip) of the zipped artifact uploaded on the previous jobs
+          path: ${{ env.WHEEL_DIR }}  # directory to extract downloaded zipped artifacts
 
       - name: Install pycfml from local wheel (with dev extras)
         shell: bash

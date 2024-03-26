@@ -93,6 +93,16 @@ def _bash_syntax():
         bash_syntax = ARGS.bash_syntax
     return bash_syntax
 
+
+def _print_wheel_dir():
+    if ARGS.print_wheel_dir:
+        print('pycrysfml08_wheel')
+    else:
+        print()
+
+
+
+
 def _compiler_name():
     compiler = 'gfortran'  # default
     if ARGS.compiler:
@@ -222,6 +232,9 @@ def parsed_args():
     parser.add_argument("--bash-syntax",
                         action='store_true',
                         help="force bash shell syntax")
+    parser.add_argument("--print-wheel-dir",
+                        action='store_true',
+                        help="print pycfml wheel directory name")
     return parser.parse_args()
 
 def loaded_config(name: str):
@@ -799,6 +812,14 @@ def run_powder_mod_main():
 if __name__ == '__main__':
     ARGS = parsed_args()
     CONFIG = loaded_config('scripts.toml')
+
+    if ARGS.print_wheel_dir:
+        print('pycrysfml08_wheel')
+        exit(0)
+
+    #_print_wheel_dir()
+    #exit()
+
     cfml_project_name = CONFIG['cfml']['name']
     pycfml_project_name = CONFIG['pycfml']['name']
 

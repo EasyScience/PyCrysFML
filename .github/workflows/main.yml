@@ -127,8 +127,11 @@ jobs:
       - name: DEBUG
         run: |
           ls -l pycrysfml08_dist/pycrysfml08
+          ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
           patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
           patchelf --replace-needed libifport.so.5 /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08/libifport.so.5 pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          patchelf --replace-needed libifcoremt.so.5 ./libifcoremt.so.5 pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
           patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
 
       - name: Validate current project pyproject.toml

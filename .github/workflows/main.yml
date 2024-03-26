@@ -6,32 +6,34 @@ on:
   #  - cron: '*/120 8-18 * * *'  # every 2 hours from 8:00 to 18:00 every day
 
 jobs:
-  make-wheel:
-    timeout-minutes: 30
+  make-wheel:  # the first job
 
+    # current job matrix. if modified, remember to UPDATE the strategy in the next job
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, macos-12, windows-2022]
+        os: [ubuntu-22.04] # [ubuntu-22.04, macos-12, windows-2022]
         toolchain:
           - {compiler: gcc, version: 13}  # gfortran
-          - {compiler: intel-classic, version: '2021.10'}  # ifort
-          - {compiler: intel, version: '2023.2'}  # ifx
-        exclude:
-          - os: macos-12
-            toolchain: {compiler: intel, version: '2023.2'}  # ifx not supported
+        #  - {compiler: intel-classic, version: '2021.10'}  # ifort
+        #  - {compiler: intel, version: '2023.2'}  # ifx
+        #exclude:
+        #  - os: macos-12
+        #    toolchain: {compiler: intel, version: '2023.2'}  # ifx not supported
 
     runs-on: ${{ matrix.os }}
 
-    env:
+    timeout-minutes: 30
+
+    env:  # environment variables accessible on next steps in the current job
       wheel-dir: pycrysfml08_wheel
       wheel-name: pycrysfml08-wheel_${{ matrix.os }}_${{ matrix.toolchain.compiler }}.zip
 
-    outputs:
+    outputs:  # variables accessible on other jobs, dependent on the current job
       wheel-dir: ${{ env.wheel-dir }}
       wheel-name: ${{ env.wheel-name }}
 
-    steps:
+    steps:  # job steps
       - name: Check-out repository
         uses: actions/checkout@v4
 
@@ -151,26 +153,27 @@ jobs:
           if-no-files-found: 'error'
           compression-level: 0
 
-  run-tests:
-    timeout-minutes: 30
+  run-tests:  # the second job
 
-    strategy:
+    strategy:  # current job matrix. copy of the strategy from the previous job
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, macos-12, windows-2022]
+        os: [ubuntu-22.04] # [ubuntu-22.04, macos-12, windows-2022]
         toolchain:
           - {compiler: gcc, version: 13}  # gfortran
-          - {compiler: intel-classic, version: '2021.10'}  # ifort
-          - {compiler: intel, version: '2023.2'}  # ifx
-        exclude:
-          - os: macos-12
-            toolchain: {compiler: intel, version: '2023.2'}  # ifx not supported
+        #  - {compiler: intel-classic, version: '2021.10'}  # ifort
+        #  - {compiler: intel, version: '2023.2'}  # ifx
+        #exclude:
+        #  - os: macos-12
+        #    toolchain: {compiler: intel, version: '2023.2'}  # ifx not supported
 
     runs-on: ${{ matrix.os }}
 
-    needs: make-wheel
+    timeout-minutes: 30
 
-    steps:
+    needs: make-wheel  # previous job need to be finished first
+
+    steps:  # job steps
       - name: Check-out repository
         uses: actions/checkout@v4
 
@@ -195,9 +198,3 @@ jobs:
       - name: Run powder_mod main
         shell: bash
         run: scripts/run_powder_mod_main.sh
-
-      #- name: Upload calculated pattern
-      #  uses: actions/upload-artifact@v4
-      #  with:
-      #    name: ycalc_${{ runner.os }}_${{ env.FC }}_${{ matrix.build_system }}.dat
-      #    path: ycalc.dat

@@ -68,9 +68,6 @@ jobs:
         shell: bash
         run: echo "MACOSX_DEPLOYMENT_TARGET=$(sw_vers -productVersion)" >> $GITHUB_ENV  # needed because of `brew reinstall gcc`
 
-      - name: Debug
-        run: pwd
-
       - name: Create scripts
         shell: bash
         run: >
@@ -87,27 +84,25 @@ jobs:
       - name: Download cfml repo
         shell: bash
         run: |
-          bash -x scripts/create_cfml_repo_dir.sh
-          bash -x scripts/download_cfml_repo.sh
+          scripts/create_cfml_repo_dir.sh
+          scripts/download_cfml_repo.sh
 
       - name: Build cfml
         shell: bash
         run: |
-          pwd
-          ls -l
-          bash -x scripts/create_cfml_build_dir.sh
-          bash -x scripts/rename_global_deps_file.sh
-          bash -x scripts/compile_cfml_objs.sh
-          bash -x scripts/delete_renamed_global_deps_file.sh
-          bash -x scripts/create_cfml_static_lib.sh
-          bash -x scripts/create_cfml_dist_dir.sh
-          bash -x scripts/copy_compiled_to_cfml_dist.sh
+          scripts/create_cfml_build_dir.sh
+          scripts/rename_global_deps_file.sh
+          scripts/compile_cfml_objs.sh
+          scripts/delete_renamed_global_deps_file.sh
+          scripts/create_cfml_static_lib.sh
+          scripts/create_cfml_dist_dir.sh
+          scripts/copy_compiled_to_cfml_dist.sh
 
       - name: Download pycfml repo
         shell: bash
         run: |
-          bash -x scripts/create_pycfml_repo_dir.sh
-          bash -x scripts/download_pycfml_repo.sh
+          scripts/create_pycfml_repo_dir.sh
+          scripts/download_pycfml_repo.sh
 
       - name: Copy powder_mod to from cfml to pycfml
         shell: bash
@@ -135,6 +130,7 @@ jobs:
         run: scripts/add_cfml_databases_to_pycfml_dist.sh
 
       - name: Validate pyproject.toml
+        shell: bash
         run: |
           python3 -m pip install 'validate-pyproject[all]'
           scripts/validate_pyproject_toml.sh
@@ -143,18 +139,13 @@ jobs:
         shell: bash
         run: |
           python3 -m pip install build
-          pwd
-          ls -l
-          bash -x scripts/create_pycfml_python_wheel.sh
-          pwd
-          ls -l
+          scripts/create_pycfml_python_wheel.sh
 
       - name: Rename pycfml wheel
+        shell: bash
         run: |
           python3 -m pip install wheel
-          bash -x scripts/rename_pycfml_python_wheel.sh
-          ls -l /home/runner/work/TEST_PyCrysFML/TEST_PyCrysFML
-          ls -l ${{ env.wheel-dir }}
+          scripts/rename_pycfml_python_wheel.sh
 
       - name: Upload zipped wheel for next job
         uses: actions/upload-artifact@v4
@@ -211,17 +202,9 @@ jobs:
           name: ${{ needs.make-wheel.outputs.wheel-name }}
           path: ${{ needs.make-wheel.outputs.wheel-dir }}
 
-      - name: Debugggggg
-        run: |
-          pwd
-          ls -l
-          ls -l /home/runner/work/TEST_PyCrysFML
-          ls -l /home/runner/work/TEST_PyCrysFML/TEST_PyCrysFML
-          ls -l ${{ needs.make-wheel.outputs.wheel-dir }}
-
       - name: Install pycfml from local wheel (with dev extras)
         shell: bash
-        run: bash -x scripts/install_pycfml_from_wheel.sh
+        run: scripts/install_pycfml_from_wheel.sh
 
       - name: Run pycfml unit tests
         shell: bash

@@ -25,11 +25,6 @@ jobs:
 
     timeout-minutes: 30
 
-    outputs:  # variables accessible on other jobs, dependent on the current job
-      FC: ${{ steps.set-output-variables.outputs.FC }}
-      WHEEL_NAME: ${{ steps.set-output-variables.outputs.WHEEL_NAME }}
-      WHEEL_DIR: ${{ steps.set-output-variables.outputs.WHEEL_DIR }}
-
     steps:  # job steps
       - name: Check-out repository
         uses: actions/checkout@v4
@@ -41,8 +36,6 @@ jobs:
         with:
           compiler: ${{ matrix.toolchain.compiler }}
           version: ${{ matrix.toolchain.version }}
-          run: |
-            echo '!!!!!!'
 
       - name: Set up Fortran compiler (FC) [Windows + gfortran]  # use pre-installed gfortran
         if: runner.os == 'Windows' && matrix.toolchain.compiler == 'gcc'
@@ -147,22 +140,14 @@ jobs:
         shell: bash
         run: |
           echo "WHEEL_DIR=$(python3 scripts.py --print-wheel-dir)" >> $GITHUB_ENV
-          echo "WHEEL_NAME=`basename $(python3 scripts.py --print-wheel-dir)/*.whl .whl`" >> $GITHUB_ENV
 
       - name: Upload zipped Python package wheel of pycfml for next job
         uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.WHEEL_NAME }}--${{ env.FC }}  # name (without .zip) of the zip file to be uploaded
-          path: ${{ env.WHEEL_DIR }}  # all files from this directory are zipped
+        with:  # if name or path modified, remember to UPDATE those in the download step of the next job
+          name: pycfml-${{ matrix.os }}-${{ env.FC }}  # name (without .zip) of the zip file to be uploaded
+          path: $(python3 scripts.py --print-wheel-dir)  # all files from this directory are zipped
           if-no-files-found: 'error'
           compression-level: 0
-
-      - name: Set variables to be accessible in the next jobs
-        id: set-output-variables
-        run: |
-          echo "FC=${{ env.FC }}" >> $GITHUB_OUTPUT
-          echo "WHEEL_NAME=${{ env.WHEEL_NAME }}" >> $GITHUB_OUTPUT
-          echo "WHEEL_DIR=${{ env.WHEEL_DIR }}" >> $GITHUB_OUTPUT
 
   run-tests:  # the second job
 
@@ -184,11 +169,6 @@ jobs:
 
     needs: make-wheel  # previous job need to be finished first
 
-    env:  # variables defined in the previous job
-      FC: ${{ needs.make-wheel.outputs.FC }}
-      WHEEL_NAME: ${{ needs.make-wheel.outputs.WHEEL_NAME }}
-      WHEEL_DIR: ${{ needs.make-wheel.outputs.WHEEL_DIR }}
-
     steps:  # job steps
       - name: Check-out repository
         uses: actions/checkout@v4
@@ -207,15 +187,14 @@ jobs:
         run: >
           python3 scripts.py
           --platform ${{ runner.os }}
-          --compiler ${{ env.FC }}
           --mode debug
           --bash-syntax
 
       - name: Download zipped pcfml wheel from previous job
         uses: actions/download-artifact@v4
-        with:
-          name: ${{ env.WHEEL_NAME }}--${{ env.FC }}  # name (without .zip) of the zipped artifact uploaded on the previous jobs
-          path: ${{ env.WHEEL_DIR }}  # directory to extract downloaded zipped artifacts
+        with:  # name or path are taken from the upload step of the previous job
+          name: pycfml-${{ matrix.os }}-${{ env.FC }}  # name (without .zip) of the zipped artifact uploaded on the previous jobs
+          path: $(python3 scripts.py --print-wheel-dir)  # directory to extract downloaded zipped artifacts
 
       - name: Install pycfml from downloaded Python package wheel (with dev extras)
         shell: bash

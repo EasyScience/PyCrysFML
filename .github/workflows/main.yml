@@ -125,7 +125,9 @@ jobs:
         run: scripts/copy_cfml_databases_to_pycfml_dist.sh
 
       - name: DEBUG
-        run: ls -l pycrysfml08_dist/pycrysfml08
+        run: |
+          ls -l pycrysfml08_dist/pycrysfml08
+          patchelf --print-needed pycrysfml08_dist/pycrysfml08/powder_mod.so
 
       - name: Validate current project pyproject.toml
         shell: bash

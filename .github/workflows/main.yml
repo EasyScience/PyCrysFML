@@ -194,9 +194,6 @@ jobs:
       - name: Check-out repository
         uses: actions/checkout@v4
 
-      - name: Load all envs saved in the first job
-        run: cat .output >> $GITHUB_ENV
-
       - name: Set up python environment
         uses: actions/setup-python@v5
         with:

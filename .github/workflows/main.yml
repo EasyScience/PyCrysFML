@@ -26,9 +26,9 @@ jobs:
     timeout-minutes: 30
 
     outputs:  # variables accessible on other jobs, dependent on the current job
-      FC: ${{ steps.set-output-variables.output.FC }}
-      WHEEL_NAME: ${{ steps.set-output-variables.output.WHEEL_NAME }}
-      WHEEL_DIR: ${{ steps.set-output-variables.output.WHEEL_DIR }}
+      FC: ${{ steps.set-output-variables.outputs.FC }}
+      WHEEL_NAME: ${{ steps.set-output-variables.outputs.WHEEL_NAME }}
+      WHEEL_DIR: ${{ steps.set-output-variables.outputs.WHEEL_DIR }}
 
     steps:  # job steps
       - name: Check-out repository
@@ -183,9 +183,9 @@ jobs:
     needs: make-wheel  # previous job need to be finished first
 
     env:  # variables defined in the previous job
-      FC: ${{ needs.make-wheel.output.FC }}
-      WHEEL_NAME: ${{ needs.make-wheel.output.WHEEL_NAME }}
-      WHEEL_DIR: ${{ needs.make-wheel.output.WHEEL_DIR }}
+      FC: ${{ needs.make-wheel.outputs.FC }}
+      WHEEL_NAME: ${{ needs.make-wheel.outputs.WHEEL_NAME }}
+      WHEEL_DIR: ${{ needs.make-wheel.outputs.WHEEL_DIR }}
 
     steps:  # job steps
       - name: Check-out repository

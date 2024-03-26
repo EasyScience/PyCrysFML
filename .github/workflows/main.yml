@@ -126,13 +126,26 @@ jobs:
 
       - name: DEBUG
         run: |
+          echo 'ls -l pycrysfml08_dist/pycrysfml08'
           ls -l pycrysfml08_dist/pycrysfml08
+          echo 'ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
           ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          echo 'patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
           patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          echo 'patchelf --replace-needed libifport.so.5 ...'
           patchelf --replace-needed libifport.so.5 /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08/libifport.so.5 pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          echo 'patchelf --replace-needed libifcoremt.so.5 ...'
           patchelf --replace-needed libifcoremt.so.5 ./libifcoremt.so.5 pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          echo 'ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
           ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          echo 'patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
           patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          echo 'objdump -x pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so | grep RPATH'
+          objdump -x pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so | grep RPATH
+          echo 'readelf -d pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so | head -20'
+          readelf -d pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so | head -20
+          echo 'chrpath -l pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
+          chrpath -l pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
 
       - name: Validate current project pyproject.toml
         shell: bash

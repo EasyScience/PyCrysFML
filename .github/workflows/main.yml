@@ -188,6 +188,23 @@ jobs:
       - name: Check-out repository
         uses: actions/checkout@v4
 
+      - name: Set up python environment
+        uses: actions/setup-python@v5
+        with:
+            python-version: 3.11
+
+      - name: Upgrade package installer for Python
+        shell: bash
+        run: python3 -m pip install --upgrade pip
+
+      - name: Create scripts
+        shell: bash
+        run: >
+          python3 scripts.py
+          --platform ${{ runner.os }}
+          --mode debug
+          --bash-syntax
+
       - name: Download zipped wheel from previous job
         uses: actions/download-artifact@v4
         with:

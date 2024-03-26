@@ -648,6 +648,10 @@ def copy_extra_libs_to_pycfml_dist():
     try:
         extra_libs = CONFIG['build']['extra-libs'][_platform()][_compiler_name()]
     except KeyError:
+        msg = f"No extra libraries are needed for platform '{_platform()}' and compiler '{_compiler_name()}'"
+        lines = [msg]
+        _write_lines_to_file(lines, script_name)
+        append_to_main_script(lines)
         return
     dist_dir = CONFIG['pycfml']['dir']['dist']
     package_dir = CONFIG['pycfml']['dir']['dist-package']

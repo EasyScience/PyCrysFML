@@ -93,15 +93,9 @@ def _bash_syntax():
         bash_syntax = ARGS.bash_syntax
     return bash_syntax
 
-
-def _print_wheel_dir():
-    if ARGS.print_wheel_dir:
-        print('pycrysfml08_wheel')
-    else:
-        print()
-
-
-
+def _print_pcfml_wheel_dir():
+    wheel_dir = CONFIG['pycfml']['dir']['wheel']
+    print(wheel_dir)
 
 def _compiler_name():
     compiler = 'gfortran'  # default
@@ -814,11 +808,8 @@ if __name__ == '__main__':
     CONFIG = loaded_config('scripts.toml')
 
     if ARGS.print_wheel_dir:
-        print('pycrysfml08_wheel')
+        _print_pcfml_wheel_dir()
         exit(0)
-
-    #_print_wheel_dir()
-    #exit()
 
     cfml_project_name = CONFIG['cfml']['name']
     pycfml_project_name = CONFIG['pycfml']['name']

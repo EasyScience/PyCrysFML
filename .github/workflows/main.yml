@@ -74,7 +74,7 @@ jobs:
       - name: Create scripts
         shell: bash
         run: >
-          python3 scripts2.py
+          python3 scripts.py
           --platform ${{ runner.os }}
           --compiler ${{ env.FC }}
           --mode debug
@@ -87,25 +87,27 @@ jobs:
       - name: Download cfml repo
         shell: bash
         run: |
-          scripts/create_cfml_repo_dir.sh
-          scripts/download_cfml_repo.sh
+          bash -x scripts/create_cfml_repo_dir.sh
+          bash -x scripts/download_cfml_repo.sh
 
       - name: Build cfml
         shell: bash
         run: |
-          scripts/create_cfml_build_dir.sh
-          scripts/rename_global_deps_file.sh
-          scripts/compile_cfml_objs.sh
-          scripts/delete_renamed_global_deps_file.sh
-          scripts/create_cfml_static_lib.sh
-          scripts/create_cfml_dist_dir.sh
-          scripts/copy_compiled_to_cfml_dist.sh
+          pwd
+          ls -l
+          bash -x scripts/create_cfml_build_dir.sh
+          bash -x scripts/rename_global_deps_file.sh
+          bash -x scripts/compile_cfml_objs.sh
+          bash -x scripts/delete_renamed_global_deps_file.sh
+          bash -x scripts/create_cfml_static_lib.sh
+          bash -x scripts/create_cfml_dist_dir.sh
+          bash -x scripts/copy_compiled_to_cfml_dist.sh
 
       - name: Download pycfml repo
         shell: bash
         run: |
-          scripts/create_pycfml_repo_dir.sh
-          scripts/download_pycfml_repo.sh
+          bash -x scripts/create_pycfml_repo_dir.sh
+          bash -x scripts/download_pycfml_repo.sh
 
       - name: Copy powder_mod to from cfml to pycfml
         shell: bash
@@ -141,12 +143,16 @@ jobs:
         shell: bash
         run: |
           python3 -m pip install build
-          scripts/create_pycfml_python_wheel.sh
+          pwd
+          ls -l
+          bash -x scripts/create_pycfml_python_wheel.sh
+          pwd
+          ls -l
 
       - name: Rename pycfml wheel
         run: |
           python3 -m pip install wheel
-          scripts/rename_pycfml_python_wheel.sh
+          bash -x scripts/rename_pycfml_python_wheel.sh
 
       - name: Upload zipped wheel for next job
         uses: actions/upload-artifact@v4

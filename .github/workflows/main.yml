@@ -37,7 +37,7 @@ jobs:
       - name: Check-out repository
         uses: actions/checkout@v4
 
-      - name: Set up fortran (all except Windows + gfortran)
+      - name: Set up Fortran compiler (FC) [all except Windows + gfortran]
         if: runner.os != 'Windows' || matrix.toolchain.compiler != 'gcc'  # let's use pre-installed gfortran
         uses: fortran-lang/setup-fortran@v1
         id: setup-fortran
@@ -45,39 +45,42 @@ jobs:
           compiler: ${{ matrix.toolchain.compiler }}
           version: ${{ matrix.toolchain.version }}
 
-      - name: Set up fortran (Windows + gfortran)
+      - name: Set up Fortran compiler (FC) [Windows + gfortran]
         if: runner.os == 'Windows' && matrix.toolchain.compiler == 'gcc'  # let's use pre-installed gfortran
         shell: bash
         run: echo "FC=gfortran" >> $GITHUB_ENV
 
-      - name: Set up nmake (Windows)
+      - name: Set up Nmake build tool [Windows]
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1
 
-      - name: Set up python3 environment
-        uses: actions/setup-python@v4
+      - name: Set up python environment
+        uses: actions/setup-python@v5
         with:
             python-version: 3.11
 
-      - name: Upgrade pip
+      - name: Upgrade package installer for Python
         shell: bash
         run: python3 -m pip install --upgrade pip
 
-      - name: Declare env variables
+      - name: Declare os-specific environment variables
         if: runner.os == 'macOS'
         shell: bash
         run: echo "MACOSX_DEPLOYMENT_TARGET=$(sw_vers -productVersion)" >> $GITHUB_ENV  # needed because of `brew reinstall gcc`
 
+      - name: Debug
+        run: pwd
+
       - name: Create scripts
         shell: bash
         run: >
-          python3 scripts.py
+          python3 scripts2.py
           --platform ${{ runner.os }}
           --compiler ${{ env.FC }}
           --mode debug
           --bash-syntax
 
-      - name: Show info
+      - name: Show some debug info
         shell: bash
         run: scripts/show_info.sh  # bash -x scripts/show_info.sh for printing commands
 

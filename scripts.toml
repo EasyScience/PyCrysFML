@@ -57,11 +57,10 @@ extra-libs.macos.ifort = ['/System/Volumes/Data/opt/intel/oneapi/compiler/2023.2
 extra-libs.macos.ifx = ['/System/Volumes/Data/opt/intel/oneapi/compiler/2023.2.0/mac/compiler/lib/libifcoremt.dylib']
 extra-libs.linux.ifort = ['/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin/libifport.so.5']
 extra-libs.linux.ifx = ['/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin/libifport.so.5']
-extra-libs.windows.gfortran = ['C:\hostedtoolcache\windows\Python\3.11.8\x64\libs\python311.lib',
-                      'C:\mingw64\bin\libgcc_s_seh-1.dll',
-                      'C:\mingw64\bin\libgfortran-5.dll',
-                      'C:\mingw64\bin\libquadmath-0.dll',
-                      'C:\mingw64\bin\libwinpthread-1.dll']
+extra-libs.windows.gfortran = ['C:\mingw64\bin\libgcc_s_seh-1.dll',
+                               'C:\mingw64\bin\libgfortran-5.dll',
+                               'C:\mingw64\bin\libquadmath-0.dll',
+                               'C:\mingw64\bin\libwinpthread-1.dll']
 
 [[build-objs]]
 platforms = ['macos', 'linux', 'windows']

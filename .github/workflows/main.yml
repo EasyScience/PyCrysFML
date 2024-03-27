@@ -125,7 +125,8 @@ jobs:
         shell: bash
         run: scripts/copy_cfml_databases_to_pycfml_dist.sh
 
-      - name: DEBUG
+      - name: DEBUG 
+        if: matrix.toolchain.exe == 'ifort'
         shell: bash
         run: |
           echo '::::: ls -l pycrysfml08_dist/pycrysfml08'

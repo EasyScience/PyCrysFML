@@ -145,35 +145,35 @@ jobs:
           install_name_tool -change @rpath/libifport.dylib     @loader_path/libifport.dylib     pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
           install_name_tool -change @rpath/libifcoremt.dylib   @loader_path/libifcoremt.dylib   pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
 
-          #install_name_tool -change @rpath/libifport.dylib     @loader_path/libifport.dylib     pycrysfml08_dist/pycrysfml08/libifport.dylib
-          install_name_tool -change @rpath/libifcore.dylib     @loader_path/libifcore.dylib     pycrysfml08_dist/pycrysfml08/libifport.dylib
-          install_name_tool -change @rpath/libsvml.dylib       @loader_path/libsvml.dylib       pycrysfml08_dist/pycrysfml08/libifport.dylib
-          install_name_tool -change @rpath/libintlc.dylib      @loader_path/libintlc.dylib      pycrysfml08_dist/pycrysfml08/libifport.dylib
-          install_name_tool -change @rpath/libirc.dylib        @loader_path/libirc.dylib        pycrysfml08_dist/pycrysfml08/libifport.dylib
+          ##install_name_tool -change @rpath/libifport.dylib     @loader_path/libifport.dylib     pycrysfml08_dist/pycrysfml08/libifport.dylib
+          #install_name_tool -change @rpath/libifcore.dylib     @loader_path/libifcore.dylib     pycrysfml08_dist/pycrysfml08/libifport.dylib
+          #install_name_tool -change @rpath/libsvml.dylib       @loader_path/libsvml.dylib       pycrysfml08_dist/pycrysfml08/libifport.dylib
+          #install_name_tool -change @rpath/libintlc.dylib      @loader_path/libintlc.dylib      pycrysfml08_dist/pycrysfml08/libifport.dylib
+          #install_name_tool -change @rpath/libirc.dylib        @loader_path/libirc.dylib        pycrysfml08_dist/pycrysfml08/libifport.dylib
 
-          #install_name_tool -change @rpath/libifcoremt.dylib   @loader_path/libifcoremt.dylib   pycrysfml08_dist/pycrysfml08/libifcoremt.dylib
-          install_name_tool -change @rpath/libifdynalloc.dylib @loader_path/libifdynalloc.dylib pycrysfml08_dist/pycrysfml08/libifcoremt.dylib
-          install_name_tool -change @rpath/libifcore.dylib     @loader_path/libifcore.dylib     pycrysfml08_dist/pycrysfml08/libifcoremt.dylib
-          install_name_tool -change @rpath/libsvml.dylib       @loader_path/libsvml.dylib       pycrysfml08_dist/pycrysfml08/libifcoremt.dylib
-          install_name_tool -change @rpath/libintlc.dylib      @loader_path/libintlc.dylib      pycrysfml08_dist/pycrysfml08/libifcoremt.dylib
+          ##install_name_tool -change @rpath/libifcoremt.dylib   @loader_path/libifcoremt.dylib   pycrysfml08_dist/pycrysfml08/libifcoremt.dylib
+          #install_name_tool -change @rpath/libifdynalloc.dylib @loader_path/libifdynalloc.dylib pycrysfml08_dist/pycrysfml08/libifcoremt.dylib
+          #install_name_tool -change @rpath/libifcore.dylib     @loader_path/libifcore.dylib     pycrysfml08_dist/pycrysfml08/libifcoremt.dylib
+          #install_name_tool -change @rpath/libsvml.dylib       @loader_path/libsvml.dylib       pycrysfml08_dist/pycrysfml08/libifcoremt.dylib
+          #install_name_tool -change @rpath/libintlc.dylib      @loader_path/libintlc.dylib      pycrysfml08_dist/pycrysfml08/libifcoremt.dylib
 
-          #install_name_tool -change @rpath/libifcore.dylib     @loader_path/libifcore.dylib     pycrysfml08_dist/pycrysfml08/libifcore.dylib
-          install_name_tool -change @rpath/libifdynalloc.dylib @loader_path/libifdynalloc.dylib pycrysfml08_dist/pycrysfml08/libifcore.dylib
-          install_name_tool -change @rpath/libimf.dylib        @loader_path/libimf.dylib        pycrysfml08_dist/pycrysfml08/libifcore.dylib
-          install_name_tool -change @rpath/libsvml.dylib       @loader_path/libsvml.dylib       pycrysfml08_dist/pycrysfml08/libifcore.dylib
-          install_name_tool -change @rpath/libintlc.dylib      @loader_path/libintlc.dylib      pycrysfml08_dist/pycrysfml08/libifcore.dylib
+          ##install_name_tool -change @rpath/libifcore.dylib     @loader_path/libifcore.dylib     pycrysfml08_dist/pycrysfml08/libifcore.dylib
+          #install_name_tool -change @rpath/libifdynalloc.dylib @loader_path/libifdynalloc.dylib pycrysfml08_dist/pycrysfml08/libifcore.dylib
+          #install_name_tool -change @rpath/libimf.dylib        @loader_path/libimf.dylib        pycrysfml08_dist/pycrysfml08/libifcore.dylib
+          #install_name_tool -change @rpath/libsvml.dylib       @loader_path/libsvml.dylib       pycrysfml08_dist/pycrysfml08/libifcore.dylib
+          #install_name_tool -change @rpath/libintlc.dylib      @loader_path/libintlc.dylib      pycrysfml08_dist/pycrysfml08/libifcore.dylib
 
-          #install_name_tool -change @rpath/libimf.dylib        @loader_path/libimf.dylib        pycrysfml08_dist/pycrysfml08/libimf.dylib
-          install_name_tool -change @rpath/libintlc.dylib      @loader_path/libintlc.dylib      pycrysfml08_dist/pycrysfml08/libimf.dylib
+          ##install_name_tool -change @rpath/libimf.dylib        @loader_path/libimf.dylib        pycrysfml08_dist/pycrysfml08/libimf.dylib
+          #install_name_tool -change @rpath/libintlc.dylib      @loader_path/libintlc.dylib      pycrysfml08_dist/pycrysfml08/libimf.dylib
 
-          #install_name_tool -change @rpath/libsvml.dylib       @loader_path/libsvml.dylib       pycrysfml08_dist/pycrysfml08/libsvml.dylib
-          install_name_tool -change @rpath/libintlc.dylib      @loader_path/libintlc.dylib      pycrysfml08_dist/pycrysfml08/libsvml.dylib
+          ##install_name_tool -change @rpath/libsvml.dylib       @loader_path/libsvml.dylib       pycrysfml08_dist/pycrysfml08/libsvml.dylib
+          #install_name_tool -change @rpath/libintlc.dylib      @loader_path/libintlc.dylib      pycrysfml08_dist/pycrysfml08/libsvml.dylib
 
-          #install_name_tool -change @rpath/libintlc.dylib      @loader_path/libintlc.dylib      pycrysfml08_dist/pycrysfml08/libintlc.dylib
+          ##install_name_tool -change @rpath/libintlc.dylib      @loader_path/libintlc.dylib      pycrysfml08_dist/pycrysfml08/libintlc.dylib
 
-          #install_name_tool -change @rpath/libirc.dylib        @loader_path/libirc.dylib        pycrysfml08_dist/pycrysfml08/libirc.dylib
+          ##install_name_tool -change @rpath/libirc.dylib        @loader_path/libirc.dylib        pycrysfml08_dist/pycrysfml08/libirc.dylib
 
-          #install_name_tool -change @rpath/libifdynalloc.dylib @loader_path/libifdynalloc.dylib pycrysfml08_dist/pycrysfml08/libifdynalloc.dylib
+          ##install_name_tool -change @rpath/libifdynalloc.dylib @loader_path/libifdynalloc.dylib pycrysfml08_dist/pycrysfml08/libifdynalloc.dylib
 
 
           echo '::::: otool -L pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'

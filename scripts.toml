@@ -51,7 +51,7 @@ package-version = '0.0.1a0'  # NEED FIX: get from pyproject.toml (consider mergi
 src-ext = { cfml = 'f90', pycfml = 'F90' }
 static-lib-prefix = { macos = 'lib', linux = 'lib', windows = '' }
 static-lib-ext = { macos = 'a', linux = 'a', windows = 'lib' }
-shared-lib-ext = { macos = 'so', linux = 'so', windows = 'pyd' }
+shared-lib-ext = { macos = 'so', linux = 'so', windows = 'pyd' }  # *.so on Linux or *.dylib on macOS??? https://duerrenberger.dev/blog/2021/08/04/understanding-rpath-with-cmake/
 python-lib.macos = '`python3-config --ldflags --embed`'
 python-lib.linux = ''
 python-lib.windows = 'C:\hostedtoolcache\windows\Python\3.11.8\x64\libs\python311.lib'

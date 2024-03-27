@@ -131,12 +131,12 @@ jobs:
           echo '::::: ls -l pycrysfml08_dist/pycrysfml08'
           ls -l pycrysfml08_dist/pycrysfml08
 
-          #echo '::::: patchelf --print-rpath pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          #patchelf --print-rpath pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          echo '::::: patchelf --print-rpath pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
+          patchelf --print-rpath pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
           #echo '::::: patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
           #patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          #echo '::::: ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          #ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          echo '::::: ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
+          ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
 
           #echo '::::: patchelf --set-rpath ...'
           #patchelf --set-rpath '$ORIGIN' pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so

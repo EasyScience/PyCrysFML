@@ -131,6 +131,9 @@ jobs:
           echo '::::: ls -l pycrysfml08_dist/pycrysfml08'
           ls -l pycrysfml08_dist/pycrysfml08
 
+          echo '::::: install_name_tool -add_rpath @executable_path pycrysfml08_dist/pycrysfml08/powder_mod.so'
+          install_name_tool -add_rpath @executable_path pycrysfml08_dist/pycrysfml08/powder_mod.so
+
           echo '::::: otool -L pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
           otool -L pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
 

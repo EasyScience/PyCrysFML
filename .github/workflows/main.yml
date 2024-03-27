@@ -247,15 +247,15 @@ jobs:
       - name: DEBUG
         shell: bash
         run: |
+          echo '::::: ls -l /Users/runner/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08'
+          ls -l /Users/runner/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08
+          echo '::::: otool -L pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
+          otool -L pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+
           #echo '::::: ls -l /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08'
           #ls -l /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08  # ls -l ${{ env.LD_LIBRARY_PATH }}/python3.11/site-packages/pycrysfml08
           #echo '::::: ldd /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08/py_cfml_metrics.so'
           #ldd /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08/py_cfml_metrics.so
-
-          echo '::::: ls -l /Users/runner/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08'
-          ls -l /Users/runner/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08'
-          echo '::::: otool -L pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          otool -L pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
 
       - name: Run pycfml unit tests
         shell: bash

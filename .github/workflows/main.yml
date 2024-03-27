@@ -125,7 +125,7 @@ jobs:
         shell: bash
         run: scripts/copy_cfml_databases_to_pycfml_dist.sh
 
-      - name: DEBUG 
+      - name: DEBUG
         if: matrix.toolchain.exe == 'ifort'
         shell: bash
         run: |
@@ -141,11 +141,31 @@ jobs:
 
 
 
-          echo '::::: install_name_tool -change @rpath... @loader_path... pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          install_name_tool -change @rpath/libifport.dylib @loader_path/libifport.dylib pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          install_name_tool -change @rpath/libifcoremt.dylib @loader_path/libifcoremt.dylib pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          install_name_tool -change @rpath/libifcore.dylib @loader_path/libifcore.dylib pycrysfml08_dist/pycrysfml08/libifport.dylib
-          install_name_tool -change @rpath/libimf.dylib @loader_path/libifcore.dylib pycrysfml08_dist/pycrysfml08/libifcoremt.dylib
+          echo '::::: install_name_tool -change @rpath... @loader_path...'
+          install_name_tool -change @rpath/libifport.dylib     @loader_path/libifport.dylib     pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          install_name_tool -change @rpath/libifcoremt.dylib   @loader_path/libifcoremt.dylib   pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+
+          install_name_tool -change @rpath/libifport.dylib     @loader_path/libifport.dylib     pycrysfml08_dist/pycrysfml08/libifport.dylib
+          install_name_tool -change @rpath/libifcore.dylib     @loader_path/libifcore.dylib     pycrysfml08_dist/pycrysfml08/libifport.dylib
+          install_name_tool -change @rpath/libsvml.dylib       @loader_path/libsvml.dylib       pycrysfml08_dist/pycrysfml08/libifport.dylib
+          install_name_tool -change @rpath/libintlc.dylib      @loader_path/libintlc.dylib      pycrysfml08_dist/pycrysfml08/libifport.dylib
+          install_name_tool -change @rpath/libirc.dylib        @loader_path/libirc.dylib        pycrysfml08_dist/pycrysfml08/libifport.dylib
+
+          install_name_tool -change @rpath/libifcoremt.dylib   @loader_path/libifcoremt.dylib   pycrysfml08_dist/pycrysfml08/libifcoremt.dylib
+          install_name_tool -change @rpath/libifdynalloc.dylib @loader_path/libifdynalloc.dylib pycrysfml08_dist/pycrysfml08/libifcoremt.dylib
+          install_name_tool -change @rpath/libifcore.dylib     @loader_path/libifcore.dylib     pycrysfml08_dist/pycrysfml08/libifcoremt.dylib
+          install_name_tool -change @rpath/libsvml.dylib       @loader_path/libsvml.dylib       pycrysfml08_dist/pycrysfml08/libifcoremt.dylib
+          install_name_tool -change @rpath/libintlc.dylib      @loader_path/libintlc.dylib      pycrysfml08_dist/pycrysfml08/libifcoremt.dylib
+
+          install_name_tool -change @rpath/libifcore.dylib     @loader_path/libifcore.dylib     pycrysfml08_dist/pycrysfml08/libifcore.dylib
+          install_name_tool -change @rpath/libifdynalloc.dylib @loader_path/libifdynalloc.dylib pycrysfml08_dist/pycrysfml08/libifcore.dylib
+          install_name_tool -change @rpath/libimf.dylib        @loader_path/libimf.dylib        pycrysfml08_dist/pycrysfml08/libifcore.dylib
+          install_name_tool -change @rpath/libsvml.dylib       @loader_path/libsvml.dylib       pycrysfml08_dist/pycrysfml08/libifcore.dylib
+          install_name_tool -change @rpath/libintlc.dylib      @loader_path/libintlc.dylib      pycrysfml08_dist/pycrysfml08/libifcore.dylib
+
+          install_name_tool -change @rpath/libimf.dylib        @loader_path/libimf.dylib   pycrysfml08_dist/pycrysfml08/libimf.dylib
+          install_name_tool -change @rpath/libintlc.dylib      @loader_path/libintlc.dylib pycrysfml08_dist/pycrysfml08/libimf.dylib
+
 
           echo '::::: otool -L pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
           otool -L pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
@@ -158,6 +178,14 @@ jobs:
           echo '::::: otool -L pycrysfml08_dist/pycrysfml08/libimf.dylib'
           otool -L pycrysfml08_dist/pycrysfml08/libimf.dylib
 
+          echo '::::: otool -L pycrysfml08_dist/pycrysfml08/libsvml.dylib'
+          otool -L pycrysfml08_dist/pycrysfml08/libsvml.dylib
+          echo '::::: otool -L pycrysfml08_dist/pycrysfml08/libintlc.dylib'
+          otool -L pycrysfml08_dist/pycrysfml08/libintlc.dylib
+          echo '::::: otool -L pycrysfml08_dist/pycrysfml08/libirc.dylib'
+          otool -L pycrysfml08_dist/pycrysfml08/libirc.dylib
+          echo '::::: otool -L pycrysfml08_dist/pycrysfml08/libifdynalloc.dylib'
+          otool -L pycrysfml08_dist/pycrysfml08/libifdynalloc.dylib
 
 
           echo '::::: otool -l pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so | grep RPATH -A2'

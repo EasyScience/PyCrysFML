@@ -140,8 +140,14 @@ jobs:
           #install_name_tool -rpath @rpath @loader_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
 
 
-          ###echo '::::: install_name_tool -add_rpath @loader_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          ###install_name_tool -add_rpath @loader_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          echo '::::: install_name_tool -add_rpath @loader_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
+          install_name_tool -add_rpath @loader_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+
+          echo '::::: install_name_tool -add_rpath @loader_path pycrysfml08_dist/pycrysfml08/powder_mod.so'
+          install_name_tool -add_rpath @loader_path pycrysfml08_dist/pycrysfml08/powder_mod.so
+
+          echo '::::: install_name_tool -add_rpath @loader_path pycrysfml08_dist/pycrysfml08/powder_mod_2.so'
+          install_name_tool -add_rpath @loader_path pycrysfml08_dist/pycrysfml08/powder_mod_2.so
 
 
 

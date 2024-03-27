@@ -646,6 +646,55 @@ def copy_built_to_pycfml_dist():
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
 
+def change_runpath_for_built_pycfml():
+    # Tried to set rpath to $ORIGIN (with -Wl,-rpath,'$ORIGIN') during the build
+    # shared objects step (CONFIG['build-shared']), but it didn't help :(
+    # Ubuntu usage examples:
+    # sudo find / -iname "libif*"
+    # ls -l pycrysfml08_dist/pycrysfml08
+    # patchelf --print-rpath pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+    # patchelf --set-rpath '$ORIGIN' pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+    # patchelf --print-rpath pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+    # patchelf --no-default-lib pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+    # ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+    # ls -l /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08
+    # ldd /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08/py_cfml_metrics.so
+    try:
+        template_cmd = CONFIG['template']['set-rpath'][_platform()]
+    except KeyError:
+        msg = _echo_msg(f"Changing runpath is not needed for platform '{_platform()}'")
+        lines = [msg]
+        script_name = f'{sys._getframe().f_code.co_name}.sh'
+        _write_lines_to_file(lines, script_name)
+        append_to_main_script(lines)
+        return
+    modules = 'pycfml-modules'
+    project_name = CONFIG['pycfml']['name']
+    shared_lib_ext = CONFIG['build']['shared-lib-ext'][_platform()]
+    dist_dir = CONFIG['pycfml']['dir']['dist']
+    package_dir = CONFIG['pycfml']['dir']['dist-package']
+    package_relpath = os.path.join(dist_dir, package_dir)
+    package_abspath = os.path.join(_project_path(), dist_dir, package_dir)
+    total = _total_src_file_count(modules)
+    current = 0
+    lines = []
+    msg = _echo_msg(f"Changing runpath for built {project_name} shared objects")
+    lines.append(msg)
+    for module in CONFIG[modules]:
+        if 'main-file' in module:
+            current += 1
+            name = f'{module["main-file"]}'
+            path = os.path.join(package_abspath, name)
+            msg = _echo_progress_msg(current, total, f'{name}.{shared_lib_ext}')
+            lines.append(msg)
+            cmd = template_cmd
+            cmd = cmd.replace('{PATH}', path)
+            cmd = cmd.replace('{EXT}', shared_lib_ext)
+            lines.append(cmd)
+    script_name = f'{sys._getframe().f_code.co_name}.sh'
+    _write_lines_to_file(lines, script_name)
+    append_to_main_script(lines)
+
 def copy_extra_libs_to_pycfml_dist():
     try:
         extra_libs = CONFIG['build']['extra-libs'][_platform()][_compiler_name()]
@@ -852,6 +901,7 @@ if __name__ == '__main__':
     build_pycfml_shared_objs_or_dynamic_libs()
     create_pycfml_dist_dir()
     copy_built_to_pycfml_dist()
+    change_runpath_for_built_pycfml()
 
     headers = _echo_header(f"Creating {pycfml_project_name} python package wheel")
     append_to_main_script(headers)

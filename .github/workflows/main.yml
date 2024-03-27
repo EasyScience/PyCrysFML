@@ -26,23 +26,8 @@ jobs:
     timeout-minutes: 30
 
     steps:  # job steps
-
-
-      - name: DEBUG
-        run: |
-          echo '::::: patchelf --help'
-          patchelf --help
-
-      - name: DEBUG
-        run: |
-          echo '::::: man patchelf'
-          man patchelf
-
-
       - name: Check-out repository
         uses: actions/checkout@v4
-
-
 
       - name: Set up Fortran compiler (FC) [all except Windows + gfortran]  # except: use pre-installed gfortran
         if: runner.os != 'Windows' || matrix.toolchain.exe != 'gfortran'
@@ -123,9 +108,10 @@ jobs:
         run: |
           scripts/create_pycfml_build_dir.sh
           scripts/build_pycfml_objs.sh
-          bash -x scripts/build_pycfml_shared_objs_or_dynamic_libs.sh
+          scripts/build_pycfml_shared_objs_or_dynamic_libs.sh
           scripts/create_pycfml_dist_dir.sh
           scripts/copy_built_to_pycfml_dist.sh
+          scripts/change_runpath_for_built_pycfml.sh
 
       - name: Copy extra system libs to pycfml dist
         shell: bash
@@ -140,32 +126,35 @@ jobs:
         run: scripts/copy_cfml_databases_to_pycfml_dist.sh
 
       - name: DEBUG
+        shell: bash
         run: |
           echo '::::: ls -l pycrysfml08_dist/pycrysfml08'
           ls -l pycrysfml08_dist/pycrysfml08
 
-          echo '::::: patchelf --print-rpath ...'
-          patchelf --print-rpath pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          echo '::::: patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          echo '::::: ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          #echo '::::: patchelf --print-rpath pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
+          #patchelf --print-rpath pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          #echo '::::: patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
+          #patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          #echo '::::: ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
+          #ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
 
-          echo '::::: patchelf --no-default-lib ...'
-          patchelf --no-default-lib pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          echo '::::: patchelf --set-rpath'
-          patchelf --set-rpath '$ORIGIN' pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          #echo '::::: patchelf --set-rpath ...'
+          #patchelf --set-rpath '$ORIGIN' pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          #echo '::::: patchelf --print-rpath pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
+          #patchelf --print-rpath pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+
+          #echo '::::: patchelf --no-default-lib pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
+          #patchelf --no-default-lib pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+
           #echo '::::: patchelf --replace-needed libifport.so.5 ...'
           #patchelf --replace-needed libifport.so.5 /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08/libifport.so.5 pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
           #echo '::::: patchelf --replace-needed libifcoremt.so.5 ...'
           #patchelf --replace-needed libifcoremt.so.5 ./libifcoremt.so.5 pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
 
-          echo '::::: patchelf --print-rpath ...'
-          patchelf --print-rpath pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          echo '::::: patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          echo '::::: ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          #echo '::::: patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
+          #patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          #echo '::::: ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
+          #ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
 
           #echo '::::: patchelf --remove-needed libifcoremt.so.5 ...'
           #patchelf --remove-needed libifcoremt.so.5 pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
@@ -257,7 +246,7 @@ jobs:
         run: |
           echo '::::: ls -l /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08'
           ls -l /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08  # ls -l ${{ env.LD_LIBRARY_PATH }}/python3.11/site-packages/pycrysfml08
-          echo '::::: lldd /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08/py_cfml_metrics.so'
+          echo '::::: ldd /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08/py_cfml_metrics.so'
           ldd /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08/py_cfml_metrics.so
 
       - name: Run pycfml unit tests

@@ -134,9 +134,9 @@ jobs:
           #echo '::::: install_name_tool -add_rpath @executable_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
           #install_name_tool -add_rpath @executable_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
 
-          echo '::::: install_name_tool -change @rpath... ... pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          install_name_tool -change @rpath/libifport.dylib libifport.dylib pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          install_name_tool -change @rpath/libifcoremt.dylib libifcoremt.dylib pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          echo '::::: install_name_tool -rpath @rpath @loader_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
+          install_name_tool -rpath @rpath @loader_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          install_name_tool -rpath @rpath @loader_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
 
           echo '::::: otool -L pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
           otool -L pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so

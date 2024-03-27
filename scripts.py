@@ -660,7 +660,8 @@ def change_runpath_for_built_pycfml():
     # ls -l /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08
     # ldd /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08/py_cfml_metrics.so
     try:
-        template_cmd = CONFIG['template']['set-rpath'][_platform()]
+        set_rpath_template_cmd = CONFIG['template']['set-rpath'][_platform()]
+        no_default_lib_template_cmd = CONFIG['template']['no-default-lib'][_platform()]
     except KeyError:
         msg = _echo_msg(f"Changing runpath is not needed for platform '{_platform()}'")
         lines = [msg]
@@ -687,10 +688,14 @@ def change_runpath_for_built_pycfml():
             path = os.path.join(package_abspath, name)
             msg = _echo_progress_msg(current, total, f'{name}.{shared_lib_ext}')
             lines.append(msg)
-            cmd = template_cmd
+            cmd = set_rpath_template_cmd
             cmd = cmd.replace('{PATH}', path)
             cmd = cmd.replace('{EXT}', shared_lib_ext)
             lines.append(cmd)
+            cmd = no_default_lib_template_cmd
+            cmd = cmd.replace('{PATH}', path)
+            cmd = cmd.replace('{EXT}', shared_lib_ext)
+            lines.append(cmd)            
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)

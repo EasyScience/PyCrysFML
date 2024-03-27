@@ -62,7 +62,9 @@ extra-libs.macos.gfortran = ['/usr/local/opt/gcc/lib/gcc/current/libgfortran.5.d
                              '/usr/local/opt/gcc/lib/gcc/current/libgcc_s.1.1.dylib',
                              '/usr/local/opt/gcc/lib/gcc/current/libquadmath.0.dylib']
 extra-libs.macos.ifort = ['/System/Volumes/Data/opt/intel/oneapi/compiler/2023.2.0/mac/compiler/lib/libifport.dylib',
-                          '/System/Volumes/Data/opt/intel/oneapi/compiler/2023.2.0/mac/compiler/lib/libifcoremt.dylib']
+                          '/System/Volumes/Data/opt/intel/oneapi/compiler/2023.2.0/mac/compiler/lib/libifcoremt.dylib',
+                          '/System/Volumes/Data/opt/intel/oneapi/compiler/2023.2.0/mac/compiler/lib/libifcore.dylib',
+                          '/System/Volumes/Data/opt/intel/oneapi/compiler/2023.2.0/mac/compiler/lib/libimf.dylib']
 extra-libs.macos.ifx = ['/System/Volumes/Data/opt/intel/oneapi/compiler/2023.2.0/mac/compiler/lib/libifport.dylib',
                         '/System/Volumes/Data/opt/intel/oneapi/compiler/2023.2.0/mac/compiler/lib/libifcoremt.dylib']
 extra-libs.linux.ifort = ['/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin/libifport.so.5',

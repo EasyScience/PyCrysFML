@@ -134,12 +134,30 @@ jobs:
           #echo '::::: install_name_tool -add_rpath @executable_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
           #install_name_tool -add_rpath @executable_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
 
-          echo '::::: install_name_tool -rpath @rpath @loader_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          install_name_tool -rpath @rpath @loader_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          install_name_tool -rpath @rpath @loader_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          #echo '::::: install_name_tool -rpath @rpath @loader_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
+          #install_name_tool -rpath @rpath @loader_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          #install_name_tool -rpath @rpath @loader_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+
+
+
+          echo '::::: install_name_tool -change @rpath... @loader_path... pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
+          install_name_tool -change @rpath/libifport.dylib @loader_path/libifport.dylib pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          install_name_tool -change @rpath/libifcoremt.dylib @loader_path/libifcoremt.dylib pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          install_name_tool -change @rpath/libifcore.dylib @loader_path/libifcore.dylib pycrysfml08_dist/pycrysfml08/libifport.dylib
+          install_name_tool -change @rpath/libimf.dylib @loader_path/libifcore.dylib pycrysfml08_dist/pycrysfml08/libifcoremt.dylib
 
           echo '::::: otool -L pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
           otool -L pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          echo '::::: otool -L pycrysfml08_dist/pycrysfml08/libifport.dylib'
+          otool -L pycrysfml08_dist/pycrysfml08/libifport.dylib
+          echo '::::: otool -L pycrysfml08_dist/pycrysfml08/libifcoremt.dylib'
+          otool -L pycrysfml08_dist/pycrysfml08/libifcoremt.dylib
+          echo '::::: otool -L pycrysfml08_dist/pycrysfml08/libifcore.dylib'
+          otool -L pycrysfml08_dist/pycrysfml08/libifcore.dylib
+          echo '::::: otool -L pycrysfml08_dist/pycrysfml08/libimf.dylib'
+          otool -L pycrysfml08_dist/pycrysfml08/libimf.dylib
+
+
 
           echo '::::: otool -l pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so | grep RPATH -A2'
           otool -l pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so | grep RPATH -A2

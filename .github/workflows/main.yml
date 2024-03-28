@@ -140,16 +140,19 @@ jobs:
           #install_name_tool -rpath @rpath @loader_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
 
 
-          echo '::::: install_name_tool -add_rpath @loader_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          install_name_tool -add_rpath @loader_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          #echo '::::: install_name_tool -add_rpath @loader_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
+          #install_name_tool -add_rpath @loader_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
 
-          echo '::::: install_name_tool -add_rpath @loader_path pycrysfml08_dist/pycrysfml08/powder_mod.so'
-          install_name_tool -add_rpath @loader_path pycrysfml08_dist/pycrysfml08/powder_mod.so
+          #echo '::::: install_name_tool -add_rpath @loader_path pycrysfml08_dist/pycrysfml08/powder_mod.so'
+          #install_name_tool -add_rpath @loader_path pycrysfml08_dist/pycrysfml08/powder_mod.so
 
-          echo '::::: install_name_tool -add_rpath @loader_path pycrysfml08_dist/pycrysfml08/powder_mod_2.so'
-          install_name_tool -add_rpath @loader_path pycrysfml08_dist/pycrysfml08/powder_mod_2.so
+          #echo '::::: install_name_tool -add_rpath @loader_path pycrysfml08_dist/pycrysfml08/powder_mod_2.so'
+          #install_name_tool -add_rpath @loader_path pycrysfml08_dist/pycrysfml08/powder_mod_2.so
 
-
+          echo '::::: change rpath'
+          install_name_tool -rpath /opt/intel/oneapi/compiler/2023.2.0/mac/bin/intel64/../../compiler/lib @loader_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          install_name_tool -rpath /opt/intel/oneapi/compiler/2023.2.0/mac/bin/intel64/../../compiler/lib @loader_path pycrysfml08_dist/pycrysfml08/powder_mod.so
+          install_name_tool -rpath /opt/intel/oneapi/compiler/2023.2.0/mac/bin/intel64/../../compiler/lib @loader_path pycrysfml08_dist/pycrysfml08/powder_mod_2.so
 
           #echo '::::: install_name_tool -change @rpath... @loader_path...'
           #install_name_tool -change @rpath/libifport.dylib     @loader_path/libifport.dylib     pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so

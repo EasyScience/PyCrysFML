@@ -43,6 +43,7 @@ rpath.change.macos = 'install_name_tool -rpath {OLD} {NEW} {PATH}.{EXT}'
 rpath.add.macos = 'install_name_tool -add_rpath {NEW} {PATH}.{EXT}'
 rpath.delete.macos = 'install_name_tool -delete_rpath {OLD} {PATH}.{EXT}'
 no-default-lib.linux = 'patchelf --no-default-lib {PATH}.{EXT}'
+dependent-lib.change.macos = 'install_name_tool -change {OLD} {NEW} {PATH}.{EXT}'
 build-wheel = 'python3 -m build --wheel --outdir {PATH}'
 rename-wheel = 'python3 -m wheel tags --python-tag {PYTHON_TAG} --platform-tag {PLATFORM_TAG} --remove {PATH}'
 install-wheel = 'python3 -m pip install "{PACKAGE}[dev]" --force-reinstall --find-links={PATH}'
@@ -98,7 +99,6 @@ extra-libs.windows.gfortran = ['C:\mingw64\bin\libgcc_s_seh-1.dll',
                                'C:\mingw64\bin\libgfortran-5.dll',
                                'C:\mingw64\bin\libquadmath-0.dll',
                                'C:\mingw64\bin\libwinpthread-1.dll']
-
 rpaths.linux.gfortran = [ { old = '', new = "'$ORIGIN'" } ]  # set rpath to point to '$ORIGIN'
 rpaths.linux.ifort =    [ { old = '', new = "'$ORIGIN'" } ]  # set rpath to point to '$ORIGIN'
 rpaths.linux.ifx =      [ { old = '', new = "'$ORIGIN'" } ]  # set rpath to point to '$ORIGIN'

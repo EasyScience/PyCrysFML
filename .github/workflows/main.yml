@@ -113,172 +113,19 @@ jobs:
           scripts/copy_built_to_pycfml_dist.sh
           scripts/change_runpath_for_built_pycfml.sh
 
-      - name: Copy extra system libs to pycfml dist
-        shell: bash
-        run: scripts/copy_extra_libs_to_pycfml_dist.sh
-
-      - name: Copy __init__.py from pycfml repo to pycfml dist
-        shell: bash
-        run: scripts/copy_init_file_to_pycfml_dist.sh
-
-      - name: Copy magnetic_data.txt database from cfml to pycfml dist
-        shell: bash
-        run: scripts/copy_cfml_databases_to_pycfml_dist.sh
-
-      - name: DEBUG
-        if: matrix.toolchain.exe == 'ifort' || matrix.toolchain.exe == 'ifx'
+      - name: Copy extra files to pycfml dist
         shell: bash
         run: |
-          echo '::::: ls -l pycrysfml08_dist/pycrysfml08'
-          ls -l pycrysfml08_dist/pycrysfml08
-
-          #echo '::::: install_name_tool -add_rpath @executable_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          #install_name_tool -add_rpath @executable_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-
-          #echo '::::: install_name_tool -rpath @rpath @loader_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          #install_name_tool -rpath @rpath @loader_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          #install_name_tool -rpath @rpath @loader_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-
-
-          #echo '::::: install_name_tool -add_rpath @loader_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          #install_name_tool -add_rpath @loader_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-
-          #echo '::::: install_name_tool -add_rpath @loader_path pycrysfml08_dist/pycrysfml08/powder_mod.so'
-          #install_name_tool -add_rpath @loader_path pycrysfml08_dist/pycrysfml08/powder_mod.so
-
-          #echo '::::: install_name_tool -add_rpath @loader_path pycrysfml08_dist/pycrysfml08/powder_mod_2.so'
-          #install_name_tool -add_rpath @loader_path pycrysfml08_dist/pycrysfml08/powder_mod_2.so
-
-          ###echo '::::: change rpath'
-          ###install_name_tool -rpath /opt/intel/oneapi/compiler/2023.2.0/mac/bin/intel64/../../compiler/lib @loader_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          ###install_name_tool -rpath /opt/intel/oneapi/compiler/2023.2.0/mac/bin/intel64/../../compiler/lib @loader_path pycrysfml08_dist/pycrysfml08/powder_mod.so
-          ###install_name_tool -rpath /opt/intel/oneapi/compiler/2023.2.0/mac/bin/intel64/../../compiler/lib @loader_path pycrysfml08_dist/pycrysfml08/powder_mod_2.so
-
-          #echo '::::: install_name_tool -change @rpath... @loader_path...'
-          #install_name_tool -change @rpath/libifport.dylib     @loader_path/libifport.dylib     pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          #install_name_tool -change @rpath/libifcoremt.dylib   @loader_path/libifcoremt.dylib   pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-
-          ##install_name_tool -change @rpath/libifport.dylib     @loader_path/libifport.dylib     pycrysfml08_dist/pycrysfml08/libifport.dylib
-          #install_name_tool -change @rpath/libifcore.dylib     @loader_path/libifcore.dylib     pycrysfml08_dist/pycrysfml08/libifport.dylib
-          #install_name_tool -change @rpath/libsvml.dylib       @loader_path/libsvml.dylib       pycrysfml08_dist/pycrysfml08/libifport.dylib
-          #install_name_tool -change @rpath/libintlc.dylib      @loader_path/libintlc.dylib      pycrysfml08_dist/pycrysfml08/libifport.dylib
-          #install_name_tool -change @rpath/libirc.dylib        @loader_path/libirc.dylib        pycrysfml08_dist/pycrysfml08/libifport.dylib
-
-          ##install_name_tool -change @rpath/libifcoremt.dylib   @loader_path/libifcoremt.dylib   pycrysfml08_dist/pycrysfml08/libifcoremt.dylib
-          #install_name_tool -change @rpath/libifdynalloc.dylib @loader_path/libifdynalloc.dylib pycrysfml08_dist/pycrysfml08/libifcoremt.dylib
-          #install_name_tool -change @rpath/libifcore.dylib     @loader_path/libifcore.dylib     pycrysfml08_dist/pycrysfml08/libifcoremt.dylib
-          #install_name_tool -change @rpath/libsvml.dylib       @loader_path/libsvml.dylib       pycrysfml08_dist/pycrysfml08/libifcoremt.dylib
-          #install_name_tool -change @rpath/libintlc.dylib      @loader_path/libintlc.dylib      pycrysfml08_dist/pycrysfml08/libifcoremt.dylib
-
-          ##install_name_tool -change @rpath/libifcore.dylib     @loader_path/libifcore.dylib     pycrysfml08_dist/pycrysfml08/libifcore.dylib
-          #install_name_tool -change @rpath/libifdynalloc.dylib @loader_path/libifdynalloc.dylib pycrysfml08_dist/pycrysfml08/libifcore.dylib
-          #install_name_tool -change @rpath/libimf.dylib        @loader_path/libimf.dylib        pycrysfml08_dist/pycrysfml08/libifcore.dylib
-          #install_name_tool -change @rpath/libsvml.dylib       @loader_path/libsvml.dylib       pycrysfml08_dist/pycrysfml08/libifcore.dylib
-          #install_name_tool -change @rpath/libintlc.dylib      @loader_path/libintlc.dylib      pycrysfml08_dist/pycrysfml08/libifcore.dylib
-
-          ##install_name_tool -change @rpath/libimf.dylib        @loader_path/libimf.dylib        pycrysfml08_dist/pycrysfml08/libimf.dylib
-          #install_name_tool -change @rpath/libintlc.dylib      @loader_path/libintlc.dylib      pycrysfml08_dist/pycrysfml08/libimf.dylib
-
-          ##install_name_tool -change @rpath/libsvml.dylib       @loader_path/libsvml.dylib       pycrysfml08_dist/pycrysfml08/libsvml.dylib
-          #install_name_tool -change @rpath/libintlc.dylib      @loader_path/libintlc.dylib      pycrysfml08_dist/pycrysfml08/libsvml.dylib
-
-          ##install_name_tool -change @rpath/libintlc.dylib      @loader_path/libintlc.dylib      pycrysfml08_dist/pycrysfml08/libintlc.dylib
-
-          ##install_name_tool -change @rpath/libirc.dylib        @loader_path/libirc.dylib        pycrysfml08_dist/pycrysfml08/libirc.dylib
-
-          ##install_name_tool -change @rpath/libifdynalloc.dylib @loader_path/libifdynalloc.dylib pycrysfml08_dist/pycrysfml08/libifdynalloc.dylib
-
-
-          echo '::::: otool -L pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          otool -L pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          echo '::::: otool -L pycrysfml08_dist/pycrysfml08/libifport.dylib'
-          otool -L pycrysfml08_dist/pycrysfml08/libifport.dylib
-          echo '::::: otool -L pycrysfml08_dist/pycrysfml08/libifcoremt.dylib'
-          otool -L pycrysfml08_dist/pycrysfml08/libifcoremt.dylib
-          echo '::::: otool -L pycrysfml08_dist/pycrysfml08/libifcore.dylib'
-          otool -L pycrysfml08_dist/pycrysfml08/libifcore.dylib
-          echo '::::: otool -L pycrysfml08_dist/pycrysfml08/libimf.dylib'
-          otool -L pycrysfml08_dist/pycrysfml08/libimf.dylib
-
-          echo '::::: otool -L pycrysfml08_dist/pycrysfml08/libsvml.dylib'
-          otool -L pycrysfml08_dist/pycrysfml08/libsvml.dylib
-          echo '::::: otool -L pycrysfml08_dist/pycrysfml08/libintlc.dylib'
-          otool -L pycrysfml08_dist/pycrysfml08/libintlc.dylib
-          echo '::::: otool -L pycrysfml08_dist/pycrysfml08/libirc.dylib'
-          otool -L pycrysfml08_dist/pycrysfml08/libirc.dylib
-          echo '::::: otool -L pycrysfml08_dist/pycrysfml08/libifdynalloc.dylib'
-          otool -L pycrysfml08_dist/pycrysfml08/libifdynalloc.dylib
-
-
-          echo '::::: otool -l pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so | grep RPATH -A2'
-          otool -l pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so | grep RPATH -A2
-
-          #echo '::::: patchelf --print-rpath pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          #patchelf --print-rpath pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          #echo '::::: patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          #patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          #echo '::::: ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          #ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-
-          #echo '::::: patchelf --set-rpath ...'
-          #patchelf --set-rpath '$ORIGIN' pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          #echo '::::: patchelf --print-rpath pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          #patchelf --print-rpath pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-
-          #echo '::::: patchelf --no-default-lib pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          #patchelf --no-default-lib pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-
-          #echo '::::: patchelf --replace-needed libifport.so.5 ...'
-          #patchelf --replace-needed libifport.so.5 /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08/libifport.so.5 pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          #echo '::::: patchelf --replace-needed libifcoremt.so.5 ...'
-          #patchelf --replace-needed libifcoremt.so.5 ./libifcoremt.so.5 pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-
-          #echo '::::: patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          #patchelf --print-needed pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          #echo '::::: ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          #ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-
-          #echo '::::: patchelf --remove-needed libifcoremt.so.5 ...'
-          #patchelf --remove-needed libifcoremt.so.5 pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          #echo '::::: patchelf --add-needed ./libifcoremt.so.5  ...'
-          #patchelf --add-needed --relative-to-file libifcoremt.so.5 pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-
-      - name: DEBUG
-        if: matrix.toolchain.exe == 'gfortran'
-        shell: bash
-        run: |
-          echo '::::: ls -l pycrysfml08_dist/pycrysfml08'
-          ls -l pycrysfml08_dist/pycrysfml08
-
-          ###echo '::::: delete old rpaths'
-          ###install_name_tool -delete_rpath /usr/local/Cellar/gcc/13.2.0/lib/gcc/current/gcc/x86_64-apple-darwin21/13 pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          ###install_name_tool -delete_rpath /usr/local/Cellar/gcc/13.2.0/lib/gcc/current/gcc pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          ###install_name_tool -delete_rpath /usr/local/Cellar/gcc/13.2.0/lib/gcc/current pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-
-
-
-          ###echo '::::: install_name_tool -change @rpath... @loader_path...'
-          ###install_name_tool -change /usr/local/opt/gcc/lib/gcc/current/libgfortran.5.dylib @rpath/libgfortran.5.dylib pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          ###install_name_tool -change /usr/local/opt/gcc/lib/gcc/current/libgcc_s.1.1.dylib  @rpath/libgcc_s.1.1.dylib  pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          ###install_name_tool -change /usr/local/opt/gcc/lib/gcc/current/libquadmath.0.dylib @rpath/libquadmath.0.dylib pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-
-          echo '::::: otool -L pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          otool -L pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-
-          echo '::::: otool -l pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so | grep RPATH -A2'
-          otool -l pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so | grep RPATH -A2
-
-      - name: Validate current project pyproject.toml
-        shell: bash
-        run: scripts/validate_pyproject_toml.sh
+          scripts/copy_extra_libs_to_pycfml_dist.sh
+          scripts/copy_init_file_to_pycfml_dist.sh
+          scripts/copy_cfml_databases_to_pycfml_dist.sh
 
       - name: Create Python package wheel of pycfml
         shell: bash
-        run: scripts/create_pycfml_python_wheel.sh
-
-      - name: Rename autogenerated Python package wheel of pycfml
-        shell: bash
-        run: scripts/rename_pycfml_python_wheel.sh
+        run: |
+          scripts/validate_pyproject_toml.sh
+          scripts/create_pycfml_python_wheel.sh
+          scripts/rename_pycfml_python_wheel.sh
 
       - name: Prepare for uploading Python package wheel of pycfml
         shell: bash
@@ -347,19 +194,6 @@ jobs:
       - name: Install pycfml from downloaded Python package wheel (with dev extras)
         shell: bash
         run: scripts/install_pycfml_from_wheel.sh
-
-      - name: DEBUG
-        shell: bash
-        run: |
-          echo '::::: ls -l /Users/runner/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08'
-          ls -l /Users/runner/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08
-          echo '::::: otool -L /Users/runner/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08/py_cfml_metrics.so'
-          otool -L /Users/runner/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08/py_cfml_metrics.so
-
-          #echo '::::: ls -l /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08'
-          #ls -l /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08  # ls -l ${{ env.LD_LIBRARY_PATH }}/python3.11/site-packages/pycrysfml08
-          #echo '::::: ldd /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08/py_cfml_metrics.so'
-          #ldd /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08/py_cfml_metrics.so
 
       - name: Run pycfml unit tests
         shell: bash

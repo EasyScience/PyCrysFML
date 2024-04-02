@@ -659,6 +659,14 @@ def change_runpath_for_built_pycfml():
     # ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
     # ls -l /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08
     # ldd /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08/py_cfml_metrics.so
+    # macOS usage example:
+    # sudo find / -iname "libif*"
+    # ls -l pycrysfml08_dist/pycrysfml08
+    # install_name_tool -rpath /opt/intel/oneapi/compiler/2023.2.0/mac/bin/intel64/../../compiler/lib @loader_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+    # install_name_tool -delete_rpath /usr/local/Cellar/gcc/13.2.0/lib/gcc/current pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+    # install_name_tool -change /usr/local/opt/gcc/lib/gcc/current/libgfortran.5.dylib @rpath/libgfortran.5.dylib pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+    # otool -L pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+    # otool -l pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so | grep RPATH -A2
     modules = 'pycfml-modules'
     project_name = CONFIG['pycfml']['name']
     shared_lib_ext = CONFIG['build']['shared-lib-ext'][_platform()]
@@ -693,11 +701,12 @@ def change_runpath_for_built_pycfml():
                     cmd = cmd.replace('{EXT}', shared_lib_ext)
                     lines.append(cmd)
     elif _platform() == 'macos':
-        change_rpath_template_cmd = CONFIG['template']['rpath']['change'][_platform()]
         delete_rpath_template_cmd = CONFIG['template']['rpath']['delete'][_platform()]
+        change_rpath_template_cmd = CONFIG['template']['rpath']['change'][_platform()]
         rpaths = CONFIG['build']['rpaths'][_platform()][_compiler_name()]
         try:
             dependent_libs = CONFIG['build']['dependent-libs'][_platform()][_compiler_name()]
+            change_lib_template_cmd = CONFIG['template']['dependent-lib']['change'][_platform()]
         except KeyError:
             dependent_libs = []
         msg = _echo_msg(f"Changing runpath(s) for built {project_name} shared objects")
@@ -723,7 +732,7 @@ def change_runpath_for_built_pycfml():
                         cmd = cmd.replace('{EXT}', shared_lib_ext)
                     lines.append(cmd)
                 for lib in dependent_libs:
-                    cmd = change_rpath_template_cmd
+                    cmd = change_lib_template_cmd
                     cmd = cmd.replace('{OLD}', lib['old'])
                     cmd = cmd.replace('{NEW}', lib['new'])
                     cmd = cmd.replace('{PATH}', path)

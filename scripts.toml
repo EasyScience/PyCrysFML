@@ -1,8 +1,7 @@
-[project.dir]
-scripts = 'scripts'
+# CrysFML related parameters
 
 [cfml]
-name = 'CrysFML2008'
+log-name = 'CrysFML2008'
 static-lib-name = 'CrysFML08'  # without 'lib' prefix on unix-based platforms
 
 [cfml.git]
@@ -17,8 +16,10 @@ dist = 'crysfml08_dist'
 dist-lib = 'lib'
 dist-include = 'include'
 
+# PyCrysFML related parameters
+
 [pycfml]
-name = 'PyCrysFML08'
+log-name = 'PyCrysFML08'
 
 [pycfml.git]
 url = 'https://code.ill.fr/scientific-software/pycrysfml08.git'
@@ -31,6 +32,11 @@ build = 'pycrysfml08_build'
 dist = 'pycrysfml08_dist'
 dist-package = 'pycrysfml08'
 wheel = 'pycrysfml08_wheel'
+
+# Generic build template commands and related parameters
+
+[project.dir]
+scripts = 'scripts'
 
 [template]
 clone-repo = 'git clone --single-branch --branch {BRANCH} {URL} {OUT_PATH}'
@@ -110,6 +116,8 @@ dependent-libs.macos.gfortran = [ { old = '/usr/local/opt/gcc/lib/gcc/current/li
                                   { old = '/usr/local/opt/gcc/lib/gcc/current/libgcc_s.1.1.dylib',  new = '@rpath/libgcc_s.1.1.dylib' },
                                   { old = '/usr/local/opt/gcc/lib/gcc/current/libquadmath.0.dylib', new = '@rpath/libquadmath.0.dylib' } ]
 
+# Build configurations matrix
+
 [[build-objs]]
 platforms = ['macos', 'linux', 'windows']
 compilers = ['gfortran']
@@ -145,6 +153,8 @@ build-shared = 'link {PATH}.obj /out:"{PATH}.{EXT}" /libpath:{CFML_LIB_PATH} /dl
 modes.base = '/fpp /heap-arrays /nologo -DWIN32=ON'
 modes.debug = ''
 modes.release = ''
+
+# CrysFML fortran source files
 
 [[cfml-modules]]
 main-file = 'Forpy'
@@ -691,6 +701,8 @@ components-files = [
   'EnBVS_Maps',
   'EnBVS_SetTab'
 ]
+
+# PyCrysFML fortran source files
 
 [[pycfml-modules]]
 main-file = 'py_cfml_metrics'

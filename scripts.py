@@ -298,7 +298,7 @@ def create_cfml_repo_dir():
     append_to_main_script(lines)
 
 def download_cfml_repo():
-    project_name = CONFIG['cfml']['name']
+    project_name = CONFIG['cfml']['log-name']
     url = CONFIG['cfml']['git']['url']
     branch = CONFIG['cfml']['git']['branch']
     out_dir = CONFIG['cfml']['dir']['repo']
@@ -363,7 +363,7 @@ def rename_global_deps_file():
     append_to_main_script(lines)
 
 def build_cfml_objs():
-    project_name = CONFIG['cfml']['name']
+    project_name = CONFIG['cfml']['log-name']
     repo_dir = CONFIG['cfml']['dir']['repo']
     src_dir = CONFIG['cfml']['dir']['repo-src']
     src_path = os.path.join(_project_path(), repo_dir, src_dir)
@@ -501,7 +501,7 @@ def create_pycfml_repo_dir():
     append_to_main_script(lines)
 
 def download_pycfml_repo():
-    project_name = CONFIG['pycfml']['name']
+    project_name = CONFIG['pycfml']['log-name']
     url = CONFIG['pycfml']['git']['url']
     branch = CONFIG['pycfml']['git']['branch']
     out_dir = CONFIG['pycfml']['dir']['repo']
@@ -519,10 +519,10 @@ def download_pycfml_repo():
     append_to_main_script(lines)
 
 def copy_powder_mod_to_pycfml_repo():
-    cfml_project_name = CONFIG['cfml']['name']
+    cfml_project_name = CONFIG['cfml']['log-name']
     cfml_repo_dir = CONFIG['cfml']['dir']['repo']
     cfml_repo_path = os.path.join(_project_path(), cfml_repo_dir)
-    pycfml_project_name = CONFIG['pycfml']['name']
+    pycfml_project_name = CONFIG['pycfml']['log-name']
     pycfml_repo_dir = CONFIG['pycfml']['dir']['repo']
     pycfml_src_dir = CONFIG['pycfml']['dir']['repo-src']
     pycfml_src_path = os.path.join(_project_path(), pycfml_repo_dir, pycfml_src_dir)
@@ -561,7 +561,7 @@ def create_pycfml_build_dir():
     append_to_main_script(lines)
 
 def build_pycfml_objs():
-    project_name = CONFIG['pycfml']['name']
+    project_name = CONFIG['pycfml']['log-name']
     repo_dir = CONFIG['pycfml']['dir']['repo']
     src_dir = CONFIG['pycfml']['dir']['repo-src']
     src_path = os.path.join(_project_path(), repo_dir, src_dir)
@@ -588,7 +588,7 @@ def build_pycfml_objs():
     append_to_main_script(lines)
 
 def build_pycfml_shared_objs_or_dynamic_libs():
-    project_name = CONFIG['pycfml']['name']
+    project_name = CONFIG['pycfml']['log-name']
     build_dir = CONFIG['pycfml']['dir']['build']
     build_path = os.path.join(_project_path(), build_dir)
     lines = []
@@ -629,7 +629,7 @@ def create_pycfml_dist_dir():
 
 def copy_built_to_pycfml_dist():
     shared_lib_ext = CONFIG['build']['shared-lib-ext'][_platform()]
-    project_name = CONFIG['pycfml']['name']
+    project_name = CONFIG['pycfml']['log-name']
     build_dir = CONFIG['pycfml']['dir']['build']
     build_path = os.path.join(_project_path(), build_dir)
     dist_dir = CONFIG['pycfml']['dir']['dist']
@@ -677,7 +677,7 @@ def change_runpath_for_built_pycfml():
         append_to_main_script(lines)
         return
     modules = 'pycfml-modules'
-    project_name = CONFIG['pycfml']['name']
+    project_name = CONFIG['pycfml']['log-name']
     shared_lib_ext = CONFIG['build']['shared-lib-ext'][_platform()]
     dist_dir = CONFIG['pycfml']['dir']['dist']
     package_dir = CONFIG['pycfml']['dir']['dist-package']
@@ -777,7 +777,7 @@ def copy_extra_libs_to_pycfml_dist():
     append_to_main_script(lines)
 
 def copy_init_file_to_pycfml_dist():
-    project_name = CONFIG['pycfml']['name']
+    project_name = CONFIG['pycfml']['log-name']
     repo_dir = CONFIG['pycfml']['dir']['repo']
     repo_path = os.path.join(_project_path(), repo_dir)
     dist_dir = CONFIG['pycfml']['dir']['dist']
@@ -831,7 +831,7 @@ def validate_pyproject_toml():
     append_to_main_script(lines)
 
 def create_pycfml_python_wheel():
-    project_name = CONFIG['pycfml']['name']
+    project_name = CONFIG['pycfml']['log-name']
     wheel_dir = CONFIG['pycfml']['dir']['wheel']
     wheel_path = os.path.join(_project_path(), wheel_dir)
     lines = []
@@ -845,7 +845,7 @@ def create_pycfml_python_wheel():
     append_to_main_script(lines)
 
 def rename_pycfml_python_wheel():
-    project_name = CONFIG['pycfml']['name']
+    project_name = CONFIG['pycfml']['log-name']
     pycfml_package_dir = CONFIG['pycfml']['dir']['dist-package']
     dist_package_version = CONFIG['build']['package-version']
     initial_wheel_name = f'{pycfml_package_dir}-{dist_package_version}-py3-none-any.whl'
@@ -865,7 +865,7 @@ def rename_pycfml_python_wheel():
     #append_to_main_script(lines)
 
 def install_pycfml_from_wheel():
-    project_name = CONFIG['pycfml']['name']
+    project_name = CONFIG['pycfml']['log-name']
     package_name = CONFIG['pycfml']['dir']['dist-package']
     wheel_dir = CONFIG['pycfml']['dir']['wheel']
     wheel_path = os.path.join(_project_path(), wheel_dir)
@@ -927,8 +927,8 @@ if __name__ == '__main__':
         _print_pcfml_wheel_dir()
         exit(0)
 
-    cfml_project_name = CONFIG['cfml']['name']
-    pycfml_project_name = CONFIG['pycfml']['name']
+    cfml_project_name = CONFIG['cfml']['log-name']
+    pycfml_project_name = CONFIG['pycfml']['log-name']
 
     clear_main_script()
 

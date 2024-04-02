@@ -3,7 +3,7 @@ scripts = 'scripts'
 
 [cfml]
 name = 'CrysFML2008'
-static-lib.name = 'CrysFML08'  # without 'lib' prefix on unix-based platforms
+static-lib-name = 'CrysFML08'  # without 'lib' prefix on unix-based platforms
 
 [cfml.git]
 url = 'https://code.ill.fr/rodriguez-carvajal/crysfml2008.git'

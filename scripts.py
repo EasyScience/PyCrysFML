@@ -178,7 +178,7 @@ def _compile_objs_script_lines(modules: str, src_path: str, include_path: str=No
 
 def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):
     obj_ext = _obj_ext()
-    cfml_lib_name = CONFIG['cfml']['static-lib']['name']
+    cfml_lib_name = CONFIG['cfml']['static-lib-name']
     cfml_dist_dir = CONFIG['cfml']['dir']['dist']
     cfml_dist_path = os.path.join(_project_path(), cfml_dist_dir)
     cfml_lib_dist_dir = CONFIG['cfml']['dir']['dist-lib']
@@ -405,7 +405,7 @@ def delete_renamed_global_deps_file():
 def build_cfml_static_lib():
     lib_ext = CONFIG['build']['static-lib-ext'][_platform()]
     static_lib_prefix = CONFIG['build']['static-lib-prefix'][_platform()]
-    lib_name = CONFIG['cfml']['static-lib']['name']
+    lib_name = CONFIG['cfml']['static-lib-name']
     lib_name = f'{static_lib_prefix}{lib_name}'
     build_dir = CONFIG['cfml']['dir']['build']
     build_path = os.path.join(_project_path(), build_dir)
@@ -459,7 +459,7 @@ def create_cfml_dist_dir():
 def copy_built_to_cfml_dist():
     lib_ext = CONFIG['build']['static-lib-ext'][_platform()]
     static_lib_prefix = CONFIG['build']['static-lib-prefix'][_platform()]
-    lib_name = CONFIG['cfml']['static-lib']['name']
+    lib_name = CONFIG['cfml']['static-lib-name']
     lib_name = f'{static_lib_prefix}{lib_name}'
     build_dir = CONFIG['cfml']['dir']['build']
     build_path = os.path.join(_project_path(), build_dir)
@@ -667,6 +667,15 @@ def change_runpath_for_built_pycfml():
     # install_name_tool -change /usr/local/opt/gcc/lib/gcc/current/libgfortran.5.dylib @rpath/libgfortran.5.dylib pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
     # otool -L pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
     # otool -l pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so | grep RPATH -A2
+    try:
+        rpaths = CONFIG['build']['rpaths'][_platform()][_compiler_name()]
+    except KeyError:
+        msg = _echo_msg(f"No change of runtime paths are needed for platform '{_platform()}' and compiler '{_compiler_name()}'")
+        lines = [msg]
+        script_name = f'{sys._getframe().f_code.co_name}.sh'
+        _write_lines_to_file(lines, script_name)
+        append_to_main_script(lines)
+        return
     modules = 'pycfml-modules'
     project_name = CONFIG['pycfml']['name']
     shared_lib_ext = CONFIG['build']['shared-lib-ext'][_platform()]
@@ -680,7 +689,6 @@ def change_runpath_for_built_pycfml():
     if _platform() == 'linux':
         set_rpath_template_cmd = CONFIG['template']['rpath']['set'][_platform()]
         no_default_lib_template_cmd = CONFIG['template']['no-default-lib'][_platform()]
-        rpaths = CONFIG['build']['rpaths'][_platform()][_compiler_name()]
         msg = _echo_msg(f"Changing runpath(s) for built {project_name} shared objects")
         lines.append(msg)
         for module in CONFIG[modules]:
@@ -701,14 +709,13 @@ def change_runpath_for_built_pycfml():
                     cmd = cmd.replace('{EXT}', shared_lib_ext)
                     lines.append(cmd)
     elif _platform() == 'macos':
-        delete_rpath_template_cmd = CONFIG['template']['rpath']['delete'][_platform()]
-        change_rpath_template_cmd = CONFIG['template']['rpath']['change'][_platform()]
-        rpaths = CONFIG['build']['rpaths'][_platform()][_compiler_name()]
         try:
             dependent_libs = CONFIG['build']['dependent-libs'][_platform()][_compiler_name()]
             change_lib_template_cmd = CONFIG['template']['dependent-lib']['change'][_platform()]
         except KeyError:
             dependent_libs = []
+        delete_rpath_template_cmd = CONFIG['template']['rpath']['delete'][_platform()]
+        change_rpath_template_cmd = CONFIG['template']['rpath']['change'][_platform()]
         msg = _echo_msg(f"Changing runpath(s) for built {project_name} shared objects")
         lines.append(msg)
         for module in CONFIG[modules]:

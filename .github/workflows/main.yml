@@ -37,10 +37,6 @@ jobs:
           compiler: ${{ matrix.toolchain.compiler }}
           version: ${{ matrix.toolchain.version }}
 
-      #- name: DEBUG
-      #  shell: bash
-      #  run: sudo find / -iname "libif*"
-
       - name: Set up NMake build tool [Windows]
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1

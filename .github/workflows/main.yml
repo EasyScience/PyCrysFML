@@ -52,7 +52,7 @@ jobs:
 
       - name: Install Python dependences
         shell: bash
-        run: python3 -m pip install '.[ci,test]'  # from pyproject.toml (including ci and test extras)
+        run: python3 -m pip install '.[ci]'  # ci extras from pyproject.toml
 
       - name: Fix reinstalling gcc [macOS]  # needed because of `brew reinstall gcc`
         if: runner.os == 'macOS'
@@ -168,6 +168,10 @@ jobs:
         shell: bash
         run: python3 -m pip install --upgrade pip
 
+      - name: Install Python dependences
+        shell: bash
+        run: python3 -m pip install '.[test]'  # test extras from pyproject.toml
+
       - name: Create job step scripts
         shell: bash
         run: >
@@ -177,7 +181,7 @@ jobs:
           --mode debug
           --bash-syntax
 
-      - name: Prepare for downloading Python package wheel of pycfml
+      - name: Prepare for downloading Python package wheel of PYCFML
         shell: bash
         run: echo "WHEEL_DIR=$(python3 scripts.py --print-wheel-dir)" >> $GITHUB_ENV
 

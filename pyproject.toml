@@ -7,9 +7,11 @@ name = 'pycrysfml08'
 version = '0.0.1-alpha0'
 description = "Testing packaging PyCrysFML08 from https://code.ill.fr/scientific-software/PyCrysFML08"
 authors = [
-  {name = "Andrew Sazonov", email = "andrew.sazonov@ess.eu"}
+  {name = "Juan Rodríguez-Carvajal", email = "jrc@ill.fr"},
+  {name = "Nebil Ayape Katcho", email = "katcho@ill.fr"}
 ]
 maintainers = [
+  {name = "Elisa Rebolini", email = "rebolini@ill.fr"},
   {name = "Andrew Sazonov", email = "andrew.sazonov@ess.eu"}
 ]
 readme = "README.md"

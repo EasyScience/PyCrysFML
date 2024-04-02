@@ -52,9 +52,9 @@ jobs:
 
       - name: Install Python dependences
         shell: bash
-        run: python3 -m pip install 'validate-pyproject[all]' build wheel
+        run: python3 -m pip install '.[ci,test]'  # from pyproject.toml (including ci and test extras)
 
-      - name: Fix reinstalling gcc [macOS] # needed because of `brew reinstall gcc`
+      - name: Fix reinstalling gcc [macOS]  # needed because of `brew reinstall gcc`
         if: runner.os == 'macOS'
         shell: bash
         run: echo "MACOSX_DEPLOYMENT_TARGET=$(sw_vers -productVersion)" >> $GITHUB_ENV

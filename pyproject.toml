@@ -15,19 +15,24 @@ maintainers = [
 readme = "README.md"
 license = {file = "LICENSE"}
 classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent"
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent"
 ]
 requires-python = ">=3.11"
 dependencies = [
-    "numpy"
+  "numpy"
 ]
 
 [project.optional-dependencies]
-dev = [
-    "deepdiff",
-    "pytest>=5.2"
+ci = [
+  'validate-pyproject[all]',
+  'build',
+  'wheel'
+]
+test = [
+  "deepdiff",
+  "pytest>=5.2"
 ]
 
 [project.urls]

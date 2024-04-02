@@ -1,7 +1,5 @@
 import os
-import re
 import sys
-import json
 import tomllib
 import argparse
 import sysconfig

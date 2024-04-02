@@ -149,10 +149,10 @@ jobs:
           #echo '::::: install_name_tool -add_rpath @loader_path pycrysfml08_dist/pycrysfml08/powder_mod_2.so'
           #install_name_tool -add_rpath @loader_path pycrysfml08_dist/pycrysfml08/powder_mod_2.so
 
-          echo '::::: change rpath'
-          install_name_tool -rpath /opt/intel/oneapi/compiler/2023.2.0/mac/bin/intel64/../../compiler/lib @loader_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          install_name_tool -rpath /opt/intel/oneapi/compiler/2023.2.0/mac/bin/intel64/../../compiler/lib @loader_path pycrysfml08_dist/pycrysfml08/powder_mod.so
-          install_name_tool -rpath /opt/intel/oneapi/compiler/2023.2.0/mac/bin/intel64/../../compiler/lib @loader_path pycrysfml08_dist/pycrysfml08/powder_mod_2.so
+          ###echo '::::: change rpath'
+          ###install_name_tool -rpath /opt/intel/oneapi/compiler/2023.2.0/mac/bin/intel64/../../compiler/lib @loader_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          ###install_name_tool -rpath /opt/intel/oneapi/compiler/2023.2.0/mac/bin/intel64/../../compiler/lib @loader_path pycrysfml08_dist/pycrysfml08/powder_mod.so
+          ###install_name_tool -rpath /opt/intel/oneapi/compiler/2023.2.0/mac/bin/intel64/../../compiler/lib @loader_path pycrysfml08_dist/pycrysfml08/powder_mod_2.so
 
           #echo '::::: install_name_tool -change @rpath... @loader_path...'
           #install_name_tool -change @rpath/libifport.dylib     @loader_path/libifport.dylib     pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
@@ -250,17 +250,17 @@ jobs:
           echo '::::: ls -l pycrysfml08_dist/pycrysfml08'
           ls -l pycrysfml08_dist/pycrysfml08
 
-          echo '::::: delete old rpaths'
-          install_name_tool -delete_rpath /usr/local/Cellar/gcc/13.2.0/lib/gcc/current/gcc/x86_64-apple-darwin21/13 pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          install_name_tool -delete_rpath /usr/local/Cellar/gcc/13.2.0/lib/gcc/current/gcc pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          install_name_tool -delete_rpath /usr/local/Cellar/gcc/13.2.0/lib/gcc/current pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          ###echo '::::: delete old rpaths'
+          ###install_name_tool -delete_rpath /usr/local/Cellar/gcc/13.2.0/lib/gcc/current/gcc/x86_64-apple-darwin21/13 pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          ###install_name_tool -delete_rpath /usr/local/Cellar/gcc/13.2.0/lib/gcc/current/gcc pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          ###install_name_tool -delete_rpath /usr/local/Cellar/gcc/13.2.0/lib/gcc/current pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
 
 
 
-          echo '::::: install_name_tool -change @rpath... @loader_path...'
-          install_name_tool -change /usr/local/opt/gcc/lib/gcc/current/libgfortran.5.dylib @rpath/libgfortran.5.dylib pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          install_name_tool -change /usr/local/opt/gcc/lib/gcc/current/libgcc_s.1.1.dylib  @rpath/libgcc_s.1.1.dylib  pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          install_name_tool -change /usr/local/opt/gcc/lib/gcc/current/libquadmath.0.dylib @rpath/libquadmath.0.dylib pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          ###echo '::::: install_name_tool -change @rpath... @loader_path...'
+          ###install_name_tool -change /usr/local/opt/gcc/lib/gcc/current/libgfortran.5.dylib @rpath/libgfortran.5.dylib pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          ###install_name_tool -change /usr/local/opt/gcc/lib/gcc/current/libgcc_s.1.1.dylib  @rpath/libgcc_s.1.1.dylib  pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+          ###install_name_tool -change /usr/local/opt/gcc/lib/gcc/current/libquadmath.0.dylib @rpath/libquadmath.0.dylib pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
 
           echo '::::: otool -L pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
           otool -L pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so

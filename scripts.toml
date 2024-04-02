@@ -38,10 +38,10 @@ build-obj = '{COMPILER} {OPTIONS} -c {PATH} -I {INCLUDE}'
 build-static.macos = 'ar -r {LIB}.a *.{OBJ_EXT}'
 build-static.linux = 'ar -r {LIB}.a *.{OBJ_EXT}'
 build-static.windows = 'lib /out:{LIB}.lib *.{OBJ_EXT}'
-change-rpath.macos = 'install_name_tool -rpath {OLD} {NEW}'
-add-rpath.macos = 'install_name_tool -add_rpath {NEW}'
-delete-rpath.macos = 'install_name_tool -delete_rpath {OLD}'
-set-rpath.linux = "patchelf --set-rpath '$ORIGIN' {PATH}.{EXT}"
+rpath.set.linux = 'patchelf --set-rpath {NEW} {PATH}.{EXT}'
+rpath.change.macos = 'install_name_tool -rpath {OLD} {NEW} {PATH}.{EXT}'
+rpath.add.macos = 'install_name_tool -add_rpath {NEW} {PATH}.{EXT}'
+rpath.delete.macos = 'install_name_tool -delete_rpath {OLD} {PATH}.{EXT}'
 no-default-lib.linux = 'patchelf --no-default-lib {PATH}.{EXT}'
 build-wheel = 'python3 -m build --wheel --outdir {PATH}'
 rename-wheel = 'python3 -m wheel tags --python-tag {PYTHON_TAG} --platform-tag {PLATFORM_TAG} --remove {PATH}'
@@ -98,6 +98,17 @@ extra-libs.windows.gfortran = ['C:\mingw64\bin\libgcc_s_seh-1.dll',
                                'C:\mingw64\bin\libgfortran-5.dll',
                                'C:\mingw64\bin\libquadmath-0.dll',
                                'C:\mingw64\bin\libwinpthread-1.dll']
+
+rpaths.linux.gfortran = [ { old = '', new = "'$ORIGIN'" } ]  # set rpath to point to '$ORIGIN'
+rpaths.linux.ifort =    [ { old = '', new = "'$ORIGIN'" } ]  # set rpath to point to '$ORIGIN'
+rpaths.linux.ifx =      [ { old = '', new = "'$ORIGIN'" } ]  # set rpath to point to '$ORIGIN'
+rpaths.macos.gfortran = [ { old = '/usr/local/Cellar/gcc/13.2.0/lib/gcc/current/gcc/x86_64-apple-darwin21/13', new = '' },   # delete all rpaths besides @loader_path
+                          { old = '/usr/local/Cellar/gcc/13.2.0/lib/gcc/current/gcc',                          new = '' },   # delete all rpaths besides @loader_path
+                          { old = '/usr/local/Cellar/gcc/13.2.0/lib/gcc/current',                              new = '' } ]  # delete all rpaths besides @loader_path
+rpaths.macos.ifort =    [ { old = '/opt/intel/oneapi/compiler/2023.2.0/mac/bin/intel64/../../compiler/lib',    new = '@loader_path' } ]
+dependent-libs.macos.gfortran = [ { old = '/usr/local/opt/gcc/lib/gcc/current/libgfortran.5.dylib', new = '@rpath/libgfortran.5.dylib' },
+                                  { old = '/usr/local/opt/gcc/lib/gcc/current/libgcc_s.1.1.dylib',  new = '@rpath/libgcc_s.1.1.dylib' },
+                                  { old = '/usr/local/opt/gcc/lib/gcc/current/libquadmath.0.dylib', new = '@rpath/libquadmath.0.dylib' } ]
 
 [[build-objs]]
 platforms = ['macos', 'linux', 'windows']

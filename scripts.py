@@ -659,16 +659,6 @@ def change_runpath_for_built_pycfml():
     # ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
     # ls -l /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08
     # ldd /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08/py_cfml_metrics.so
-    try:
-        set_rpath_template_cmd = CONFIG['template']['set-rpath'][_platform()]
-        no_default_lib_template_cmd = CONFIG['template']['no-default-lib'][_platform()]
-    except KeyError:
-        msg = _echo_msg(f"Changing runpath is not needed for platform '{_platform()}'")
-        lines = [msg]
-        script_name = f'{sys._getframe().f_code.co_name}.sh'
-        _write_lines_to_file(lines, script_name)
-        append_to_main_script(lines)
-        return
     modules = 'pycfml-modules'
     project_name = CONFIG['pycfml']['name']
     shared_lib_ext = CONFIG['build']['shared-lib-ext'][_platform()]
@@ -679,23 +669,69 @@ def change_runpath_for_built_pycfml():
     total = _total_src_file_count(modules)
     current = 0
     lines = []
-    msg = _echo_msg(f"Changing runpath for built {project_name} shared objects")
-    lines.append(msg)
-    for module in CONFIG[modules]:
-        if 'main-file' in module:
-            current += 1
-            name = f'{module["main-file"]}'
-            path = os.path.join(package_abspath, name)
-            msg = _echo_progress_msg(current, total, f'{name}.{shared_lib_ext}')
-            lines.append(msg)
-            cmd = set_rpath_template_cmd
-            cmd = cmd.replace('{PATH}', path)
-            cmd = cmd.replace('{EXT}', shared_lib_ext)
-            lines.append(cmd)
-            cmd = no_default_lib_template_cmd
-            cmd = cmd.replace('{PATH}', path)
-            cmd = cmd.replace('{EXT}', shared_lib_ext)
-            lines.append(cmd)            
+    if _platform() == 'linux':
+        set_rpath_template_cmd = CONFIG['template']['rpath']['set'][_platform()]
+        no_default_lib_template_cmd = CONFIG['template']['no-default-lib'][_platform()]
+        rpaths = CONFIG['build']['rpaths'][_platform()][_compiler_name()]
+        msg = _echo_msg(f"Changing runpath(s) for built {project_name} shared objects")
+        lines.append(msg)
+        for module in CONFIG[modules]:
+            if 'main-file' in module:
+                for rpath in rpaths:
+                    current += 1
+                    name = f'{module["main-file"]}'
+                    path = os.path.join(package_abspath, name)
+                    msg = _echo_progress_msg(current, total, f'{name}.{shared_lib_ext}')
+                    lines.append(msg)
+                    cmd = set_rpath_template_cmd
+                    cmd = cmd.replace('{NEW}', rpath['new'])
+                    cmd = cmd.replace('{PATH}', path)
+                    cmd = cmd.replace('{EXT}', shared_lib_ext)
+                    lines.append(cmd)
+                    cmd = no_default_lib_template_cmd
+                    cmd = cmd.replace('{PATH}', path)
+                    cmd = cmd.replace('{EXT}', shared_lib_ext)
+                    lines.append(cmd)
+    elif _platform() == 'macos':
+        change_rpath_template_cmd = CONFIG['template']['rpath']['change'][_platform()]
+        delete_rpath_template_cmd = CONFIG['template']['rpath']['delete'][_platform()]
+        rpaths = CONFIG['build']['rpaths'][_platform()][_compiler_name()]
+        try:
+            dependent_libs = CONFIG['build']['dependent-libs'][_platform()][_compiler_name()]
+        except KeyError:
+            dependent_libs = []
+        msg = _echo_msg(f"Changing runpath(s) for built {project_name} shared objects")
+        lines.append(msg)
+        for module in CONFIG[modules]:
+            if 'main-file' in module:
+                current += 1
+                name = f'{module["main-file"]}'
+                path = os.path.join(package_abspath, name)
+                msg = _echo_progress_msg(current, total, f'{name}.{shared_lib_ext}')
+                lines.append(msg)
+                for rpath in rpaths:
+                    if rpath['new'] == '':  # delete this rpath
+                        cmd = delete_rpath_template_cmd
+                        cmd = cmd.replace('{OLD}', rpath['old'])
+                        cmd = cmd.replace('{PATH}', path)
+                        cmd = cmd.replace('{EXT}', shared_lib_ext)
+                    else:  # change this rpath
+                        cmd = change_rpath_template_cmd
+                        cmd = cmd.replace('{OLD}', rpath['old'])
+                        cmd = cmd.replace('{NEW}', rpath['new'])
+                        cmd = cmd.replace('{PATH}', path)
+                        cmd = cmd.replace('{EXT}', shared_lib_ext)
+                    lines.append(cmd)
+                for lib in dependent_libs:
+                    cmd = change_rpath_template_cmd
+                    cmd = cmd.replace('{OLD}', lib['old'])
+                    cmd = cmd.replace('{NEW}', lib['new'])
+                    cmd = cmd.replace('{PATH}', path)
+                    cmd = cmd.replace('{EXT}', shared_lib_ext)
+                    lines.append(cmd)
+    else:
+        msg = _echo_msg(f"Changing runpath is not needed for platform '{_platform()}'")
+        lines.append(msg)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)

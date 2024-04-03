@@ -6,30 +6,29 @@ on:
   #  - cron: '*/120 8-18 * * *'  # every 2 hours from 8:00 to 18:00 every day
 
 jobs:
-  wheel:  # the first job
-
+  wheel: # the first job
     # current job matrix. if modified, remember to UPDATE the strategy in the next job
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-22.04, macos-12, windows-2022]
         toolchain:
-          - {exe: gfortran, compiler: gcc, version: 13}
-          - {exe: ifort, compiler: intel-classic, version: '2021.10'}
-          - {exe: ifx, compiler: intel, version: '2023.2'}
+          - { exe: gfortran, compiler: gcc, version: 13 }
+          - { exe: ifort, compiler: intel-classic, version: "2021.10" }
+          - { exe: ifx, compiler: intel, version: "2023.2" }
         exclude:
           - os: macos-12
-            toolchain: {exe: ifx, compiler: intel, version: '2023.2'}  # no support for macOS
+            toolchain: { exe: ifx, compiler: intel, version: "2023.2" } # no support for macOS
 
     runs-on: ${{ matrix.os }}
 
     timeout-minutes: 30
 
-    steps:  # job steps
+    steps: # job steps
       - name: Check-out repository
         uses: actions/checkout@v4
 
-      - name: Set up Fortran compiler (FC) [all except Windows + gfortran]  # except: use pre-installed gfortran
+      - name: Set up Fortran compiler (FC) [all except Windows + gfortran] # except: use pre-installed gfortran
         if: runner.os != 'Windows' || matrix.toolchain.exe != 'gfortran'
         uses: fortran-lang/setup-fortran@v1
         id: setup-fortran
@@ -44,7 +43,7 @@ jobs:
       - name: Set up Python environment
         uses: actions/setup-python@v5
         with:
-            python-version: 3.11
+          python-version: 3.11
 
       - name: Upgrade package installer for Python
         shell: bash
@@ -52,9 +51,9 @@ jobs:
 
       - name: Install Python dependences
         shell: bash
-        run: python3 -m pip install '.[ci]'  # ci extras from pyproject.toml
+        run: python3 -m pip install '.[ci]' # ci extras from pyproject.toml
 
-      - name: Fix reinstalling gcc [macOS]  # needed because of `brew reinstall gcc`
+      - name: Fix reinstalling gcc [macOS] # needed because of `brew reinstall gcc`
         if: runner.os == 'macOS'
         shell: bash
         run: echo "MACOSX_DEPLOYMENT_TARGET=$(sw_vers -productVersion)" >> $GITHUB_ENV
@@ -70,7 +69,7 @@ jobs:
 
       - name: Print some debug info
         shell: bash
-        run: scripts/print_debug_info.sh  # bash -x scripts/print_debug_info.sh for printing commands
+        run: scripts/print_debug_info.sh # bash -x scripts/print_debug_info.sh for printing commands
 
       - name: Download CFML repository
         shell: bash
@@ -129,40 +128,39 @@ jobs:
 
       - name: Upload zipped Python package wheel of PYCFML for next job
         uses: actions/upload-artifact@v4
-        with:  # if name or path modified, remember to UPDATE those in the download step of the next job
-          name: pycfml-wheel_${{ matrix.os }}_${{ matrix.toolchain.exe }}  # name (without .zip) of the zip file to be uploaded
-          path: ${{ env.WHEEL_DIR }}  # all files from this directory are zipped
-          if-no-files-found: 'error'
+        with: # if name or path modified, remember to UPDATE those in the download step of the next job
+          name: pycfml-wheel_${{ matrix.os }}_${{ matrix.toolchain.exe }} # name (without .zip) of the zip file to be uploaded
+          path: ${{ env.WHEEL_DIR }} # all files from this directory are zipped
+          if-no-files-found: "error"
           compression-level: 0
 
-  tests:  # the second job
-
-    strategy:  # current job matrix. copy of the strategy from the previous job
+  tests: # the second job
+    strategy: # current job matrix. copy of the strategy from the previous job
       fail-fast: false
       matrix:
         os: [ubuntu-22.04, macos-12, windows-2022]
         toolchain:
-          - {exe: gfortran, compiler: gcc, version: 13}
-          - {exe: ifort, compiler: intel-classic, version: '2021.10'}
-          - {exe: ifx, compiler: intel, version: '2023.2'}
+          - { exe: gfortran, compiler: gcc, version: 13 }
+          - { exe: ifort, compiler: intel-classic, version: "2021.10" }
+          - { exe: ifx, compiler: intel, version: "2023.2" }
         exclude:
           - os: macos-12
-            toolchain: {exe: ifx, compiler: intel, version: '2023.2'}  # no support for macOS
+            toolchain: { exe: ifx, compiler: intel, version: "2023.2" } # no support for macOS
 
     runs-on: ${{ matrix.os }}
 
     timeout-minutes: 30
 
-    needs: wheel  # previous job need to be finished first
+    needs: wheel # previous job need to be finished first
 
-    steps:  # job steps
+    steps: # job steps
       - name: Check-out repository
         uses: actions/checkout@v4
 
       - name: Set up python environment
         uses: actions/setup-python@v5
         with:
-            python-version: 3.11
+          python-version: 3.11
 
       - name: Upgrade package installer for Python
         shell: bash
@@ -170,7 +168,7 @@ jobs:
 
       - name: Install Python dependences
         shell: bash
-        run: python3 -m pip install '.[test]'  # test extras from pyproject.toml
+        run: python3 -m pip install '.[test]' # test extras from pyproject.toml
 
       - name: Create job step scripts
         shell: bash
@@ -187,13 +185,17 @@ jobs:
 
       - name: Download zipped PYCFML wheel from previous job
         uses: actions/download-artifact@v4
-        with:  # name or path are taken from the upload step of the previous job
-          name: pycfml-wheel_${{ matrix.os }}_${{ matrix.toolchain.exe }}  # name (without .zip) of the zipped artifact uploaded on the previous jobs
-          path: ${{ env.WHEEL_DIR }}  # directory to extract downloaded zipped artifacts
+        with: # name or path are taken from the upload step of the previous job
+          name: pycfml-wheel_${{ matrix.os }}_${{ matrix.toolchain.exe }} # name (without .zip) of the zipped artifact uploaded on the previous jobs
+          path: ${{ env.WHEEL_DIR }} # directory to extract downloaded zipped artifacts
 
       - name: Install PYCFML from downloaded Python package wheel (with dev extras)
         shell: bash
         run: scripts/install_pycfml_from_wheel.sh
+
+      - name: Run CFML functional tests
+        shell: bash
+        run: scripts/run_cfml_functional_tests.sh
 
       - name: Run PYCFML unit tests
         shell: bash

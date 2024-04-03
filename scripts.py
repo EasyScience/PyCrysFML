@@ -990,7 +990,7 @@ def run_powder_mod_tests():
     append_to_main_script(lines)
 
 def run_powder_mod_main():
-    relpath = os.path.join('tests', 'powder_mod_tests', 'test_powder_mod.py')
+    relpath = os.path.join('tests', 'functional_tests', 'pycfml', 'test_powder_mod.py')
     abspath = os.path.join(_project_path(), relpath)
     lines = []
     msg = _echo_msg(f"Running powder_mod main from '{relpath}'")

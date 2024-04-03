@@ -107,7 +107,9 @@ def _compiler_options():
     options = ''
     for build in CONFIG['build-objs']:
         if _platform() in build['platforms'] and compiler in build['compilers']:
-            options = f"{build['modes']['base']} {build['modes'][mode]}"
+            options = f"{build['modes']['base']}"
+            if build['modes'][mode]:
+                options += f" {build['modes'][mode]}"
             break
     return options
 
@@ -139,11 +141,13 @@ def _compiling_progress(current: int, total: int):
     progress = round(current / total * 100)
     return progress
 
-def _compile_objs_script_lines(modules: str, src_path: str, include_path: str=None):
+def _compile_objs_script_lines(modules: str,
+                               src_path: str,
+                               include_path: str=''):
     src_ext = CONFIG['build']['src-ext'][modules]
     modules = f'{modules}-modules'
     template_cmd = CONFIG['template']['build-obj']
-    if include_path is None:
+    if not include_path:
         template_cmd = template_cmd.replace(' -I {INCLUDE}', '')
     else:
         template_cmd = template_cmd.replace('{INCLUDE}', include_path)
@@ -159,7 +163,10 @@ def _compile_objs_script_lines(modules: str, src_path: str, include_path: str=No
             msg = _echo_progress_msg(current, total, f"{name}")
             lines.append(msg)
             path = os.path.join(src_path, name)
-            cmd = template_cmd.replace('{COMPILER}', compiler).replace('{OPTIONS}', options).replace('{PATH}', path)
+            cmd = template_cmd
+            cmd = cmd.replace('{COMPILER}', compiler)
+            cmd = cmd.replace('{OPTIONS}', options)
+            cmd = cmd.replace('{PATH}', path)
             lines.append(cmd)
         if 'components-dir' in module and 'components-files' in module:
             components_dir = module['components-dir']
@@ -170,7 +177,10 @@ def _compile_objs_script_lines(modules: str, src_path: str, include_path: str=No
                 msg = _echo_progress_msg(current, total, f"{name}")
                 lines.append(msg)
                 path = os.path.join(src_path, path)
-                cmd = template_cmd.replace('{COMPILER}', compiler).replace('{OPTIONS}', options).replace('{PATH}', path)
+                cmd = template_cmd
+                cmd = cmd.replace('{COMPILER}', compiler)
+                cmd = cmd.replace('{OPTIONS}', options)
+                cmd = cmd.replace('{PATH}', path)
                 lines.append(cmd)
     return lines
 
@@ -204,6 +214,38 @@ def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):
             cmd = cmd.replace('{IFC_LIB}', ifc_lib)
             cmd = cmd.replace('{PYTHON_LIB}', python_lib)
             lines.append(cmd)
+    return lines
+
+def _compile_executables_script_lines(section_prefix: str,
+                                      src_path: str,
+                                      include_path: str,
+                                      lib_path: str,
+                                      lib_name: str):
+    src_ext = CONFIG['build']['src-ext'][section_prefix]
+    tests = f'{section_prefix}-tests'
+    template_cmd = CONFIG['template']['build-exe']
+    compiler = _compiler_name()
+    options = _compiler_options()
+    total = _total_src_file_count(tests)
+    current = 0
+    lines = []
+    for test in CONFIG[tests]:
+        current += 1
+        dir = test["main-dir"]
+        main_name = test["main-file"]
+        source_name = f'{main_name}.{src_ext}'
+        msg = _echo_progress_msg(current, total, f"{source_name}")
+        lines.append(msg)
+        source_path = os.path.join(src_path, dir, source_name)
+        cmd = template_cmd
+        cmd = cmd.replace('{COMPILER}', compiler)
+        cmd = cmd.replace('{OPTIONS}', options)
+        cmd = cmd.replace('{EXE_NAME}', main_name)
+        cmd = cmd.replace('{SOURCE_PATH}', source_path)
+        cmd = cmd.replace('{INCLUDE_PATH}', include_path)
+        cmd = cmd.replace('{LIB_PATH}', lib_path)
+        cmd = cmd.replace('{LIB_NAME}', lib_name)
+        lines.append(cmd)
     return lines
 
 def parsed_args():
@@ -252,7 +294,7 @@ def append_to_main_script(obj: str | list):
     path = _main_script_path()
     if isinstance(obj, str):
         lines = [obj]
-    if isinstance(obj, list):
+    elif isinstance(obj, list):
         lines = obj
     with open(path, 'a') as file:
         for line in lines:
@@ -477,6 +519,49 @@ def copy_built_to_cfml_dist():
     lines.append(msg)
     from_path = os.path.join(build_path, '*.*mod')
     cmd = f'cp {from_path} {include_dist_path}'
+    lines.append(cmd)
+    script_name = f'{sys._getframe().f_code.co_name}.sh'
+    _write_lines_to_file(lines, script_name)
+    append_to_main_script(lines)
+
+def build_cfml_test_programs():
+    project_name = CONFIG['cfml']['log-name']
+    repo_dir = CONFIG['cfml']['dir']['repo']
+    src_dir = CONFIG['cfml']['dir']['repo-tests']
+    src_path = os.path.join(_project_path(), repo_dir, src_dir)
+    build_dir = os.path.join('tests', 'functional_tests', 'cfml')
+    build_path = os.path.join(_project_path(), build_dir)
+    dist_dir = CONFIG['cfml']['dir']['dist']
+    include_dir = CONFIG['cfml']['dir']['dist-include']
+    include_path = os.path.join(_project_path(), dist_dir, include_dir)
+    lib_dir = CONFIG['cfml']['dir']['dist-lib']
+    lib_path = os.path.join(_project_path(), dist_dir, lib_dir)
+    lib_name = CONFIG['cfml']['static-lib-name']
+    lines = []
+    msg = _echo_msg(f"Entering build dir '{build_dir}'")
+    lines.append(msg)
+    cmd = f'cd {build_path}'
+    lines.append(cmd)
+    msg = _echo_msg(f"Building test programs for {project_name}:")
+    lines.append(msg)
+    compile_lines = _compile_executables_script_lines('cfml', src_path, include_path, lib_path, lib_name)
+    lines.extend(compile_lines)
+    msg = _echo_msg(f"Exiting build dir '{build_dir}'")
+    lines.append(msg)
+    cmd = f'cd {_project_path()}'
+    lines.append(cmd)
+    script_name = f'{sys._getframe().f_code.co_name}.sh'
+    _write_lines_to_file(lines, script_name)
+    append_to_main_script(lines)
+
+def run_cfml_functional_tests():
+    relpath = os.path.join('tests', 'functional_tests', 'cfml')
+    abspath = os.path.join(_project_path(), relpath)
+    lines = []
+    msg = _echo_msg(f"Running functional tests from '{relpath}'")
+    lines.append(msg)
+    cmd = CONFIG['template']['run-tests']
+    cmd = cmd.replace('{PATH}', abspath)
     lines.append(cmd)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
@@ -879,7 +964,7 @@ def install_pycfml_from_wheel():
     append_to_main_script(lines)
 
 def run_pycfml_unit_tests():
-    relpath = os.path.join('tests', 'unit_tests')
+    relpath = os.path.join('tests', 'unit_tests', 'pycfml')
     abspath = os.path.join(_project_path(), relpath)
     lines = []
     msg = _echo_msg(f"Running unit tests from '{relpath}'")
@@ -892,7 +977,7 @@ def run_pycfml_unit_tests():
     append_to_main_script(lines)
 
 def run_powder_mod_tests():
-    relpath = os.path.join('tests', 'powder_mod_tests')
+    relpath = os.path.join('tests', 'functional_tests', 'pycfml')
     abspath = os.path.join(_project_path(), relpath)
     lines = []
     msg = _echo_msg(f"Running powder_mod tests from '{relpath}'")
@@ -946,6 +1031,9 @@ if __name__ == '__main__':
     create_cfml_dist_dir()
     copy_built_to_cfml_dist()
 
+    headers = _echo_header(f"Running {cfml_project_name} test programs")
+    build_cfml_test_programs()
+
     headers = _echo_header(f"Creating {pycfml_project_name} shared objects or dynamic libraries")
     append_to_main_script(headers)
     create_pycfml_repo_dir()
@@ -970,6 +1058,10 @@ if __name__ == '__main__':
     headers = _echo_header(f"Installing {pycfml_project_name} from python wheel")
     append_to_main_script(headers)
     install_pycfml_from_wheel()
+
+    headers = _echo_header(f"Running {cfml_project_name} tests")
+    append_to_main_script(headers)
+    run_cfml_functional_tests()
 
     headers = _echo_header(f"Running {pycfml_project_name} tests")
     append_to_main_script(headers)

@@ -1,0 +1,200 @@
+
+
+            ------ PROGRAM SIMPLE POWDER PATTERN CALCULATION  ------
+                    ---- Version 0.1 April-2009----
+    **********************************************************************
+    * Calculates powder diffraction pattern from a *.CFL or a *.CIF file *
+    **********************************************************************
+                          (JRC- April 2009 )
+
+
+        Metric information:
+        -------------------
+
+ => Direct cell parameters:
+
+         a =       3.9000      b =       3.9000      c =       3.9000
+     alpha =       90.000   beta =       90.000  gamma =       90.000
+                        Direct Cell Volume =      59.3190
+
+ => Reciprocal cell parameters:
+
+         a*=     0.256410      b*=     0.256410      c*=     0.256410
+     alpha*=       90.000   beta*=       90.000  gamma*=       90.000
+                    Reciprocal Cell Volume =   0.01685800
+
+ => Direct and Reciprocal Metric Tensors:
+
+                   GD                                       GR
+     15.2100     -0.0000     -0.0000          0.065746   -0.000000   -0.000000
+     -0.0000     15.2100     -0.0000         -0.000000    0.065746   -0.000000
+     -0.0000     -0.0000     15.2100         -0.000000   -0.000000    0.065746
+
+ =>  Cartesian frame: z // c; y is in the bc-plane; x is along y ^ z = a*  
+
+     Crystal_to_Orthonormal_Matrix              Orthonormal_to_Crystal Matrix
+              Cr_Orth_cel                               Orth_Cr_cel  
+      3.9000      0.0000      0.0000          0.256410   -0.000000    0.000000
+     -0.0000      3.9000      0.0000          0.000000    0.256410   -0.000000
+     -0.0000     -0.0000      3.9000          0.000000    0.000000    0.256410
+
+     Busing-Levy B-matrix: Hc=B.H            Inverse of the Busing-Levy B-matrix
+                BL_M                                      BL_Minv  
+    0.256410    0.000000    0.000000            3.9000     -0.0000     -0.0000
+   -0.000000    0.256410    0.000000            0.0000      3.9000     -0.0000
+    0.000000   -0.000000    0.256410            0.0000      0.0000      3.9000
+
+     General Space Group
+     -------------------
+                   Op-Dimension:    4
+                Space-Dimension:    3
+                   Multiplicity:   48
+                         NumOps:   24
+                        Centred:    2
+      Num. Centring translation:    0
+                 Crystal system: Cubic
+   Crystallographic Point group: m-3m
+                     Laue class: m-3m
+             Space Group number:  221
+         Space Group Init Label: P m -3 m
+             Space Group symbol: P m -3 m
+                    Hall symbol: -P 4 2 3
+              To Standard Group: a,b,c;0,0,0
+            From Standard Group: a,b,c;0,0,0
+               Generators List:  -x,-y,z; -x,y,-z; z,x,y; y,x,-z; -x,-y,-z
+                  Centre_coord: [ 0 0 0 ]
+
+  Complete list of symmetry operators and symmetry symbols
+  ========================================================
+  SymmOp   1: x,y,z                               Symbol: 1
+  SymmOp   2: -x,-y,z                             Symbol: 2 0,0,z
+  SymmOp   3: -x,y,-z                             Symbol: 2 0,y,0
+  SymmOp   4: z,x,y                               Symbol: 3+ x,x,x
+  SymmOp   5: y,x,-z                              Symbol: 2 x,x,0
+  SymmOp   6: x,-y,-z                             Symbol: 2 x,0,0
+  SymmOp   7: -z,-x,y                             Symbol: 3+ x,-x,-x
+  SymmOp   8: -y,-x,-z                            Symbol: 2 x,-x,0
+  SymmOp   9: -z,x,-y                             Symbol: 3- x,x,-x
+  SymmOp  10: -y,x,z                              Symbol: 4+ 0,0,z
+  SymmOp  11: z,-x,-y                             Symbol: 3- x,-x,x
+  SymmOp  12: y,z,x                               Symbol: 3- x,x,x
+  SymmOp  13: -z,y,x                              Symbol: 4- 0,y,0
+  SymmOp  14: y,-x,z                              Symbol: 4- 0,0,z
+  SymmOp  15: x,z,-y                              Symbol: 4- x,0,0
+  SymmOp  16: -y,-z,x                             Symbol: 3+ x,-x,x
+  SymmOp  17: z,-y,x                              Symbol: 2 x,0,x
+  SymmOp  18: -x,-z,-y                            Symbol: 2 0,y,-y
+  SymmOp  19: -y,z,-x                             Symbol: 3- x,-x,-x
+  SymmOp  20: z,y,-x                              Symbol: 4+ 0,y,0
+  SymmOp  21: -x,z,y                              Symbol: 2 0,y,y
+  SymmOp  22: y,-z,-x                             Symbol: 3+ x,x,-x
+  SymmOp  23: -z,-y,-x                            Symbol: 2 x,0,-x
+  SymmOp  24: x,-z,y                              Symbol: 4+ x,0,0
+  SymmOp  25: -x,-y,-z                            Symbol: -1 0,0,0
+  SymmOp  26: x,y,-z                              Symbol: m x,y,0
+  SymmOp  27: x,-y,z                              Symbol: m x,0,z
+  SymmOp  28: -z,-x,-y                            Symbol: -3+ x,x,x; 0,0,0
+  SymmOp  29: -y,-x,z                             Symbol: m x,-x,z
+  SymmOp  30: -x,y,z                              Symbol: m 0,y,z
+  SymmOp  31: z,x,-y                              Symbol: -3+ x,-x,-x; 0,0,0
+  SymmOp  32: y,x,z                               Symbol: m x,x,z
+  SymmOp  33: z,-x,y                              Symbol: -3- x,x,-x; 0,0,0
+  SymmOp  34: y,-x,-z                             Symbol: -4+ 0,0,z; 0,0,0
+  SymmOp  35: -z,x,y                              Symbol: -3- x,-x,x; 0,0,0
+  SymmOp  36: -y,-z,-x                            Symbol: -3- x,x,x; 0,0,0
+  SymmOp  37: z,-y,-x                             Symbol: -4- 0,y,0; 0,0,0
+  SymmOp  38: -y,x,-z                             Symbol: -4- 0,0,z; 0,0,0
+  SymmOp  39: -x,-z,y                             Symbol: -4- x,0,0; 0,0,0
+  SymmOp  40: y,z,-x                              Symbol: -3+ x,-x,x; 0,0,0
+  SymmOp  41: -z,y,-x                             Symbol: m x,y,-x
+  SymmOp  42: x,z,y                               Symbol: m x,y,y
+  SymmOp  43: y,-z,x                              Symbol: -3- x,-x,-x; 0,0,0
+  SymmOp  44: -z,-y,x                             Symbol: -4+ 0,y,0; 0,0,0
+  SymmOp  45: x,-z,-y                             Symbol: m x,y,-y
+  SymmOp  46: -y,z,x                              Symbol: -3+ x,x,-x; 0,0,0
+  SymmOp  47: z,y,x                               Symbol: m x,y,x
+  SymmOp  48: -x,z,-y                             Symbol: -4+ x,0,0; 0,0,0
+
+  ====
+  ====  Atoms information
+  ====
+
+ 
+   PHASE:   1
+ 
+    Atom        Scatt / Chem     Mult   x/a       y/b       z/c     B[iso]        Occ
+  ===================================================================================
+     Sr          Sr   / Sr        1   0.50000   0.50000   0.50000   0.40000   1.00000                    
+     Ti          Ti   / Ti        1   0.00000   0.00000   0.00000   0.50000   1.00000                    
+     O           O    / O         3   0.50000   0.00000   0.00000   0.65000   3.00000                    
+
+ => CALCULATION OF NEUTRON POWDER DIFFRACTION PATTERN
+ => Resolution parameters UVWX:    0.02000  -0.02000   0.12000   0.00150
+ => Lambda:    1.27000
+ => Background level:   20.00000 counts
+ => Lorentzian size:    9980.00
+ => 2Theta range and step:    1.00000   0.05000 140.00000
+ => Maximum sin(Theta)/Lambda (for generating reflections):    0.76057
+ => Total number of generated reflections is        38
+
+  INFORMATION FROM TABULATED NEUTRON SCATTERING FACTORS
+  ===================================================
+
+  FERMI LENGTHS 
+   Number of chemically different species:   3
+
+   Atom     Fermi Length [10^(-12) cm]
+     SR         0.702000
+     TI        -0.343800
+     O          0.580300
+
+
+
+ => CPU-time used for Structure_Factors:           0.000 seconds
+
+
+    LIST OF REFLECTIONS AND STRUCTURE FACTORS(NEUTRONS)
+    ===================================================
+
+   H   K   L   Mult    SinTh/Lda       dspc          |Fc|         Phase          F-Real        F-Imag       |Fc|^2      Num
+
+   1   0   0    6       0.12821       3.90000      22.28413     180.00000     -22.28413       0.00000       496.582       1
+   1   1   0   12       0.18131       2.75772      10.24308     180.00000     -10.24308       0.00000       104.921       2
+   1   1   1    8       0.22206       2.25167     130.06577     180.00000    -130.06577       0.00000     16917.104       3
+   2   0   0    6       0.25641       1.95000      96.92001       0.00000      96.92001       0.00000      9393.489       4
+   2   1   0   24       0.28668       1.74413      22.03886     180.00000     -22.03886       0.00000       485.711       5
+   2   1   1   24       0.31404       1.59217       9.44065     180.00000      -9.44065       0.00000        89.126       6
+   2   2   0   12       0.36262       1.37886      93.23492       0.00000      93.23492       0.00000      8692.751       7
+   3   0   0    6       0.38462       1.30000      21.78503     180.00000     -21.78503       0.00000       474.587       8
+   2   2   1   24       0.38462       1.30000      21.78503     180.00000     -21.78503       0.00000       474.587       9
+   3   1   0   24       0.40542       1.23329       8.68050     180.00000      -8.68050       0.00000        75.351      10
+   3   1   1   24       0.42521       1.17589     120.71895     180.00000    -120.71895       0.00000     14573.064      11
+   2   2   2    8       0.44412       1.12583      89.69536       0.00000      89.69536       0.00000      8045.257      12
+   3   2   0   24       0.46225       1.08167      21.52351     180.00000     -21.52351       0.00000       463.261      13
+   3   2   1   48       0.47970       1.04232       7.96069     180.00000      -7.96069       0.00000        63.373      14
+   4   0   0    6       0.51282       0.97500      86.29546       0.00000      86.29546       0.00000      7446.906      15
+   4   1   0   24       0.52860       0.94589      21.25514     180.00000     -21.25514       0.00000       451.781      16
+   3   2   2   24       0.52860       0.94589      21.25514     180.00000     -21.25514       0.00000       451.781      17
+   3   3   0   12       0.54393       0.91924       7.27932     180.00000      -7.27932       0.00000        52.988      18
+   4   1   1   24       0.54393       0.91924       7.27932     180.00000      -7.27932       0.00000        52.988      19
+   3   3   1   24       0.55883       0.89472     112.06715     180.00000    -112.06715       0.00000     12559.047      20
+   4   2   0   24       0.57335       0.87207      83.02954       0.00000      83.02954       0.00000      6893.905      21
+   4   2   1   48       0.58751       0.85105      20.98069     180.00000     -20.98069       0.00000       440.190      22
+   3   3   2   24       0.60134       0.83148       6.63461     180.00000      -6.63461       0.00000        44.018      23
+   4   2   2   24       0.62807       0.79608      79.89220       0.00000      79.89220       0.00000      6382.764      24
+   5   0   0    6       0.64103       0.78000      20.70090     180.00000     -20.70090       0.00000       428.527      25
+   4   3   0   24       0.64103       0.78000      20.70090     180.00000     -20.70090       0.00000       428.527      26
+   4   3   1   48       0.65372       0.76485       6.02483     180.00000      -6.02483       0.00000        36.299      27
+   5   1   0   24       0.65372       0.76485       6.02483     180.00000      -6.02483       0.00000        36.299      28
+   5   1   1   24       0.66617       0.75056     104.05730     180.00000    -104.05730       0.00000     10827.921      29
+   3   3   3    8       0.66617       0.75056     104.05729     180.00000    -104.05729       0.00000     10827.919      30
+   4   3   2   48       0.69041       0.72421      20.41645     180.00000     -20.41645       0.00000       416.831      31
+   5   2   0   24       0.69041       0.72421      20.41645     180.00000     -20.41645       0.00000       416.831      32
+   5   2   1   48       0.70221       0.71204       5.44836     180.00000      -5.44836       0.00000        29.685      33
+   4   4   0   12       0.72524       0.68943      73.98264       0.00000      73.98264       0.00000      5473.432      34
+   5   2   2   24       0.73648       0.67890      20.12799     180.00000     -20.12799       0.00000       405.136      35
+   4   4   1   24       0.73648       0.67890      20.12799     180.00000     -20.12799       0.00000       405.136      36
+   4   3   3   24       0.74756       0.66884       4.90361     180.00000      -4.90361       0.00000        24.045      37
+   5   3   0   24       0.74756       0.66884       4.90361     180.00000      -4.90361       0.00000        24.045      38
+ => CPU-time used for Calc_powder_pattern:           0.000 seconds
+ => CPU-time for all calculations:           0.002 seconds

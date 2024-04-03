@@ -9,7 +9,7 @@ from pycrysfml08 import py_cfml_sxtal_geom
 # Tests
 
 
-def test_z1frmd():
+def test__z1frmd():
     wavelength = 1.49
     # angles in degrees
     chi = 5.0
@@ -25,7 +25,7 @@ def test_z1frmd():
     assert_almost_equal(actual, desired, decimal=3, verbose=True)
 
 
-def test_z1frnb():
+def test__z1frnb():
     wave = 1.49
     ga = 10.000
     om = 15.000

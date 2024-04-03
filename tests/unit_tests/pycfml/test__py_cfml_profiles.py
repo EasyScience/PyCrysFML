@@ -7,7 +7,7 @@ from pycrysfml08 import py_cfml_profiles
 
 # Tests
 
-def test_back_to_back_exp():
+def test__back_to_back_exp():
     alpha = 0.1
     beta = 0.3
     x = 1.0
@@ -24,7 +24,7 @@ def test_back_to_back_exp():
     assert_almost_equal(desired, [actual_x_pos, actual_x_neg], decimal=8, verbose=True)
 
 
-def test_exponential():
+def test__exponential():
     a = 1.0
     x = 1.5
     desired = a * math.exp(-a * x)
@@ -34,7 +34,7 @@ def test_exponential():
     assert_almost_equal(desired, actual, decimal=3, verbose=True)
 
 
-def test_gaussian():
+def test__gaussian():
     x = 1.5
     H = 1.0
     desired = 2 * math.sqrt(math.log(2) / math.pi) / H * math.exp(- 4 * math.log(2) * (x / H)**2)
@@ -44,7 +44,7 @@ def test_gaussian():
     assert_almost_equal(desired, actual, decimal=8, verbose=True)
 
 
-def test_hat():
+def test__hat():
     # Width and amplitude of hat function
     width = 0.33
     half_width = width / 2
@@ -107,7 +107,7 @@ def test_hat():
     assert desired == actual
 
 
-def test_ikeda_carpenter():
+def test__ikeda_carpenter():
     x = 1.0
     alpha = 2.0
     beta = 3.0
@@ -134,7 +134,7 @@ def test_ikeda_carpenter():
     assert desired == actual
 
 
-def test_lorentzian():
+def test__lorentzian():
     x = 1.0
     H = 1.0
 
@@ -148,7 +148,7 @@ def test_lorentzian():
     assert_almost_equal(desired, actual, decimal=8, verbose=True)
 
 
-def test_pseudovoigt():
+def test__pseudovoigt():
     x = 1.0
     H = 1.5
     eta = 0.9
@@ -161,7 +161,7 @@ def test_pseudovoigt():
     assert_almost_equal(desired, actual, decimal=8, verbose=True)
 
 
-def test_split_pseudovoigt():
+def test__split_pseudovoigt():
     H1 = 1.0
     H2 = 1.0
     eta1 = 0.5
@@ -193,7 +193,7 @@ def test_split_pseudovoigt():
     assert_almost_equal(desired, actual, decimal=8, verbose=True)
 
 
-def test_tch_pvoigt():
+def test__tch_pvoigt():
     """ Test for Thompson-Cox-Hastings pseudo-Voigt profile """
     x = 1.0
     Hg = 2.0

@@ -28,7 +28,7 @@ DI_CELL = {'fortran_type': 'cell_g_type',
 
 # Tests
 
-def test_get_u_from_b():
+def test__get_u_from_b():
     nd_b = np.array([1.5, 1.6, 1.7, 1.0, 1.1, 1.2], dtype='f')
     desired = np.array([0.019, 0.0203, 0.0215, 0.0127, 0.0139, 0.0152], dtype='f')
     code, message, actual = py_cfml_metrics.get_u_from_b(nd_b)
@@ -36,7 +36,7 @@ def test_get_u_from_b():
     assert message == ''
     assert_almost_equal(desired, actual, decimal=4, verbose=True)
 
-def test_get_betas_from_biso():
+def test__get_betas_from_biso():
     biso = 1.0
     di_cell = copy.deepcopy(DI_CELL)
     desired = np.array([0.0025, 0.0025, 0.0025, 0.0, 0.0, 0.0], dtype='f')
@@ -45,7 +45,7 @@ def test_get_betas_from_biso():
     assert message == ''
     assert_almost_equal(desired, actual, decimal=4, verbose=True)
 
-def test_get_betas_from_u():
+def test__get_betas_from_u():
     u = np.array([0.0127, 0.0127, 0.0127, 0.0, 0.0, 0.0], dtype='f')
     di_cell = copy.deepcopy(DI_CELL)
     desired = np.array([0.0025, 0.0025, 0.0025, 0.0, 0.0, 0.0], dtype='f')
@@ -54,7 +54,7 @@ def test_get_betas_from_u():
     assert message == ''
     assert_almost_equal(desired, actual, decimal=4, verbose=True)
 
-def test_get_u_from_betas():
+def test__get_u_from_betas():
     betas = np.array([0.0025, 0.0025, 0.0025, 0.0, 0.0, 0.0], dtype='f')
     di_cell = copy.deepcopy(DI_CELL)
     desired = np.array([0.0127, 0.0127, 0.0127, 0.0, 0.0, 0.0], dtype='f')
@@ -63,7 +63,7 @@ def test_get_u_from_betas():
     assert message == ''
     assert_almost_equal(desired, actual, decimal=4, verbose=True)
 
-def test_set_crystal_cell():
+def test__set_crystal_cell():
     nd_abc = np.array([10.0, 10.0, 10.0], dtype='f')
     nd_albega = np.array([90.0, 90.0, 90.0], dtype='f')
     desired = copy.deepcopy(DI_CELL)
@@ -76,7 +76,7 @@ def test_set_crystal_cell():
         else:
             assert desired[key] == actual[key]
 
-def test_get_twofold_axes():
+def test__get_twofold_axes():
     desired = {
         'fortran_type': 'twofold_axes_type',
         'ntwo': 9,
@@ -113,7 +113,7 @@ def test_get_twofold_axes():
         else:
             assert desired[key] == actual[key]
 
-def _test_get_conventional_cell():
+def _test__get_conventional_cell():
     di_cell = copy.deepcopy(DI_CELL)
     desired = {
         'fortran_type': 'twofold_axes_type',

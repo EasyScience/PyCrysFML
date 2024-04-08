@@ -29,7 +29,7 @@ def dat_to_ndarray(file_name:str, skip_begin:int=3, skip_end:int=4):
 
 # Tests
 
-def test__Bond_StrN():
+def _test__Bond_StrN():
     # run fortran program to produce the actual output
     os.system(f'./Bond_StrN LiFePO4n.cfl')
     time.sleep(1)

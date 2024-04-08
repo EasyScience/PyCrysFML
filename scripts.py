@@ -3,6 +3,7 @@ import sys
 import tomllib
 import argparse
 import sysconfig
+import platform
 
 global ARGS
 global CONFIG
@@ -192,6 +193,7 @@ def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):
     cfml_lib_dist_dir = CONFIG['cfml']['dir']['dist-lib']
     cfml_lib_dist_path = os.path.join(cfml_dist_path, cfml_lib_dist_dir)
     python_lib = CONFIG['build']['python-lib'][_platform()]
+    python_lib = python_lib.replace('{PYTHON311_VERSION}', platform.python_version())
     ifc_lib = "-L/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin -lifport"
     compiler = _compiler_name()
     template_cmd = _compiler_build_shared_template()

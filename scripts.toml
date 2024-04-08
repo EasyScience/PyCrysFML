@@ -66,9 +66,9 @@ static-lib-ext = { macos = 'a', linux = 'a', windows = 'lib' }
 shared-lib-ext = { macos = 'so', linux = 'so', windows = 'pyd' } # *.dylib doesn't work on macOS
 python-lib.macos = '`python3-config --ldflags --embed`'
 python-lib.linux = ''
-python-lib.windows = 'C:\hostedtoolcache\windows\Python\3.11.8\x64\libs\python311.lib'
-site-packages.macos = '/Users/runner/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages'
-site-packages.linux = '/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages'
+python-lib.windows = 'C:\hostedtoolcache\windows\Python\{PYTHON311_VERSION}\x64\libs\python311.lib'
+site-packages.macos = '/Users/runner/hostedtoolcache/Python/{PYTHON311_VERSION}/x64/lib/python3.11/site-packages'
+site-packages.linux = '/opt/hostedtoolcache/Python/{PYTHON311_VERSION}/x64/lib/python3.11/site-packages'
 site-packages.windows = '???'
 extra-libs.macos.gfortran = [
     '/usr/local/opt/gcc/lib/gcc/current/libgfortran.5.dylib',

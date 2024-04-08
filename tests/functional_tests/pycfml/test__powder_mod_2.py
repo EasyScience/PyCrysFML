@@ -131,10 +131,10 @@ def test__magnetic_data_txt_exists():
 def test__phase_name__SrTiO3():
     assert phase_name_by_idx(STUDY_DICT, phase_idx=0) == 'SrTiO3'
 
-def _test_space_group__Pm3m():
+def test_space_group__Pm3m():
     assert space_group_by_phase_idx(STUDY_DICT, phase_idx=0) == 'P m -3 m'
 
-def _test_set_space_group__Pm3m():
+def test_set_space_group__Pm3m():
     new_study_dict = copy.deepcopy(STUDY_DICT)
     set_space_group_by_phase_idx(new_study_dict, phase_idx=0, space_group='P m -3 m')
     assert DeepDiff(STUDY_DICT, new_study_dict) == {}

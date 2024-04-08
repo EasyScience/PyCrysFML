@@ -134,10 +134,10 @@ def test__magnetic_data_txt_exists():
 def test__phase_name__SrTiO3():
     assert phase_name_by_idx(STUDY_DICT, phase_idx=0) == 'SrTiO3'
 
-def _test__space_group__Pm3m():
+def test__space_group__Pm3m():
     assert space_group_by_phase_idx(STUDY_DICT, phase_idx=0) == 'P m -3 m'
 
-def _test__set_space_group__Pm3m():
+def test__set_space_group__Pm3m():
     new_study_dict = copy.deepcopy(STUDY_DICT)
     set_space_group_by_phase_idx(new_study_dict, phase_idx=0, space_group='P m -3 m')
     assert DeepDiff(STUDY_DICT, new_study_dict) == {}
@@ -158,7 +158,7 @@ def _test__compute_pattern__SrTiO3_Pm3m():
     actual = actual[:-1]
     assert_almost_equal(desired, actual, decimal=0, verbose=True)
 
-def _test__compute_pattern__SrTiO3_Pnma():
+def test__compute_pattern__SrTiO3_Pnma():
     desired = np.loadtxt(os.path.join(os.path.dirname(__file__), 'srtio3-pmmm-pattern_Andrew-ifort.xy'), unpack=True)
     study_dict = copy.deepcopy(STUDY_DICT)
     set_space_group_by_phase_idx(study_dict, phase_idx=0, space_group='P n m a')

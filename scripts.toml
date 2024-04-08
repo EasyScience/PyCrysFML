@@ -194,7 +194,10 @@ main-file = 'CFML_GlobalDeps'
 [[cfml-modules]]
 main-file = 'CFML_FFT'
 components-dir = 'CFML_FFT'
-components-files = ['FFT_Gen', 'FFT_Convol']
+components-files = [
+    'FFT_Gen',
+    'FFT_Convol'
+]
 
 [[cfml-modules]]
 main-file = 'CFML_Maths'
@@ -242,13 +245,17 @@ components-files = [
     'Math_RowEchelon',
     'Math_Swap',
     'Math_Rank',
-    'Math_Sort',
+    'Math_Sort'
 ]
 
 [[cfml-modules]]
 main-file = 'CFML_ExtinCorr'
 components-dir = 'CFML_ExtinCorr'
-components-files = ['Ext_BeckerCoppens', 'Ext_FlippingRatios', 'Ext_ShelxCorr']
+components-files = [
+    'Ext_BeckerCoppens',
+    'Ext_FlippingRatios',
+    'Ext_ShelxCorr'
+]
 
 [[cfml-modules]]
 main-file = 'CFML_Random'
@@ -262,7 +269,7 @@ components-files = [
     'Random_Gamma_Sm',
     'Random_Normal_Sm',
     'Random_Cauchy_Sm',
-    'Random_T_Sm',
+    'Random_T_Sm'
 ]
 
 [[cfml-modules]]
@@ -273,13 +280,18 @@ components-files = [
     'Con_Info_Message',
     'Con_Err_Message',
     'Con_Write_ScrollMsg',
-    'Con_Wait_Message',
+    'Con_Wait_Message'
 ]
 
 [[cfml-modules]]
 main-file = 'CFML_Strings'
 components-dir = 'CFML_Strings'
-components-files = ['StringFullp', 'StringNum', 'StringReadKey', 'StringTools']
+components-files = [
+    'StringFullp',
+    'StringNum',
+    'StringReadKey',
+    'StringTools'
+]
 
 [[cfml-modules]]
 main-file = 'CFML_Rational'
@@ -301,7 +313,7 @@ components-files = [
     'RAT_operator_lt',
     'RAT_overloads',
     'RAT_operator_multiply',
-    'RAT_operator_neq',
+    'RAT_operator_neq'
 ]
 
 [[cfml-modules]]
@@ -340,7 +352,7 @@ components-files = [
     'Tab_Allocating_SuperSpaceDBase',
     'Tab_Read_SSG_DBase',
     'Tab_Allocating_MagneticDBase',
-    'Tab_Read_MagneticDBase',
+    'Tab_Read_MagneticDBase'
 ]
 
 [[cfml-modules]]
@@ -359,7 +371,7 @@ components-files = [
     'Profile_Lorentzian',
     'Profile_TOF_Jorgensen',
     'Profile_TOF_Jorg_Vondreele',
-    'Profile_TOF_Carpenter',
+    'Profile_TOF_Carpenter'
 ]
 
 [[cfml-modules]]
@@ -369,7 +381,7 @@ components-files = [
     'OPT_LSQ_LevebergMarquardt_AnalyDer',
     'OPT_LSQ_Marquardt_Fit',
     'OPT_LSQ_Output',
-    'OPT_LSQ_LevebergMarquardt_NumDer',
+    'OPT_LSQ_LevebergMarquardt_NumDer'
 ]
 
 [[cfml-modules]]
@@ -379,7 +391,7 @@ components-files = [
     'OPT_Global_Csendes',
     'OPT_Cg_Quasi_Newton',
     'OPT_Local_Optim',
-    'OPT_Simplex',
+    'OPT_Simplex'
 ]
 
 [[cfml-modules]]
@@ -405,7 +417,7 @@ components-files = [
     'DiffP_ReadPatt_TimeVar',
     'DiffP_ReadPatt_XYSIG',
     'DiffP_WritePatterns',
-    'DiffP_ReadPatterns',
+    'DiffP_ReadPatterns'
 ]
 
 [[cfml-modules]]
@@ -416,7 +428,7 @@ components-files = [
     'Metrics_Gen',
     'Metrics_ThConver',
     'Metrics_IO',
-    'Metrics_NiggliCell',
+    'Metrics_NiggliCell'
 ]
 
 [[cfml-modules]]
@@ -426,7 +438,7 @@ components-files = [
     'SAnn_LocalOpt',
     'SAnn_MultiConf',
     'SAnn_SetnCheck',
-    'SAnn_inout',
+    'SAnn_inout'
 ]
 
 [[cfml-modules]]
@@ -467,7 +479,7 @@ components-files = [
     'Eos_Pthermal',
     'Eos_Strain',
     'Eos_Write',
-    'Eos_dKdTCalc',
+    'Eos_dKdTCalc'
 ]
 
 [[cfml-modules]]
@@ -518,7 +530,7 @@ components-files = [
     'gS_Is_Antilattice',
     'gS_Spg_Const_Str',
     'gS_Symm_Symbols',
-    'gS_OnePrimeOp',
+    'gS_OnePrimeOp'
 ]
 
 [[cfml-modules]]
@@ -537,7 +549,7 @@ components-files = [
     'Atm_PointList',
     'Atm_RW_Bin_AtmList',
     'Atm_Write_AtmList',
-    'Atm_SymmetryConstraints',
+    'Atm_SymmetryConstraints'
 ]
 
 [[cfml-modules]]
@@ -560,7 +572,7 @@ components-files = [
     'Refl_Write_List',
     'Refl_UnitaryVec',
     'Refl_Init_RefList',
-    'Refl_H_Mult',
+    'Refl_H_Mult'
 ]
 
 [[cfml-modules]]
@@ -584,7 +596,7 @@ components-files = [
     'Geom_Matrices',
     'Geom_Coordination',
     'Geom_Orbits',
-    'Geom_Distances',
+    'Geom_Distances'
 ]
 
 [[cfml-modules]]
@@ -596,13 +608,28 @@ components-files = [
     'ksym_functions',
     'ksym_suscept',
     'ksym_read',
-    'ksym_write',
+    'ksym_write'
+]
+
+[[cfml-modules]]
+main-file = 'CFML_kvec_Structure_Factors'
+components-dir = 'CFML_kvec_Structure_Factors'
+components-files = [
+    'kStrf_Init_FxTables',
+    'kStrf_MiV',
+    'kStrf_MStrT',
+    'kStrf_satellites',
+    'kStrf_write'
 ]
 
 [[cfml-modules]]
 main-file = 'CFML_Maps'
 components-dir = 'CFML_Maps'
-components-files = ['Maps_Mapping', 'Maps_MarchingCubes', 'Maps_Percolation']
+components-files = [
+    'Maps_Mapping',
+    'Maps_MarchingCubes',
+    'Maps_Percolation'
+]
 
 [[cfml-modules]]
 main-file = 'CFML_Molecules'
@@ -618,7 +645,7 @@ components-files = [
     'Mol_Spherical_to',
     'Mol_ReadInfo',
     'Mol_ZMatrix_to',
-    'Mol_to_AtList',
+    'Mol_to_AtList'
 ]
 
 [[cfml-modules]]
@@ -636,7 +663,7 @@ components-files = [
     'KWC_VStateToAtomPar',
     'KWC_ReadCodes',
     'KWC_GetRestrCodes',
-    'KWC_RefCodes',
+    'KWC_RefCodes'
 ]
 
 [[cfml-modules]]
@@ -649,7 +676,7 @@ components-files = [
     'Format_CIF',
     'Format_CFL',
     'Format_FST',
-    'Format_SHX',
+    'Format_SHX'
 ]
 
 [[cfml-modules]]
@@ -664,7 +691,7 @@ components-files = [
     'keyCod_Phas',
     'KeyCod_WriteInfo',
     'KeyCod_Restraints',
-    'KeyCod_Molec',
+    'KeyCod_Molec'
 ]
 
 [[cfml-modules]]
@@ -677,13 +704,15 @@ components-files = [
     'Python_Metrics',
     'Python_Reflections',
     'Python_gSpaceGroups',
-    'Python_Ndarray',
+    'Python_Ndarray'
 ]
 
 [[cfml-modules]]
 main-file = 'CFML_VTK'
 components-dir = 'CFML_VTK'
-components-files = ['VTK_Scan_Utils']
+components-files = [
+    'VTK_Scan_Utils'
+]
 
 [[cfml-modules]]
 main-file = 'CFML_SXTAL_Geom'
@@ -694,7 +723,7 @@ components-files = [
     'SXTAL_Matx_Zvect',
     'SXTAL_PSD',
     'SXTAL_FlatCone',
-    'SXTAL_UB',
+    'SXTAL_UB'
 ]
 
 [[cfml-modules]]
@@ -703,7 +732,12 @@ main-file = 'CFML_Export_VTK'
 [[cfml-modules]]
 main-file = 'CFML_EnBVS'
 components-dir = 'CFML_EnBVS'
-components-files = ['EnBVS_CostF', 'EnBVS_Energy', 'EnBVS_Maps', 'EnBVS_SetTab']
+components-files = [
+    'EnBVS_CostF',
+    'EnBVS_Energy',
+    'EnBVS_Maps',
+    'EnBVS_SetTab'
+]
 
 # PyCrysFML fortran source files
 
@@ -725,12 +759,41 @@ main-file = 'powder_mod_2'
 # CrysFML test programs source files
 
 [[cfml-tests]]
+main-dir = 'Bond_Str'
+main-file = 'Bond_StrN'
+
+[[cfml-tests]]
+main-dir = 'CIFs'
+main-file = 'io_files'
+
+[[cfml-tests]]
 main-dir = 'Grp_230'
 main-file = 'groups_230'
 
 [[cfml-tests]]
+main-dir = 'hkl_gen'
+main-file = 'hkl_gen'
+
+[[cfml-tests]]
+main-dir = 'hkl_gen'
+main-file = 'simple_hkl_gen'
+
+[[cfml-tests]]
+main-dir = 'Molecules'
+main-file = 'mol_tpcr'
+
+[[cfml-tests]]
 main-dir = 'PowderPattern'
 main-file = 'Simple_calc_powder'
+
+[[cfml-tests]]
+main-dir = 'PowderPattern'
+main-file = 'Simple_calc_Mag_powder'
+
+[[cfml-tests]]
+main-dir = 'StructureFactors'
+main-file = 'Calc_Sfac'
+
 
 ##################
 ##################

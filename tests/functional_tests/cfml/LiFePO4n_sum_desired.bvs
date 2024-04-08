@@ -1,0 +1,13 @@
+  Subroutine Calc_BVS (JRC-LLB, version: March-2005)
+  Title: Summary of Bond-Valence calculations for file: LiFePO4n.cfl
+   Atom      Coord  D_aver Sigm   Distort(x10-4)    Valence    BVSum(Sigma)
+    Li        6.00  2.1495(   9)         4.327       1.000       0.953(  2)
+    Fe        6.00  2.1575(  12)        14.237       2.000       1.956(  6)
+    P         4.00  1.5452(  18)         0.764       5.000       4.860( 25)
+    O1        4.00  2.0175(  16)       199.572      -2.000       1.865( 15)
+    O2        4.00  1.9569(  16)       149.715      -2.000       1.957( 15)
+    O3        4.00  2.0157(  13)       183.951      -2.000       1.973( 10)
+ =>  Old Global Instability Index (  GII=SQRT{SUM{|BVS-abs(q)|^2}/Num_Atoms} ) =   8.62 /100
+ =>  Normalized   GII(a)=       SUM {|BVS-abs(q)|  *mult}       /N_Atoms_UCell =   6.59 /100
+ =>  Normalized   GII(b)=       SUM {|BVS-abs(q)|  *mult/abs(q)}/N_Atoms_UCell =   3.03 %
+ =>  Normalized   GII(c)= SQRT{ SUM {|BVS-abs(q)|^2*mult}       /N_Atoms_UCell}=   8.04 /100

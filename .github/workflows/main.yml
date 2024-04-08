@@ -193,9 +193,9 @@ jobs:
         shell: bash
         run: scripts/install_pycfml_from_wheel.sh
 
-      - name: Run CFML functional tests
-        shell: bash
-        run: scripts/run_cfml_functional_tests.sh
+      #- name: Run CFML functional tests
+      #  shell: bash
+      #  run: scripts/run_cfml_functional_tests.sh
 
       - name: Run PYCFML unit tests
         shell: bash

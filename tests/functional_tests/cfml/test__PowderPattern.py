@@ -26,7 +26,7 @@ def dat_to_ndarray(file_name:str, skip_lines:int=0):
 
 # Tests
 
-def _test__Simple_calc_powder__SrTiO3s():
+def test__Simple_calc_powder__SrTiO3s():
     # run fortran program to produce the actual output
     os.system(f'./Simple_calc_powder SrTiO3s.cfl')
     time.sleep(1)
@@ -35,7 +35,7 @@ def _test__Simple_calc_powder__SrTiO3s():
     actual = dat_to_ndarray('SrTiO3s.dat', skip_lines=2)
     assert_almost_equal(desired, actual, decimal=2, verbose=True)
 
-def _test__Simple_calc_powder__ponsin():
+def test__Simple_calc_powder__ponsin():
     # run fortran program to produce the actual output
     os.system(f'./Simple_calc_powder ponsin.cfl')
     time.sleep(1)

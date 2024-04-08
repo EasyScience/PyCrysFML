@@ -194,8 +194,11 @@ def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):
     cfml_lib_dist_path = os.path.join(cfml_dist_path, cfml_lib_dist_dir)
     python_lib = CONFIG['build']['python-lib'][_platform()]
     python_lib = python_lib.replace('{PYTHON311_VERSION}', platform.python_version())
-    ifc_lib = "-L/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin -lifport"
     compiler = _compiler_name()
+    if compiler == 'ifort' or compiler == 'ifx':
+        ifc_lib = '-L/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin -lifport'
+    else:
+        ifc_lib = ''
     template_cmd = _compiler_build_shared_template()
     shared_lib_ext = CONFIG['build']['shared-lib-ext'][_platform()]
     total = _total_src_file_count(modules)

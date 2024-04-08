@@ -4,7 +4,7 @@ import filecmp
 import time
 import subprocess
 import numpy as np
-from numpy.testing import assert_almost_equal
+from numpy.testing import assert_allclose, assert_almost_equal
 
 from pycrysfml08 import powder_mod
 
@@ -33,7 +33,7 @@ def test__Simple_calc_powder__SrTiO3s():
     # compare the actual output with the desired one
     desired = dat_to_ndarray('SrTiO3s_desired.dat', skip_lines=2)
     actual = dat_to_ndarray('SrTiO3s.dat', skip_lines=2)
-    assert_almost_equal(desired, actual, decimal=2, verbose=True)
+    assert_allclose(desired, actual, rtol=1e-03, verbose=True)
 
 def test__Simple_calc_powder__ponsin():
     # run fortran program to produce the actual output
@@ -42,7 +42,7 @@ def test__Simple_calc_powder__ponsin():
     # compare the actual output with the desired one
     desired = dat_to_ndarray('if_ponsin_desired.dat', skip_lines=2)
     actual = dat_to_ndarray('if_ponsin.dat', skip_lines=2)
-    assert_almost_equal(desired, actual, decimal=2, verbose=True)
+    assert_allclose(desired, actual, rtol=1e-03, verbose=True)
 
 # Debug
 

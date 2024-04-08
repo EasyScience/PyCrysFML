@@ -1,0 +1,18 @@
+Title CFL-file generated from FullProf for phase: LiFePO4 300K
+!   Unit cell parameters:  a, b, c, Alpha, Beta, Gamma
+Cell  10.3383(4)  6.0114(2)  4.69518(15)  90.00000  90.00000  90.00000
+!     Space Group
+Spgr  P n m a
+!  Atom-strings in the order: Label, Species, x, y, z, Biso, Occ [,2*Spin, charge]
+Atom Li   LI+1   0.00000       0.00000       0.00000       2.0(3)        0.50000
+Atom Fe   FE+2   0.28218(14)   0.25000       0.9741(5)     0.87(8)       0.50000
+Atom P    P+5    0.0950(3)     0.25000       0.4184(6)     0.51(10)      0.50000
+Atom O1   O-2    0.0971(3)     0.25000       0.7430(7)     0.91(7)       0.50000
+Atom O2   O-2    0.4570(3)     0.25000       0.2065(6)     0.91(7)       0.50000
+Atom O3   O-2    0.1655(2)     0.0464(4)     0.2845(4)     0.91(7)       1.00000
+!   Bond_STR instructions 
+RESTRAINTS 
+RESTR_FILE   CFML_Restraints.tpcr
+RESTDA      2.500  95.000
+DMAX  3.200 0.000                                                                                                                      
+TOL    30.000                                                                                                                          

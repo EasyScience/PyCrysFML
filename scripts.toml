@@ -77,6 +77,7 @@ extra-libs.macos.i386.gfortran = [
 ]
 extra-libs.macos.arm.gfortran = [
     '/opt/homebrew/opt/gcc/lib/gcc/current/libgfortran.5.dylib',
+    '/opt/homebrew/opt/gcc/lib/gcc/current/libgcc_s.1.1.dylib',
     '/opt/homebrew/opt/gcc/lib/gcc/current/libquadmath.0.dylib'
 ]
 extra-libs.macos.i386.ifort = [

@@ -11,11 +11,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [flyci-macos-14-m2]  # [windows-2022, ubuntu-22.04, macos-12, flyci-macos-14-m2]
+        os: [macos-12, flyci-macos-14-m2]  # [windows-2022, ubuntu-22.04, macos-12, flyci-macos-14-m2]
         toolchain:
           - { exe: gfortran, compiler: gcc, version: 13 }
-          - { exe: ifort, compiler: intel-classic, version: "2021.10" }
-          - { exe: ifx, compiler: intel, version: "2023.2" }
+        #  - { exe: ifort, compiler: intel-classic, version: "2021.10" }
+        #  - { exe: ifx, compiler: intel, version: "2023.2" }
         exclude:
           - os: macos-12
             toolchain: { exe: ifx, compiler: intel, version: "2023.2" } # no support for macOS
@@ -165,11 +165,11 @@ jobs:
     strategy: # current job matrix. copy of the strategy from the previous job
       fail-fast: false
       matrix:
-        os: [flyci-macos-14-m2]  # [windows-2022, ubuntu-22.04, macos-12, flyci-macos-14-m2]
+        os: [macos-12, flyci-macos-14-m2]  # [windows-2022, ubuntu-22.04, macos-12, flyci-macos-14-m2]
         toolchain:
           - { exe: gfortran, compiler: gcc, version: 13 }
-          - { exe: ifort, compiler: intel-classic, version: "2021.10" }
-          - { exe: ifx, compiler: intel, version: "2023.2" }
+        #  - { exe: ifort, compiler: intel-classic, version: "2021.10" }
+        #  - { exe: ifx, compiler: intel, version: "2023.2" }
         exclude:
           - os: macos-12
             toolchain: { exe: ifx, compiler: intel, version: "2023.2" } # no support for macOS

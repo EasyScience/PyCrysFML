@@ -70,12 +70,16 @@ python-lib.windows = 'C:\hostedtoolcache\windows\Python\{PYTHON311_VERSION}\x64\
 site-packages.macos = '/Users/runner/hostedtoolcache/Python/{PYTHON311_VERSION}/x64/lib/python3.11/site-packages'
 site-packages.linux = '/opt/hostedtoolcache/Python/{PYTHON311_VERSION}/x64/lib/python3.11/site-packages'
 site-packages.windows = '???'
-extra-libs.macos.gfortran = [
+extra-libs.macos.i386.gfortran = [
     '/usr/local/opt/gcc/lib/gcc/current/libgfortran.5.dylib',
     '/usr/local/opt/gcc/lib/gcc/current/libgcc_s.1.1.dylib',
     '/usr/local/opt/gcc/lib/gcc/current/libquadmath.0.dylib',
 ]
-extra-libs.macos.ifort = [
+extra-libs.macos.arm.gfortran = [
+    '/opt/homebrew/opt/gcc/lib/gcc/current/libgfortran.5.dylib',
+    '/opt/homebrew/opt/gcc/lib/gcc/current/libquadmath.0.dylib'
+]
+extra-libs.macos.i386.ifort = [
     '/System/Volumes/Data/opt/intel/oneapi/compiler/2023.2.0/mac/compiler/lib/libifport.dylib',
     '/System/Volumes/Data/opt/intel/oneapi/compiler/2023.2.0/mac/compiler/lib/libifcoremt.dylib',
     '/System/Volumes/Data/opt/intel/oneapi/compiler/2023.2.0/mac/compiler/lib/libifcore.dylib',
@@ -85,7 +89,17 @@ extra-libs.macos.ifort = [
     '/System/Volumes/Data/opt/intel/oneapi/compiler/2023.2.0/mac/compiler/lib/libirc.dylib',
     '/System/Volumes/Data/opt/intel/oneapi/compiler/2023.2.0/mac/compiler/lib/libifdynalloc.dylib',
 ]
-extra-libs.linux.ifort = [
+extra-libs.macos.arm.ifort = [
+    '/System/Volumes/Data/opt/intel/oneapi/compiler/2023.2.0/mac/compiler/lib/libifport.dylib',
+    '/System/Volumes/Data/opt/intel/oneapi/compiler/2023.2.0/mac/compiler/lib/libifcoremt.dylib',
+    '/System/Volumes/Data/opt/intel/oneapi/compiler/2023.2.0/mac/compiler/lib/libifcore.dylib',
+    '/System/Volumes/Data/opt/intel/oneapi/compiler/2023.2.0/mac/compiler/lib/libimf.dylib',
+    '/System/Volumes/Data/opt/intel/oneapi/compiler/2023.2.0/mac/compiler/lib/libsvml.dylib',
+    '/System/Volumes/Data/opt/intel/oneapi/compiler/2023.2.0/mac/compiler/lib/libintlc.dylib',
+    '/System/Volumes/Data/opt/intel/oneapi/compiler/2023.2.0/mac/compiler/lib/libirc.dylib',
+    '/System/Volumes/Data/opt/intel/oneapi/compiler/2023.2.0/mac/compiler/lib/libifdynalloc.dylib',
+]
+extra-libs.linux.x86_64.ifort = [
     '/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin/libifport.so.5',
     '/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin/libifcoremt.so.5',
     '/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin/libimf.so',
@@ -96,7 +110,7 @@ extra-libs.linux.ifort = [
     '/lib/x86_64-linux-gnu/libc.so.6',
     '/lib/x86_64-linux-gnu/libgcc_s.so.1',
 ]
-extra-libs.linux.ifx = [
+extra-libs.linux.x86_64.ifx = [
     '/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin/libifport.so.5',
     '/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin/libifcoremt.so.5',
     '/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin/libimf.so',
@@ -107,25 +121,25 @@ extra-libs.linux.ifx = [
     '/lib/x86_64-linux-gnu/libc.so.6',
     '/lib/x86_64-linux-gnu/libgcc_s.so.1',
 ]
-extra-libs.linux.gfortran = [
+extra-libs.linux.x86_64.gfortran = [
     '/lib/x86_64-linux-gnu/libgfortran.so.5',
     '/lib/x86_64-linux-gnu/libm.so.6',
     '/lib/x86_64-linux-gnu/libc.so.6',
     '/lib/x86_64-linux-gnu/libgcc_s.so.1',
 ]
-extra-libs.windows.gfortran = [
+extra-libs.windows.amd64.gfortran = [
     'C:\mingw64\bin\libgcc_s_seh-1.dll',
     'C:\mingw64\bin\libgfortran-5.dll',
     'C:\mingw64\bin\libquadmath-0.dll',
     'C:\mingw64\bin\libwinpthread-1.dll',
 ]
-rpaths.linux.gfortran = [
+rpaths.linux.x86_64.gfortran = [
     { old = '', new = "'$ORIGIN'" },
 ] # set rpath to point to '$ORIGIN'
-rpaths.linux.ifort = [
+rpaths.linux.x86_64.ifort = [
     { old = '', new = "'$ORIGIN'" },
 ] # set rpath to point to '$ORIGIN'
-rpaths.linux.ifx = [
+rpaths.linux.x86_64.ifx = [
     { old = '', new = "'$ORIGIN'" },
 ] # set rpath to point to '$ORIGIN'
 rpaths.macos.i386.gfortran = [

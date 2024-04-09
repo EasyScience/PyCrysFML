@@ -65,7 +65,10 @@ def _python_tag():
     return tag
 
 def _processor():
-    return platform.processor()
+    processor = platform.processor()
+    if _platform() == 'window' and 'AMD64' in processor:
+        processor = 'amd64'
+    return processor
 
 def _fix_file_permissions(path: str):
     os.chmod(path, 0o777)
@@ -843,7 +846,7 @@ def change_runpath_for_built_pycfml():
 
 def copy_extra_libs_to_pycfml_dist():
     try:
-        extra_libs = CONFIG['build']['extra-libs'][_platform()][_compiler_name()]
+        extra_libs = CONFIG['build']['extra-libs'][_platform()][_processor()][_compiler_name()]
     except KeyError:
         msg = _echo_msg(f"No extra libraries are needed for platform '{_platform()}' and compiler '{_compiler_name()}'")
         lines = [msg]

@@ -195,7 +195,7 @@ def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):
     python_lib = CONFIG['build']['python-lib'][_platform()]
     python_lib = python_lib.replace('{PYTHON311_VERSION}', platform.python_version())
     compiler = _compiler_name()
-    if compiler == 'ifort' or compiler == 'ifx':
+    if _platform() == 'linux' and (compiler == 'ifort' or compiler == 'ifx'):
         ifc_lib = '-L/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin -lifport'
     else:
         ifc_lib = ''

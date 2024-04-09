@@ -112,29 +112,6 @@ jobs:
           scripts/copy_built_to_pycfml_dist.sh
           scripts/change_runpath_for_built_pycfml.sh
 
-      - name: Debug
-        shell: bash
-        run: |
-          echo '::::: ls -l pycrysfml08_dist/pycrysfml08'
-          ls -l pycrysfml08_dist/pycrysfml08
-          echo '::::: otool -L pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so'
-          otool -L pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-          echo '::::: otool -l pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so | grep RPATH -A2'
-          otool -l pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so | grep RPATH -A2
-
-      - name: Debug 2
-        if: matrix.toolchain.exe == 'ifort' || matrix.toolchain.exe == 'ifx'
-        run: |
-          echo '::::: ls -l /opt/intel/oneapi/compiler/2023.2.0'
-          ls -l /opt/intel/oneapi/compiler/2023.2.0
-          echo '::::: ls -l /opt/intel/oneapi/compiler/2023.2.0/mac'
-          ls -l /opt/intel/oneapi/compiler/2023.2.0/mac
-          echo '::::: ls -l /opt/intel/oneapi/compiler/2023.2.0/mac/compiler'
-          ls -l /opt/intel/oneapi/compiler/2023.2.0/mac/compiler
-          echo '::::: ls -l /opt/intel/oneapi/compiler/2023.2.0/mac/compiler/lib'
-          ls -l /opt/intel/oneapi/compiler/2023.2.0/mac/compiler/lib
-
-
       - name: Copy extra files to PYCFML dist
         shell: bash
         run: |

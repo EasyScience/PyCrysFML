@@ -64,6 +64,9 @@ def _python_tag():
     tag = f'py{version}'
     return tag
 
+def _processor():
+    return platform.processor()
+
 def _fix_file_permissions(path: str):
     os.chmod(path, 0o777)
 
@@ -309,18 +312,16 @@ def append_to_main_script(obj: str | list):
     _fix_file_permissions(path)
 
 def print_debug_info():
-    platform = _platform()
-    mode = _compiling_mode()
-    compiler = _compiler_name()
-    options = _compiler_options()
     lines = []
-    msg = _echo_msg(f"Platform '{platform}'")
+    msg = _echo_msg(f"Platform '{_platform()}'")
     lines.append(msg)
-    msg = _echo_msg(f"Compiling mode '{mode}'")
+    msg = _echo_msg(f"Processor '{_processor()}'")
     lines.append(msg)
-    msg = _echo_msg(f"Fortran compiler '{compiler}'")
+    msg = _echo_msg(f"Compiling mode '{_compiling_mode()}'")
     lines.append(msg)
-    #msg = _echo_msg(f"Compiler options '{options}'")
+    msg = _echo_msg(f"Fortran compiler '{_compiler_name()}'")
+    lines.append(msg)
+    #msg = _echo_msg(f"Compiler options '{_compiler_options()}'")
     #lines.append(msg)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
@@ -756,9 +757,9 @@ def change_runpath_for_built_pycfml():
     # otool -L pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
     # otool -l pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so | grep RPATH -A2
     try:
-        rpaths = CONFIG['build']['rpaths'][_platform()][_compiler_name()]
+        rpaths = CONFIG['build']['rpaths'][_processor()][_platform()][_compiler_name()]
     except KeyError:
-        msg = _echo_msg(f"No change of runtime paths are needed for platform '{_platform()}' and compiler '{_compiler_name()}'")
+        msg = _echo_msg(f"No change of runtime paths are needed for platform '{_platform()} ({_processor()})' and compiler '{_compiler_name()}'")
         lines = [msg]
         script_name = f'{sys._getframe().f_code.co_name}.sh'
         _write_lines_to_file(lines, script_name)
@@ -798,7 +799,7 @@ def change_runpath_for_built_pycfml():
                     lines.append(cmd)
     elif _platform() == 'macos':
         try:
-            dependent_libs = CONFIG['build']['dependent-libs'][_platform()][_compiler_name()]
+            dependent_libs = CONFIG['build']['dependent-libs'][_platform()][_processor()][_compiler_name()]
             change_lib_template_cmd = CONFIG['template']['dependent-lib']['change'][_platform()]
         except KeyError:
             dependent_libs = []

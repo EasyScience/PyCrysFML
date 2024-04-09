@@ -66,8 +66,7 @@ def _python_tag():
 
 def _processor():
     processor = platform.processor()
-    if _platform() == 'window' and 'AMD64' in processor:
-        processor = 'amd64'
+    processor = processor.split()[0]  # get the 1st word from string, such as 'Intel64 Family 6 Model 154 Stepping 3, GenuineIntel' 
     return processor
 
 def _fix_file_permissions(path: str):

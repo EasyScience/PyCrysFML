@@ -760,7 +760,7 @@ def change_runpath_for_built_pycfml():
     # otool -L pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
     # otool -l pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so | grep RPATH -A2
     try:
-        rpaths = CONFIG['build']['rpaths'][_processor()][_platform()][_compiler_name()]
+        rpaths = CONFIG['build']['rpaths'][_platform()][_processor()][_compiler_name()]
     except KeyError:
         msg = _echo_msg(f"No change of runtime paths are needed for platform '{_platform()} ({_processor()})' and compiler '{_compiler_name()}'")
         lines = [msg]

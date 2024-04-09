@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [flyci-macos-14-m2]  # [windows-2022, ubuntu-22.04, macos-12, flyci-macos-14-m2]
+        os: [windows-2022, ubuntu-22.04, macos-12]  # [windows-2022, ubuntu-22.04, macos-12, flyci-macos-14-m2]
         toolchain:
           - { exe: gfortran, compiler: gcc, version: 13 }
           - { exe: ifort, compiler: intel-classic, version: "2021.10" }
@@ -109,7 +109,8 @@ jobs:
           scripts/build_pycfml_objs.sh
           scripts/build_pycfml_shared_objs_or_dynamic_libs.sh
           scripts/create_pycfml_dist_dir.sh
-          scripts/copy_built_to_pycfml_dist.sh  # scripts/change_runpath_for_built_pycfml.sh
+          scripts/copy_built_to_pycfml_dist.sh
+          scripts/change_runpath_for_built_pycfml.sh
 
       - name: Debug
         shell: bash
@@ -122,6 +123,7 @@ jobs:
           otool -l pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so | grep RPATH -A2
 
       - name: Debug 2
+        if: matrix.toolchain.exe == 'ifort' || matrix.toolchain.exe == 'ifx'
         run: |
           echo '::::: ls -l /opt/intel/oneapi/compiler/2023.2.0'
           ls -l /opt/intel/oneapi/compiler/2023.2.0

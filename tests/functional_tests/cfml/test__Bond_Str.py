@@ -22,14 +22,14 @@ def dat_to_ndarray(file_name:str, skip_begin:int=3, skip_end:int=4):
     del lines[len(lines)-skip_end:]  # deletes requested number of last lines
     lines = [l.replace('(',' ').replace(')', ' ') for l in lines]  # replace brackets with spaces
     joined = '\n'.join(lines)  # joins into single string
-    array = np.loadtxt(StringIO(joined), # converts string to ndarray
+    array = np.loadtxt(StringIO(joined),  # converts string to ndarray
                        dtype={ 'names':   ('Atom', 'Coord', 'D_aver', 'D_aver_Sigm', 'Distort', 'Valence', 'BVSum', 'BVSum_Sigma'),
                                'formats': ('S2',   'f4',    'f4',     'i4',          'f8',      'f4',      'f4',    'i4'         ) })
     return array
 
 # Tests
 
-def _test__Bond_StrN():
+def test__Bond_StrN():
     # run fortran program to produce the actual output
     os.system(f'./Bond_StrN LiFePO4n.cfl')
     time.sleep(1)

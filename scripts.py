@@ -259,6 +259,7 @@ def _compile_executables_script_lines(section_prefix: str,
         cmd = cmd.replace('{INCLUDE_PATH}', include_path)
         cmd = cmd.replace('{LIB_PATH}', lib_path)
         cmd = cmd.replace('{LIB_NAME}', lib_name)
+        lines.append(f"echo '>>>>> {cmd}'")
         lines.append(cmd)
     return lines
 

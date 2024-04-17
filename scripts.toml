@@ -182,6 +182,7 @@ platforms = ['macos', 'linux', 'windows']
 compilers = ['gfortran']
 obj-ext = 'o'
 build-shared = '{COMPILER} -shared {PATH}.o -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {PYTHON_LIB}'
+build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} -L{CFML_LIB_DIR} -l{CFML_LIB_NAME}'
 modes.base = '-std=f2008 -cpp -fPIC -fno-stack-arrays -ffree-line-length-none'
 modes.debug = ''
 modes.release = ''
@@ -191,6 +192,7 @@ platforms = ['macos']
 compilers = ['nagfor']
 obj-ext = 'o'
 build-shared = '{COMPILER} -Wl,-shared {PATH}.o -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {PYTHON_LIB}'
+build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} -L{CFML_LIB_DIR} -l{CFML_LIB_NAME}'
 modes.base = '-f2008 -fpp -PIC -quiet -w=all -colour'
 modes.debug = ''
 modes.release = ''
@@ -200,6 +202,7 @@ platforms = ['macos', 'linux']
 compilers = ['ifort', 'ifx']
 obj-ext = 'o'
 build-shared = "{COMPILER} -shared {PATH}.o -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {IFC_LIB} {PYTHON_LIB}"
+build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} -L{CFML_LIB_DIR} -l{CFML_LIB_NAME}'
 modes.base = '-fpp -fPIC -heap-arrays'
 modes.debug = ''  # -g
 modes.release = '-O3'
@@ -209,6 +212,7 @@ platforms = ['windows']
 compilers = ['ifort', 'ifx']
 obj-ext = 'obj'
 build-shared = 'link {PATH}.obj /out:"{PATH}.{EXT}" /libpath:{CFML_LIB_PATH} /dll {CFML_LIB_NAME}.lib {PYTHON_LIB}'
+build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} {CFML_LIB_DIR}\{CFML_LIB_NAME}.{LIB_EXT}'
 modes.base = '/fpp /heap-arrays /nologo -DWIN32=ON'
 modes.debug = ''
 modes.release = ''

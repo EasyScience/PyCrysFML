@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, macos-12]
+        os: [windows-2022]
         #os: [windows-2022, ubuntu-22.04, macos-12, flyci-macos-14-m2]
         toolchain:
           - { exe: gfortran, compiler: gcc, version: 13 }
@@ -23,11 +23,7 @@ jobs:
           - os: flyci-macos-14-m2
             toolchain: { exe: ifx, compiler: intel, version: "2023.2" } # no support for macOS on arm64
           - os: flyci-macos-14-m2
-            toolchain: {
-                exe: ifort,
-                compiler: intel-classic,
-                version: "2021.10",
-              } # no support for macOS on arm64
+            toolchain: { exe: ifort, compiler: intel-classic, version: "2021.10" } # no support for macOS on arm64
 
     runs-on: ${{ matrix.os }}
 
@@ -165,11 +161,7 @@ jobs:
           - os: flyci-macos-14-m2
             toolchain: { exe: ifx, compiler: intel, version: "2023.2" } # no support for macOS on arm64
           - os: flyci-macos-14-m2
-            toolchain: {
-                exe: ifort,
-                compiler: intel-classic,
-                version: "2021.10",
-              } # no support for macOS on arm64
+            toolchain: { exe: ifort, compiler: intel-classic, version: "2021.10" } # no support for macOS on arm64
 
     runs-on: ${{ matrix.os }}
 

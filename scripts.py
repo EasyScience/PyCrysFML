@@ -137,6 +137,15 @@ def _compiler_build_shared_template():
             break
     return template
 
+def _compiler_build_exe_template():
+    compiler = _compiler_name()
+    template = ''
+    for build in CONFIG['build-objs']:
+        if _platform() in build['platforms'] and compiler in build['compilers']:
+            template = build['build-exe']
+            break
+    return template
+
 def _compiling_mode():
     mode = 'debug'  # default
     if ARGS.mode:
@@ -234,11 +243,12 @@ def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):
 def _compile_executables_script_lines(section_prefix: str,
                                       src_path: str,
                                       include_path: str,
-                                      lib_path: str,
+                                      lib_dir: str,
                                       lib_name: str):
     src_ext = CONFIG['build']['src-ext'][section_prefix]
+    lib_ext = CONFIG['build']['static-lib-ext'][_platform()]
     tests = f'{section_prefix}-tests'
-    template_cmd = CONFIG['template']['build-exe']
+    template_cmd = _compiler_build_exe_template()
     compiler = _compiler_name()
     options = _compiler_options()
     total = _total_src_file_count(tests)
@@ -258,8 +268,9 @@ def _compile_executables_script_lines(section_prefix: str,
         cmd = cmd.replace('{EXE_NAME}', main_name)
         cmd = cmd.replace('{SOURCE_PATH}', source_path)
         cmd = cmd.replace('{INCLUDE_PATH}', include_path)
-        cmd = cmd.replace('{LIB_PATH}', lib_path)
-        cmd = cmd.replace('{LIB_NAME}', lib_name)
+        cmd = cmd.replace('{CFML_LIB_DIR}', lib_dir)
+        cmd = cmd.replace('{CFML_LIB_NAME}', lib_name)
+        cmd = cmd.replace('{LIB_EXT}', lib_ext)
         lines.append(f"echo '>>>>> {cmd}'")
         lines.append(cmd)
     return lines

@@ -54,6 +54,9 @@ jobs:
         with:
           python-version: 3.11
 
+      - name: debug
+        run: python3 -c "import os;print(os.environ['GITHUB_WORKSPACE'])"
+
       - name: Upgrade package installer for Python
         shell: bash
         run: python3 -m pip install --upgrade pip

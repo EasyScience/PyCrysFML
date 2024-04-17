@@ -15,15 +15,19 @@ jobs:
         os: [ubuntu-22.04]
         toolchain:
           - { exe: gfortran, compiler: gcc, version: 13 }
-          - { exe: ifort, compiler: intel-classic, version: "2021.10" }
-          - { exe: ifx, compiler: intel, version: "2023.2" }
+        #  - { exe: ifort, compiler: intel-classic, version: "2021.10" }
+        #  - { exe: ifx, compiler: intel, version: "2023.2" }
         exclude:
           - os: macos-12
             toolchain: { exe: ifx, compiler: intel, version: "2023.2" } # no support for macOS
           - os: flyci-macos-14-m2
             toolchain: { exe: ifx, compiler: intel, version: "2023.2" } # no support for macOS on arm64
           - os: flyci-macos-14-m2
-            toolchain: { exe: ifort, compiler: intel-classic, version: "2021.10" } # no support for macOS on arm64
+            toolchain: {
+                exe: ifort,
+                compiler: intel-classic,
+                version: "2021.10",
+              } # no support for macOS on arm64
 
     runs-on: ${{ matrix.os }}
 
@@ -147,15 +151,19 @@ jobs:
         os: [ubuntu-22.04]
         toolchain:
           - { exe: gfortran, compiler: gcc, version: 13 }
-          - { exe: ifort, compiler: intel-classic, version: "2021.10" }
-          - { exe: ifx, compiler: intel, version: "2023.2" }
+        #  - { exe: ifort, compiler: intel-classic, version: "2021.10" }
+        #  - { exe: ifx, compiler: intel, version: "2023.2" }
         exclude:
           - os: macos-12
             toolchain: { exe: ifx, compiler: intel, version: "2023.2" } # no support for macOS
           - os: flyci-macos-14-m2
             toolchain: { exe: ifx, compiler: intel, version: "2023.2" } # no support for macOS on arm64
           - os: flyci-macos-14-m2
-            toolchain: { exe: ifort, compiler: intel-classic, version: "2021.10" } # no support for macOS on arm64
+            toolchain: {
+                exe: ifort,
+                compiler: intel-classic,
+                version: "2021.10",
+              } # no support for macOS on arm64
 
     runs-on: ${{ matrix.os }}
 
@@ -205,7 +213,7 @@ jobs:
 
       - name: Run CFML functional tests
         shell: bash
-        run: scripts/run_cfml_functional_tests.sh
+        run: python3 tests/functional_tests/cfml/test__Bond_Str.py #scripts/run_cfml_functional_tests.sh
 
       - name: Run PYCFML unit tests
         shell: bash

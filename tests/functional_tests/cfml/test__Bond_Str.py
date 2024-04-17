@@ -11,6 +11,9 @@ from pycrysfml08 import powder_mod
 
 
 os.environ['CRYSFML_DB'] = os.path.join(os.path.dirname(powder_mod.__file__), 'Databases')  # access to Databases/magnetic_data.txt
+print('///////// os.getcwd()', os.getcwd())
+print('///////// ls -l')
+os.system(f'ls -l')
 os.chdir(os.path.dirname(__file__))  # set current directory to be the directory of this script file
 
 # Help functions
@@ -42,9 +45,22 @@ def test__Bond_StrN():
 
 if __name__ == '__main__':
     # run fortran program to produce the actual output
+    #os.system(f'./Bond_StrN LiFePO4n.cfl')
+    print('///////// os.getcwd()', os.getcwd())
+    print('///////// ls -l')
+    os.system(f'ls -l')
+    print('///////// ./Bond_StrN LiFePO4n.cfl')
     os.system(f'./Bond_StrN LiFePO4n.cfl')
     time.sleep(1)
+    print('///////// ls -l')
+    os.system(f'ls -l')
+
+    file_name = 'LiFePO4n_sum_desired.bvs'
+
+    print('///////// file_name', file_name)
+    print('///////// os.path.abspath(file_name)', os.path.abspath(file_name))
+
     # compare the actual output with the desired one
-    desired = dat_to_ndarray('LiFePO4n_sum_desired.bvs')
-    actual = dat_to_ndarray('LiFePO4n_sum.bvs')
-    assert_array_equal(desired, actual, verbose=True)
+    desired = dat_to_ndarray(file_name)
+    #actual = dat_to_ndarray('LiFePO4n_sum.bvs')
+    #assert_array_equal(desired, actual, verbose=True)

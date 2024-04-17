@@ -2,23 +2,31 @@ import os
 import re
 import filecmp
 import time
+import tomllib
 import subprocess
 from io import StringIO
 import numpy as np
 from numpy.testing import assert_array_equal, assert_almost_equal
 
-from pycrysfml08 import powder_mod
-
-
-os.environ['CRYSFML_DB'] = os.path.join(os.path.dirname(powder_mod.__file__), 'Databases')  # access to Databases/magnetic_data.txt
-print('///////// os.getcwd()', os.getcwd())
-print('///////// ls -l')
-os.system(f'ls -l')
-os.chdir(os.path.dirname(__file__))  # set current directory to be the directory of this script file
 
 # Help functions
 
+def set_crysfml_db_path():
+    """Sets the env variable 'CRYSFML_DB' as the path to the 'Databases' directory containing the file 'magnetic_data.txt'."""
+    config_path = os.path.join(os.getcwd(), 'scripts.toml')
+    with open(config_path, 'rb') as f:
+        CONFIG = tomllib.load(f)
+    repo_dir = CONFIG['cfml']['dir']['repo']
+    src_dir = CONFIG['cfml']['dir']['repo-src']
+    db_path = os.path.join(os.getcwd(), repo_dir, src_dir, 'Databases')
+    os.environ['CRYSFML_DB'] = db_path
+
+def change_cwd_to_tests():  # set current directory to be the directory of this script file
+    """Changes the current directory to the directory of this script file."""
+    os.chdir(os.path.dirname(__file__))
+
 def dat_to_ndarray(file_name:str, skip_begin:int=3, skip_end:int=4):
+    """Parses the file to extract an array of data and converts it to a numpy array."""
     with open(file_name, 'r') as file:
         lines = file.readlines()  # reads into list
     del lines[:skip_begin]  # deletes requested number of first lines
@@ -29,6 +37,21 @@ def dat_to_ndarray(file_name:str, skip_begin:int=3, skip_end:int=4):
                        dtype={ 'names':   ('Atom', 'Coord', 'D_aver', 'D_aver_Sigm', 'Distort', 'Valence', 'BVSum', 'BVSum_Sigma'),
                                'formats': ('S2',   'f4',    'f4',     'i4',          'f8',      'f4',      'f4',    'i4'         ) })
     return array
+
+# Set up paths
+
+print('///////// os.getcwd()', os.getcwd())
+print('///////// ls -l')
+os.system(f'ls -l')
+
+set_crysfml_db_path()
+change_cwd_to_tests()
+
+print('///////// os.getcwd()', os.getcwd())
+print('///////// ls -l')
+os.system(f'ls -l')
+
+
 
 # Tests
 
@@ -44,11 +67,8 @@ def test__Bond_StrN():
 # Debug
 
 if __name__ == '__main__':
+
     # run fortran program to produce the actual output
-    #os.system(f'./Bond_StrN LiFePO4n.cfl')
-    print('///////// os.getcwd()', os.getcwd())
-    print('///////// ls -l')
-    os.system(f'ls -l')
     print('///////// ./Bond_StrN LiFePO4n.cfl')
     os.system(f'./Bond_StrN LiFePO4n.cfl')
     time.sleep(1)

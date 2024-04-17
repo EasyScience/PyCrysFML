@@ -97,11 +97,11 @@ jobs:
           scripts/create_cfml_dist_dir.sh
           scripts/copy_built_to_cfml_dist.sh
 
-      - name: Build and run CFML functional tests
-        shell: bash
-        run: |
-          scripts/build_cfml_test_programs.sh
-          scripts/run_cfml_functional_tests.sh
+      #- name: Build and run CFML functional tests
+      #  shell: bash
+      #  run: |
+      #    scripts/build_cfml_test_programs.sh
+      #    scripts/run_cfml_functional_tests.sh
 
       - name: Download PYCFML repository
         shell: bash

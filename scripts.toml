@@ -197,11 +197,21 @@ modes.debug = ''
 modes.release = ''
 
 [[build-objs]]
-platforms = ['macos', 'linux']
+platforms = ['linux']
 compilers = ['ifort', 'ifx']
 obj-ext = 'o'
 build-shared = "{COMPILER} -shared {PATH}.o -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {IFC_LIB} {PYTHON_LIB}"
 build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} -L{CFML_LIB_DIR} -l{CFML_LIB_NAME}'
+modes.base = '-fpp -fPIC -heap-arrays'
+modes.debug = ''  # -g
+modes.release = '-O3'
+
+[[build-objs]]
+platforms = ['macos']
+compilers = ['ifort', 'ifx']
+obj-ext = 'o'
+build-shared = "{COMPILER} -shared {PATH}.o -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {IFC_LIB} {PYTHON_LIB}"
+build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} -L{CFML_LIB_DIR} lib{CFML_LIB_NAME}.{LIB_EXT}'
 modes.base = '-fpp -fPIC -heap-arrays'
 modes.debug = ''  # -g
 modes.release = '-O3'

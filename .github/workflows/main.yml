@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-2022]
+        os: [windows-2022, ubuntu-22.04, macos-12]
         #os: [windows-2022, ubuntu-22.04, macos-12, flyci-macos-14-m2]
         toolchain:
           - { exe: gfortran, compiler: gcc, version: 13 }
@@ -149,7 +149,7 @@ jobs:
     strategy: # current job matrix. copy of the strategy from the previous job
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, macos-12]
+        os: [windows-2022, ubuntu-22.04, macos-12]
         #os: [windows-2022, ubuntu-22.04, macos-12, flyci-macos-14-m2]
         toolchain:
           - { exe: gfortran, compiler: gcc, version: 13 }

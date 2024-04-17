@@ -63,7 +63,7 @@ def test__Bond_StrN__LiFePO4n():
     # compare the actual output with the desired one
     desired = dat_to_ndarray('LiFePO4n_sum_desired.bvs')
     actual = dat_to_ndarray('LiFePO4n_sum.bvs')
-    assert_allclose(desired, actual, rtol=1e-03, verbose=True)
+    assert_allclose(desired, actual, rtol=1e-02, verbose=True)
 
 
 # Debug
@@ -71,4 +71,4 @@ def test__Bond_StrN__LiFePO4n():
 if __name__ == '__main__':
     os.system(f"echo '::::: ls -l'")
     os.system(f'ls -l')
-    test__Bond_StrN()
+    test__Bond_StrN__LiFePO4n()

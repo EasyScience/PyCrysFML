@@ -41,16 +41,8 @@ def dat_to_ndarray(file_name:str, skip_begin:int=3, skip_end:int=4):
 
 # Set up paths
 
-os.system(f"echo '----- os.getcwd(): {os.getcwd()}'")
-os.system(f'ls -l')
-
 set_crysfml_db_path()
 change_cwd_to_tests()
-
-os.system(f"echo '----- os.getcwd(): {os.getcwd()}'")
-os.system(f'ls -l')
-
-
 
 # Tests
 
@@ -66,20 +58,12 @@ def test__Bond_StrN():
 # Debug
 
 if __name__ == '__main__':
-
     # run fortran program to produce the actual output
-    os.system(f"echo '----- ./Bond_StrN LiFePO4n.cfl'")
+    os.system(f"echo '::::: ./Bond_StrN LiFePO4n.cfl'")
     os.system(f'./Bond_StrN LiFePO4n.cfl')
     time.sleep(1)
 
-    os.system(f"echo '----- os.getcwd(): {os.getcwd()}'")
-    os.system(f'ls -l')
-
-    file_name = 'LiFePO4n_sum_desired.bvs'
-    os.system(f"echo '----- file_name: {file_name}'")
-    os.system(f"echo '----- os.path.abspath(file_name): {os.path.abspath(file_name)}'")
-
     # compare the actual output with the desired one
-    desired = dat_to_ndarray(file_name)
-    #actual = dat_to_ndarray('LiFePO4n_sum.bvs')
-    #assert_array_equal(desired, actual, verbose=True)
+    desired = dat_to_ndarray('LiFePO4n_sum_desired.bvs')
+    actual = dat_to_ndarray('LiFePO4n_sum.bvs')
+    assert_array_equal(desired, actual, verbose=True)

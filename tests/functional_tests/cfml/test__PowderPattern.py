@@ -2,19 +2,30 @@ import os
 import re
 import filecmp
 import time
+import tomllib
 import subprocess
 import numpy as np
 from numpy.testing import assert_allclose, assert_almost_equal
 
-from pycrysfml08 import powder_mod
-
-
-os.environ['CRYSFML_DB'] = os.path.join(os.path.dirname(powder_mod.__file__), 'Databases')  # access to Databases/magnetic_data.txt
-os.chdir(os.path.dirname(__file__))  # set current directory to be the directory of this script file
 
 # Help functions
 
+def set_crysfml_db_path():
+    """Sets the env variable 'CRYSFML_DB' as the path to the 'Databases' directory containing the file 'magnetic_data.txt'."""
+    config_path = os.path.join(os.getcwd(), 'scripts.toml')
+    with open(config_path, 'rb') as f:
+        CONFIG = tomllib.load(f)
+    repo_dir = CONFIG['cfml']['dir']['repo']
+    src_dir = CONFIG['cfml']['dir']['repo-src']
+    db_path = os.path.join(os.getcwd(), repo_dir, src_dir, 'Databases')
+    os.environ['CRYSFML_DB'] = db_path
+
+def change_cwd_to_tests():  # set current directory to be the directory of this script file
+    """Changes the current directory to the directory of this script file."""
+    os.chdir(os.path.dirname(__file__))
+
 def dat_to_ndarray(file_name:str, skip_lines:int=0):
+    """Parses the file to extract an array of data and converts it to a numpy array."""
     with open(file_name, 'r') as file:
         lines = file.read().splitlines()  # reads into list removing end-of-line symbols
     del lines[:skip_lines]  # deletes requested number of first lines
@@ -23,6 +34,17 @@ def dat_to_ndarray(file_name:str, skip_lines:int=0):
     splitted = re.split(r'\s{2,}', stripped)  # splits back into list ignoring single whitespaces
     array = np.array(splitted, dtype=np.float32)  # converts list of string numbers into numpy array of floats
     return array
+
+# Set up paths
+
+os.system(f"echo '----- os.getcwd(): {os.getcwd()}'")
+os.system(f'ls -l')
+
+set_crysfml_db_path()
+change_cwd_to_tests()
+
+os.system(f"echo '----- os.getcwd(): {os.getcwd()}'")
+os.system(f'ls -l')
 
 # Tests
 

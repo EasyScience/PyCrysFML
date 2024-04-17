@@ -97,6 +97,12 @@ jobs:
           scripts/create_cfml_dist_dir.sh
           scripts/copy_built_to_cfml_dist.sh
 
+      - name: Build and run CFML functional tests
+        shell: bash
+        run: |
+          scripts/build_cfml_test_programs.sh
+          python3 tests/functional_tests/cfml/test__Bond_Str.py  #scripts/run_cfml_functional_tests.sh
+
       - name: Download PYCFML repository
         shell: bash
         run: |
@@ -210,10 +216,6 @@ jobs:
       - name: Install PYCFML from downloaded Python package wheel (with dev extras)
         shell: bash
         run: scripts/install_pycfml_from_wheel.sh
-
-      - name: Run CFML functional tests
-        shell: bash
-        run: python3 tests/functional_tests/cfml/test__Bond_Str.py #scripts/run_cfml_functional_tests.sh
 
       - name: Run PYCFML unit tests
         shell: bash

@@ -189,7 +189,7 @@ def _compile_objs_script_lines(modules: str,
                 cmd = cmd.replace('{PATH}', path)
                 cmd = f'{cmd}&'  # start this bash command in background for parallel compilation
                 lines.append(cmd)
-                if current % 4:  # do not parallelise for more than 3 compilations
+                if current % 11:  # do not parallelise for more than 10 compilations
                     lines.append('wait')  # wait for all parallel bash commands to finish
             lines.append('wait')  # wait for all parallel bash commands to finish
     return lines
@@ -1043,8 +1043,10 @@ if __name__ == '__main__':
     create_cfml_dist_dir()
     copy_built_to_cfml_dist()
 
-    headers = _echo_header(f"Running {cfml_project_name} test programs")
+    headers = _echo_header(f"Creating and running {cfml_project_name} test programs")
+    append_to_main_script(headers)
     build_cfml_test_programs()
+    run_cfml_functional_tests()
 
     headers = _echo_header(f"Creating {pycfml_project_name} shared objects or dynamic libraries")
     append_to_main_script(headers)
@@ -1070,10 +1072,6 @@ if __name__ == '__main__':
     headers = _echo_header(f"Installing {pycfml_project_name} from python wheel")
     append_to_main_script(headers)
     install_pycfml_from_wheel()
-
-    headers = _echo_header(f"Running {cfml_project_name} tests")
-    append_to_main_script(headers)
-    run_cfml_functional_tests()
 
     headers = _echo_header(f"Running {pycfml_project_name} tests")
     append_to_main_script(headers)

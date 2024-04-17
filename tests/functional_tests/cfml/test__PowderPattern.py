@@ -42,9 +42,6 @@ def dat_to_ndarray(file_name:str, skip_lines:int=0):
 os.system(f"echo '----- os.getcwd(): {os.getcwd()}'")
 os.system(f'ls -l')
 
-def test__path():
-    assert os.getcwd() == ''
-
 set_crysfml_db_path()
 change_cwd_to_tests()
 

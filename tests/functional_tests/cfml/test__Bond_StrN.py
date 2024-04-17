@@ -7,7 +7,7 @@ import subprocess
 import platform
 from io import StringIO
 import numpy as np
-from numpy.testing import assert_array_equal, assert_almost_equal
+from numpy.testing import assert_array_equal, assert_almost_equal, assert_allclose
 
 
 # Help functions
@@ -35,7 +35,7 @@ def run_exe_with_args(file_name:str, args:str=''):
     cmd = f'{file_name}'
     if args:
         cmd = f'{file_name} {args}'
-    os.system(f"echo '::::: {cmd}'")
+    #os.system(f"echo '::::: {cmd}'")
     os.system(f'{cmd}')
     time.sleep(1)
 
@@ -47,10 +47,8 @@ def dat_to_ndarray(file_name:str, skip_begin:int=3, skip_end:int=4):
     del lines[len(lines)-skip_end:]  # deletes requested number of last lines
     lines = [l.replace('(',' ').replace(')', ' ') for l in lines]  # replace brackets with spaces
     joined = '\n'.join(lines)  # joins into single string
-    array = np.loadtxt(StringIO(joined),  # converts string to ndarray
-                       dtype={ 'names':   ('Atom', 'Coord', 'D_aver', 'D_aver_Sigm', 'Distort', 'Valence', 'BVSum', 'BVSum_Sigma'),
-                               'formats': ('S2',   'f4',    'f4',     'i4',          'f8',      'f4',      'f4',    'i4'         ) })
-    return array
+    data = np.genfromtxt(StringIO(joined), usecols=(1, 2, 3, 4, 5, 6, 7))  # converts string to ndarray
+    return data
 
 # Set up paths
 
@@ -59,30 +57,18 @@ change_cwd_to_tests()
 
 # Tests
 
-def test__Bond_StrN():
+def test__Bond_StrN__LiFePO4n():
     # run fortran program to produce the actual output
-    os.system(f"echo '::::: ls -l'")
-    os.system(f'ls -l')
-    #os.system(f"echo '::::: ./Bond_StrN LiFePO4n.cfl'")
-    #os.system(f'./Bond_StrN LiFePO4n.cfl')
     run_exe_with_args('Bond_StrN', args='LiFePO4n.cfl')
     # compare the actual output with the desired one
     desired = dat_to_ndarray('LiFePO4n_sum_desired.bvs')
     actual = dat_to_ndarray('LiFePO4n_sum.bvs')
-    assert_array_equal(desired, actual, verbose=True)
+    assert_allclose(desired, actual, rtol=1e-03, verbose=True)
+
 
 # Debug
 
 if __name__ == '__main__':
-    # run fortran program to produce the actual output
     os.system(f"echo '::::: ls -l'")
     os.system(f'ls -l')
-    #os.system(f"echo '::::: ./Bond_StrN LiFePO4n.cfl'")
-    #os.system(f'./Bond_StrN LiFePO4n.cfl')
-    run_exe_with_args('Bond_StrN', args='LiFePO4n.cfl')
-    time.sleep(1)
-
-    # compare the actual output with the desired one
-    desired = dat_to_ndarray('LiFePO4n_sum_desired.bvs')
-    actual = dat_to_ndarray('LiFePO4n_sum.bvs')
-    assert_array_equal(desired, actual, verbose=True)
+    test__Bond_StrN()

@@ -101,7 +101,7 @@ jobs:
         shell: bash
         run: |
           scripts/build_cfml_test_programs.sh
-          python3 tests/functional_tests/cfml/test__Bond_Str.py  #scripts/run_cfml_functional_tests.sh
+          scripts/run_cfml_functional_tests.sh  #python3 tests/functional_tests/cfml/test__Bond_Str.py
 
       - name: Download PYCFML repository
         shell: bash

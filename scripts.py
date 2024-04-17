@@ -189,7 +189,7 @@ def _compile_objs_script_lines(modules: str,
                 cmd = cmd.replace('{PATH}', path)
                 cmd = f'{cmd}&'  # start this bash command in background for parallel compilation
                 lines.append(cmd)
-                if current % 11:  # do not parallelise for more than 10 compilations
+                if current % 6 == 0:  # do not parallelise for more than 5 compilations
                     lines.append('wait')  # wait for all parallel bash commands to finish
             lines.append('wait')  # wait for all parallel bash commands to finish
     return lines

@@ -1,4 +1,5 @@
 import os
+import sys
 import re
 import filecmp
 import time
@@ -12,12 +13,13 @@ from numpy.testing import assert_allclose, assert_almost_equal
 
 def set_crysfml_db_path():
     """Sets the env variable 'CRYSFML_DB' as the path to the 'Databases' directory containing the file 'magnetic_data.txt'."""
-    config_path = os.path.join(os.getcwd(), 'scripts.toml')
+    project_dir = os.getenv('GITHUB_WORKSPACE', default=os.getcwd())
+    config_path = os.path.join(project_dir, 'scripts.toml')
     with open(config_path, 'rb') as f:
         CONFIG = tomllib.load(f)
     repo_dir = CONFIG['cfml']['dir']['repo']
     src_dir = CONFIG['cfml']['dir']['repo-src']
-    db_path = os.path.join(os.getcwd(), repo_dir, src_dir, 'Databases')
+    db_path = os.path.join(project_dir, repo_dir, src_dir, 'Databases')
     os.environ['CRYSFML_DB'] = db_path
 
 def change_cwd_to_tests():  # set current directory to be the directory of this script file
@@ -39,6 +41,9 @@ def dat_to_ndarray(file_name:str, skip_lines:int=0):
 
 os.system(f"echo '----- os.getcwd(): {os.getcwd()}'")
 os.system(f'ls -l')
+
+def test__path():
+    assert os.getcwd() == ''
 
 set_crysfml_db_path()
 change_cwd_to_tests()

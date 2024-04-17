@@ -60,7 +60,7 @@ jobs:
 
       - name: Install Python dependences
         shell: bash
-        run: python3 -m pip install '.[ci]' # ci extras from pyproject.toml
+        run: python3 -m pip install '.[ci,test]' # ci extras from pyproject.toml
 
       - name: Fix reinstalling gcc [macOS] # needed because of `brew reinstall gcc`
         if: runner.os == 'macOS'

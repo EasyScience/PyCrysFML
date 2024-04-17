@@ -40,15 +40,13 @@ def dat_to_ndarray(file_name:str, skip_begin:int=3, skip_end:int=4):
 
 # Set up paths
 
-print('///////// os.getcwd()', os.getcwd())
-print('///////// ls -l')
+os.system(f"echo '----- os.getcwd(): {os.getcwd()}'")
 os.system(f'ls -l')
 
 set_crysfml_db_path()
 change_cwd_to_tests()
 
-print('///////// os.getcwd()', os.getcwd())
-print('///////// ls -l')
+os.system(f"echo '----- os.getcwd(): {os.getcwd()}'")
 os.system(f'ls -l')
 
 
@@ -69,16 +67,16 @@ def test__Bond_StrN():
 if __name__ == '__main__':
 
     # run fortran program to produce the actual output
-    print('///////// ./Bond_StrN LiFePO4n.cfl')
+    os.system(f"echo '----- ./Bond_StrN LiFePO4n.cfl'")
     os.system(f'./Bond_StrN LiFePO4n.cfl')
     time.sleep(1)
-    print('///////// ls -l')
+
+    os.system(f"echo '----- os.getcwd(): {os.getcwd()}'")
     os.system(f'ls -l')
 
     file_name = 'LiFePO4n_sum_desired.bvs'
-
-    print('///////// file_name', file_name)
-    print('///////// os.path.abspath(file_name)', os.path.abspath(file_name))
+    os.system(f"echo '----- file_name: {file_name}'")
+    os.system(f"echo '----- os.path.abspath(file_name): {os.path.abspath(file_name)}'")
 
     # compare the actual output with the desired one
     desired = dat_to_ndarray(file_name)

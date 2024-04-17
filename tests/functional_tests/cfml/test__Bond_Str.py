@@ -48,6 +48,9 @@ change_cwd_to_tests()
 
 def test__Bond_StrN():
     # run fortran program to produce the actual output
+    os.system(f"echo '::::: ls -l'")
+    os.system(f'ls -l')
+    os.system(f"echo '::::: ./Bond_StrN LiFePO4n.cfl'")
     os.system(f'./Bond_StrN LiFePO4n.cfl')
     time.sleep(1)
     # compare the actual output with the desired one
@@ -59,6 +62,8 @@ def test__Bond_StrN():
 
 if __name__ == '__main__':
     # run fortran program to produce the actual output
+    os.system(f"echo '::::: ls -l'")
+    os.system(f'ls -l')
     os.system(f"echo '::::: ./Bond_StrN LiFePO4n.cfl'")
     os.system(f'./Bond_StrN LiFePO4n.cfl')
     time.sleep(1)

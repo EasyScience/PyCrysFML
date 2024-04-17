@@ -267,7 +267,7 @@ def _compile_executables_script_lines(section_prefix: str,
         cmd = cmd.replace('{OPTIONS}', options)
         cmd = cmd.replace('{EXE_NAME}', main_name)
         cmd = cmd.replace('{SOURCE_PATH}', source_path)
-        cmd = cmd.replace('{INCLUDE_PATH}', include_path)
+        cmd = cmd.replace('{CFML_INCLUDE_PATH}', include_path)
         cmd = cmd.replace('{CFML_LIB_DIR}', lib_dir)
         cmd = cmd.replace('{CFML_LIB_NAME}', lib_name)
         cmd = cmd.replace('{LIB_EXT}', lib_ext)

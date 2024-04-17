@@ -42,7 +42,6 @@ scripts = 'scripts'
 [template]
 clone-repo = 'git clone --single-branch --branch {BRANCH} {URL} {OUT_PATH}'
 build-obj = '{COMPILER} {OPTIONS} -c {PATH} -I {INCLUDE}'
-build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {INCLUDE_PATH} -L{LIB_PATH} -l{LIB_NAME}'
 build-static.macos = 'ar -r {LIB}.a *.{OBJ_EXT}'
 build-static.linux = 'ar -r {LIB}.a *.{OBJ_EXT}'
 build-static.windows = 'lib /out:{LIB}.lib *.{OBJ_EXT}'

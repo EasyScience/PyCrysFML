@@ -66,7 +66,7 @@ def _python_tag():
 
 def _processor():
     processor = platform.processor()
-    processor = processor.split()[0]  # get the 1st word from string, such as 'Intel64 Family 6 Model 154 Stepping 3, GenuineIntel' 
+    processor = processor.split()[0]  # get the 1st word from string, such as 'Intel64 Family 6 Model 154 Stepping 3, GenuineIntel'
     return processor
 
 def _fix_file_permissions(path: str):
@@ -187,7 +187,10 @@ def _compile_objs_script_lines(modules: str,
                 cmd = cmd.replace('{COMPILER}', compiler)
                 cmd = cmd.replace('{OPTIONS}', options)
                 cmd = cmd.replace('{PATH}', path)
+                cmd = f'{cmd}&'  # start this bash command in background for parallel compilation
                 lines.append(cmd)
+            cmd = 'wait'  # wait for all parallel bash commands to finish
+            lines.append(cmd)
     return lines
 
 def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):

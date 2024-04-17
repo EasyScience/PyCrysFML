@@ -5,6 +5,7 @@ import filecmp
 import time
 import tomllib
 import subprocess
+import platform
 import numpy as np
 from numpy.testing import assert_allclose, assert_almost_equal
 
@@ -22,9 +23,21 @@ def set_crysfml_db_path():
     db_path = os.path.join(project_dir, repo_dir, src_dir, 'Databases')
     os.environ['CRYSFML_DB'] = db_path
 
-def change_cwd_to_tests():  # set current directory to be the directory of this script file
+def change_cwd_to_tests():
     """Changes the current directory to the directory of this script file."""
     os.chdir(os.path.dirname(__file__))
+
+def run_exe_with_args(file_name:str, args:str=''):
+    """Runs the executable with optional arguments."""
+    if platform.system() == 'Windows':
+        file_name = f'{file_name}.exe'
+    file_name = os.path.abspath(file_name)
+    cmd = f'{file_name}'
+    if args:
+        cmd = f'{file_name} {args}'
+    os.system(f"echo '::::: {cmd}'")
+    os.system(f'{cmd}')
+    time.sleep(1)
 
 def dat_to_ndarray(file_name:str, skip_lines:int=0):
     """Parses the file to extract an array of data and converts it to a numpy array."""
@@ -46,8 +59,7 @@ change_cwd_to_tests()
 
 def test__Simple_calc_powder__SrTiO3s():
     # run fortran program to produce the actual output
-    os.system(f'./Simple_calc_powder SrTiO3s.cfl')
-    time.sleep(1)
+    run_exe_with_args('Simple_calc_powder', args='SrTiO3s.cfl')
     # compare the actual output with the desired one
     desired = dat_to_ndarray('SrTiO3s_desired.dat', skip_lines=2)
     actual = dat_to_ndarray('SrTiO3s.dat', skip_lines=2)
@@ -55,8 +67,7 @@ def test__Simple_calc_powder__SrTiO3s():
 
 def test__Simple_calc_powder__ponsin():
     # run fortran program to produce the actual output
-    os.system(f'./Simple_calc_powder ponsin.cfl')
-    time.sleep(1)
+    run_exe_with_args('Simple_calc_powder', args='ponsin.cfl')
     # compare the actual output with the desired one
     desired = dat_to_ndarray('if_ponsin_desired.dat', skip_lines=2)
     actual = dat_to_ndarray('if_ponsin.dat', skip_lines=2)

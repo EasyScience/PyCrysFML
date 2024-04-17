@@ -4,6 +4,7 @@ import filecmp
 import time
 import tomllib
 import subprocess
+import platform
 from io import StringIO
 import numpy as np
 from numpy.testing import assert_array_equal, assert_almost_equal
@@ -22,9 +23,21 @@ def set_crysfml_db_path():
     db_path = os.path.join(project_dir, repo_dir, src_dir, 'Databases')
     os.environ['CRYSFML_DB'] = db_path
 
-def change_cwd_to_tests():  # set current directory to be the directory of this script file
+def change_cwd_to_tests():
     """Changes the current directory to the directory of this script file."""
     os.chdir(os.path.dirname(__file__))
+
+def run_exe_with_args(file_name:str, args:str=''):
+    """Runs the executable with optional arguments."""
+    if platform.system() == 'Windows':
+        file_name = f'{file_name}.exe'
+    file_name = os.path.abspath(file_name)
+    cmd = f'{file_name}'
+    if args:
+        cmd = f'{file_name} {args}'
+    os.system(f"echo '::::: {cmd}'")
+    os.system(f'{cmd}')
+    time.sleep(1)
 
 def dat_to_ndarray(file_name:str, skip_begin:int=3, skip_end:int=4):
     """Parses the file to extract an array of data and converts it to a numpy array."""
@@ -50,9 +63,9 @@ def test__Bond_StrN():
     # run fortran program to produce the actual output
     os.system(f"echo '::::: ls -l'")
     os.system(f'ls -l')
-    os.system(f"echo '::::: ./Bond_StrN LiFePO4n.cfl'")
-    os.system(f'./Bond_StrN LiFePO4n.cfl')
-    time.sleep(1)
+    #os.system(f"echo '::::: ./Bond_StrN LiFePO4n.cfl'")
+    #os.system(f'./Bond_StrN LiFePO4n.cfl')
+    run_exe_with_args('Bond_StrN', args='LiFePO4n.cfl')
     # compare the actual output with the desired one
     desired = dat_to_ndarray('LiFePO4n_sum_desired.bvs')
     actual = dat_to_ndarray('LiFePO4n_sum.bvs')
@@ -64,8 +77,9 @@ if __name__ == '__main__':
     # run fortran program to produce the actual output
     os.system(f"echo '::::: ls -l'")
     os.system(f'ls -l')
-    os.system(f"echo '::::: ./Bond_StrN LiFePO4n.cfl'")
-    os.system(f'./Bond_StrN LiFePO4n.cfl')
+    #os.system(f"echo '::::: ./Bond_StrN LiFePO4n.cfl'")
+    #os.system(f'./Bond_StrN LiFePO4n.cfl')
+    run_exe_with_args('Bond_StrN', args='LiFePO4n.cfl')
     time.sleep(1)
 
     # compare the actual output with the desired one

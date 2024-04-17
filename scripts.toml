@@ -211,7 +211,7 @@ platforms = ['windows']
 compilers = ['ifort', 'ifx']
 obj-ext = 'obj'
 build-shared = 'link {PATH}.obj /out:"{PATH}.{EXT}" /libpath:{CFML_LIB_PATH} /dll {CFML_LIB_NAME}.lib {PYTHON_LIB}'
-build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} {CFML_LIB_DIR}\{CFML_LIB_NAME}.{LIB_EXT}'
+build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} {CFML_LIB_DIR}\{CFML_LIB_NAME}.{LIB_EXT} -I {CFML_INCLUDE_PATH}'
 modes.base = '/fpp /heap-arrays /nologo -DWIN32=ON'
 modes.debug = ''
 modes.release = ''

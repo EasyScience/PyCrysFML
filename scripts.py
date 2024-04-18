@@ -271,7 +271,7 @@ def _compile_executables_script_lines(section_prefix: str,
         cmd = cmd.replace('{CFML_LIB_DIR}', lib_dir)
         cmd = cmd.replace('{CFML_LIB_NAME}', lib_name)
         cmd = cmd.replace('{LIB_EXT}', lib_ext)
-        lines.append(f"echo '>>>>> {cmd}'")
+        #lines.append(f"echo '>>>>> {cmd}'")
         lines.append(cmd)
     return lines
 

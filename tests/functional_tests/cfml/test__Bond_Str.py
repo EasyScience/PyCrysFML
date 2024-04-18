@@ -14,7 +14,7 @@ from numpy.testing import assert_array_equal, assert_almost_equal, assert_allclo
 
 def set_crysfml_db_path():
     """Sets the env variable 'CRYSFML_DB' as the path to the 'Databases' directory containing the file 'magnetic_data.txt'."""
-    project_dir = os.getenv('GITHUB_WORKSPACE', default=os.getcwd())
+    project_dir = os.getenv('GITHUB_WORKSPACE', default=os.getcwd())  # locally do: export GITHUB_WORKSPACE=`pwd`
     config_path = os.path.join(project_dir, 'scripts.toml')
     with open(config_path, 'rb') as f:
         CONFIG = tomllib.load(f)

@@ -1,13 +1,13 @@
 import os
-import sys
 import re
 import filecmp
 import time
 import tomllib
 import subprocess
 import platform
+from io import StringIO
 import numpy as np
-from numpy.testing import assert_allclose, assert_almost_equal
+from numpy.testing import assert_array_equal, assert_almost_equal, assert_allclose
 
 
 # Help functions
@@ -39,16 +39,16 @@ def run_exe_with_args(file_name:str, args:str=''):
     os.system(f'{cmd}')
     time.sleep(2)
 
-def dat_to_ndarray(file_name:str, skip_lines:int=0):
+def dat_to_ndarray(file_name:str, skip_begin:int=3, skip_end:int=4):
     """Parses the file to extract an array of data and converts it to a numpy array."""
     with open(file_name, 'r') as file:
-        lines = file.read().splitlines()  # reads into list removing end-of-line symbols
-    del lines[:skip_lines]  # deletes requested number of first lines
-    joined = ' '.join(lines)  # joins into single string
-    stripped = joined.strip()  # removes leading and trailing whitespaces
-    splitted = re.split(r'\s{2,}', stripped)  # splits back into list ignoring single whitespaces
-    array = np.array(splitted, dtype=np.float32)  # converts list of string numbers into numpy array of floats
-    return array
+        lines = file.readlines()  # reads into list
+    del lines[:skip_begin]  # deletes requested number of first lines
+    del lines[len(lines)-skip_end:]  # deletes requested number of last lines
+    lines = [l.replace('(',' ').replace(')', ' ') for l in lines]  # replace brackets with spaces
+    joined = '\n'.join(lines)  # joins into single string
+    data = np.genfromtxt(StringIO(joined), usecols=(1, 2, 3, 4, 5, 6, 7))  # converts string to ndarray
+    return data
 
 # Set up paths
 
@@ -57,23 +57,18 @@ change_cwd_to_tests()
 
 # Tests
 
-def test__Simple_calc_powder__SrTiO3s():
+def test__Bond_StrN__LiFePO4n():
     # run fortran program to produce the actual output
-    run_exe_with_args('Simple_calc_powder', args='SrTiO3s.cfl')
+    run_exe_with_args('Bond_StrN', args='LiFePO4n.cfl')
     # compare the actual output with the desired one
-    desired = dat_to_ndarray('SrTiO3s_desired.dat', skip_lines=2)
-    actual = dat_to_ndarray('SrTiO3s.dat', skip_lines=2)
-    assert_allclose(desired, actual, rtol=1e-03, verbose=True)
+    desired = dat_to_ndarray('LiFePO4n_sum_desired.bvs')
+    actual = dat_to_ndarray('LiFePO4n_sum.bvs')
+    assert_allclose(desired, actual, rtol=1e-02, verbose=True)
 
-def test__Simple_calc_powder__ponsin():
-    # run fortran program to produce the actual output
-    run_exe_with_args('Simple_calc_powder', args='ponsin.cfl')
-    # compare the actual output with the desired one
-    desired = dat_to_ndarray('if_ponsin_desired.dat', skip_lines=2)
-    actual = dat_to_ndarray('if_ponsin.dat', skip_lines=2)
-    assert_allclose(desired, actual, rtol=1e-03, verbose=True)
 
 # Debug
 
 if __name__ == '__main__':
-    test__Simple_calc_powder__SrTiO3s()
+    #os.system(f"echo '::::: ls -l'")
+    #os.system(f'ls -l')
+    test__Bond_StrN__LiFePO4n()

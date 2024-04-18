@@ -1,4 +1,5 @@
 import os
+import sys
 import re
 import filecmp
 import time
@@ -7,7 +8,7 @@ import subprocess
 import platform
 from io import StringIO
 import numpy as np
-from numpy.testing import assert_array_equal, assert_almost_equal, assert_allclose
+from numpy.testing import assert_allclose, assert_almost_equal
 
 
 # Help functions
@@ -45,9 +46,8 @@ def dat_to_ndarray(file_name:str, skip_begin:int=3, skip_end:int=4):
         lines = file.readlines()  # reads into list
     del lines[:skip_begin]  # deletes requested number of first lines
     del lines[len(lines)-skip_end:]  # deletes requested number of last lines
-    lines = [l.replace('(',' ').replace(')', ' ') for l in lines]  # replace brackets with spaces
     joined = '\n'.join(lines)  # joins into single string
-    data = np.genfromtxt(StringIO(joined), usecols=(1, 2, 3, 4, 5, 6, 7))  # converts string to ndarray
+    data = np.genfromtxt(StringIO(joined), usecols=(4, 5, 6, 7))  # converts string to ndarray
     return data
 
 # Set up paths
@@ -57,18 +57,15 @@ change_cwd_to_tests()
 
 # Tests
 
-def test__Bond_StrN__LiFePO4n():
+def test__mol_tpcr__molecule_PPH3_Z():
     # run fortran program to produce the actual output
-    run_exe_with_args('Bond_StrN', args='LiFePO4n.cfl')
+    run_exe_with_args('mol_tpcr', args='molecule_PPH3_Z.cfl')
     # compare the actual output with the desired one
-    desired = dat_to_ndarray('LiFePO4n_sum_desired.bvs')
-    actual = dat_to_ndarray('LiFePO4n_sum.bvs')
-    assert_allclose(desired, actual, rtol=1e-02, verbose=True)
-
+    desired = dat_to_ndarray('molecule_PPH3_Z_fc_desired.cfl', skip_begin=7, skip_end=1)
+    actual = dat_to_ndarray('molecule_PPH3_Z_fc.cfl', skip_begin=7, skip_end=1)
+    assert_allclose(desired, actual, rtol=1e-03, verbose=True)
 
 # Debug
 
 if __name__ == '__main__':
-    os.system(f"echo '::::: ls -l'")
-    os.system(f'ls -l')
-    test__Bond_StrN__LiFePO4n()
+    test__mol_tpcr__molecule_PPH3_Z()

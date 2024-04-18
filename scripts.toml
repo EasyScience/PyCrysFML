@@ -62,7 +62,7 @@ package-version = '0.0.1a0' # NEED FIX: get from pyproject.toml (consider mergin
 src-ext = { cfml = 'f90', pycfml = 'F90' }
 static-lib-prefix = { macos = 'lib', linux = 'lib', windows = '' }
 static-lib-ext = { macos = 'a', linux = 'a', windows = 'lib' }
-shared-lib-ext = { macos = 'so', linux = 'so', windows = 'pyd' } # *.dylib doesn't work on macOS
+shared-lib-ext = { macos = 'so', linux = 'so', windows = 'pyd' } # *.dylib doesn't work on macOS, *.dll on Windows?  # https://www.cita.utoronto.ca/~merz/intel_f10b/main_for/mergedProjects/bldaps_for/common/bldaps_produce_outfiles.htm
 python-lib.macos = '`python3-config --ldflags --embed`'
 python-lib.linux = ''
 python-lib.windows = 'C:\hostedtoolcache\windows\Python\{PYTHON311_VERSION}\x64\libs\python311.lib'
@@ -202,7 +202,7 @@ compilers = ['ifort', 'ifx']
 obj-ext = 'o'
 build-shared = "{COMPILER} -shared {PATH}.o -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {IFC_LIB} {PYTHON_LIB}"
 build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} -L{CFML_LIB_DIR} -l{CFML_LIB_NAME}'
-modes.base = '-fpp -fPIC -heap-arrays'
+modes.base = '-fpp -fPIC -heap-arrays -nologo'
 modes.debug = ''  # -g
 modes.release = '-O3'
 
@@ -212,7 +212,7 @@ compilers = ['ifort', 'ifx']
 obj-ext = 'o'
 build-shared = "{COMPILER} -shared {PATH}.o -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {IFC_LIB} {PYTHON_LIB}"
 build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} -L{CFML_LIB_DIR} -l{CFML_LIB_NAME}'
-modes.base = '-fpp -fPIC -heap-arrays'
+modes.base = '-fpp -fPIC -heap-arrays -nologo'
 modes.debug = ''  # -g
 modes.release = '-O3'
 
@@ -221,7 +221,7 @@ platforms = ['windows']
 compilers = ['ifort', 'ifx']
 obj-ext = 'obj'
 build-shared = 'link {PATH}.obj /out:"{PATH}.{EXT}" /libpath:{CFML_LIB_PATH} /dll {CFML_LIB_NAME}.lib {PYTHON_LIB}'
-build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} {CFML_LIB_DIR}\{CFML_LIB_NAME}.{LIB_EXT}'
+build-exe = '{COMPILER} {OPTIONS} /exe:{EXE_NAME} {SOURCE_PATH} {CFML_LIB_DIR}\{CFML_LIB_NAME}.{LIB_EXT}'
 modes.base = '/fpp /heap-arrays /nologo -DWIN32=ON'
 modes.debug = ''
 modes.release = ''
@@ -918,17 +918,35 @@ main-file = 'Calc_Sfac'
 # ifort / ifx (unix)
 ####################
 
-#'-fpp',
-#'-fPIC',
-#'-heap-arrays',
-#'-std08'
+#'-fpp',                  # -[no]fpp
+                          # run Fortran preprocessor on source files prior to compilation
+#'-fPIC',                 # -fpic, -fPIC
+                          # generate position independent code (-fno-pic/-fno-PIC is DEFAULT)
+#'-heap-arrays',          # -heap-arrays [n]
+                          # temporary arrays of minimum size n (in kilobytes) are allocated in heap memory rather than on the stack.  If n is not specified, all temporary arrays are allocated in heap memory.
+#'-std08'                 # -stand [<keyword>]
+                          # specifies level of conformance with ANSI standard to check for.  If keyword is not specified, level of conformance is f18
+                          # keywords: f90 (same as -std90), f95 (same as -std95),
+                          # f03 (same as -std03), f08 (same as -std08),
+                          # f18 (same as -std18),none (same as -nostand)
+#-w                       # disable all warnings
+#-[no]logo                # display compiler version information.  -nologo disables the output
 
 #######################
 # ifort / ifx (windows)
 #######################
 
 #'-DWIN32=ON',
-#'/fpp',
-#'/heap-arrays',
-#'/nologo',
-#'/stand:f08'
+#'/fpp',                  # /[no]fpp   run Fortran preprocessor on source files prior to compilation
+#'/heap-arrays',          # /heap-arrays[:n]
+                          # temporary arrays of minimum size n (in kilobytes) are allocated in
+                          # heap memory rather than on the stack.  If n is not specified,
+                          # all temporary arrays are allocated in heap memory.
+#'/nologo',               # /[no]logo
+                          # display compiler version information.  /nologo disables the output
+#'/stand:f08'             # /stand[:<keyword>]
+                          # specifies level of conformance with ANSI standard to check
+                          # for.  If keyword is not specified, level of conformance is f18
+                          # keywords: f90 (same as /4Ys), f95,
+                          # f03, f08, f18,
+                          # none (same as /nostand)

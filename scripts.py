@@ -307,6 +307,7 @@ def loaded_config(name: str):
     if _bash_syntax():
         for idx, build in enumerate(config['build-objs']):
             config['build-objs'][idx]['build-shared'] = build['build-shared'].replace('/', '-')
+            config['build-objs'][idx]['build-exe'] = build['build-exe'].replace('/', '-')
             config['build-objs'][idx]['modes']['base'] = build['modes']['base'].replace('/', '-')
             config['build-objs'][idx]['modes']['debug'] = build['modes']['debug'].replace('/', '-')
             config['build-objs'][idx]['modes']['release'] = build['modes']['release'].replace('/', '-')

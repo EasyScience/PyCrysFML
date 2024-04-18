@@ -1,20 +1,46 @@
 import os
+import sys
 import re
 import filecmp
 import time
+import tomllib
 import subprocess
+import platform
 import numpy as np
 from numpy.testing import assert_allclose, assert_almost_equal
 
-from pycrysfml08 import powder_mod
-
-
-os.environ['CRYSFML_DB'] = os.path.join(os.path.dirname(powder_mod.__file__), 'Databases')  # access to Databases/magnetic_data.txt
-os.chdir(os.path.dirname(__file__))  # set current directory to be the directory of this script file
 
 # Help functions
 
+def set_crysfml_db_path():
+    """Sets the env variable 'CRYSFML_DB' as the path to the 'Databases' directory containing the file 'magnetic_data.txt'."""
+    project_dir = os.getenv('GITHUB_WORKSPACE', default=os.getcwd())
+    config_path = os.path.join(project_dir, 'scripts.toml')
+    with open(config_path, 'rb') as f:
+        CONFIG = tomllib.load(f)
+    repo_dir = CONFIG['cfml']['dir']['repo']
+    src_dir = CONFIG['cfml']['dir']['repo-src']
+    db_path = os.path.join(project_dir, repo_dir, src_dir, 'Databases')
+    os.environ['CRYSFML_DB'] = db_path
+
+def change_cwd_to_tests():
+    """Changes the current directory to the directory of this script file."""
+    os.chdir(os.path.dirname(__file__))
+
+def run_exe_with_args(file_name:str, args:str=''):
+    """Runs the executable with optional arguments."""
+    if platform.system() == 'Windows':
+        file_name = f'{file_name}.exe'
+    file_name = os.path.abspath(file_name)
+    cmd = f'{file_name}'
+    if args:
+        cmd = f'{file_name} {args}'
+    #os.system(f"echo '::::: {cmd}'")
+    os.system(f'{cmd}')
+    time.sleep(2)
+
 def dat_to_ndarray(file_name:str, skip_lines:int=0):
+    """Parses the file to extract an array of data and converts it to a numpy array."""
     with open(file_name, 'r') as file:
         lines = file.read().splitlines()  # reads into list removing end-of-line symbols
     del lines[:skip_lines]  # deletes requested number of first lines
@@ -24,12 +50,16 @@ def dat_to_ndarray(file_name:str, skip_lines:int=0):
     array = np.array(splitted, dtype=np.float32)  # converts list of string numbers into numpy array of floats
     return array
 
+# Set up paths
+
+set_crysfml_db_path()
+change_cwd_to_tests()
+
 # Tests
 
 def test__Simple_calc_powder__SrTiO3s():
     # run fortran program to produce the actual output
-    os.system(f'./Simple_calc_powder SrTiO3s.cfl')
-    time.sleep(1)
+    run_exe_with_args('Simple_calc_powder', args='SrTiO3s.cfl')
     # compare the actual output with the desired one
     desired = dat_to_ndarray('SrTiO3s_desired.dat', skip_lines=2)
     actual = dat_to_ndarray('SrTiO3s.dat', skip_lines=2)
@@ -37,8 +67,7 @@ def test__Simple_calc_powder__SrTiO3s():
 
 def test__Simple_calc_powder__ponsin():
     # run fortran program to produce the actual output
-    os.system(f'./Simple_calc_powder ponsin.cfl')
-    time.sleep(1)
+    run_exe_with_args('Simple_calc_powder', args='ponsin.cfl')
     # compare the actual output with the desired one
     desired = dat_to_ndarray('if_ponsin_desired.dat', skip_lines=2)
     actual = dat_to_ndarray('if_ponsin.dat', skip_lines=2)
@@ -47,4 +76,4 @@ def test__Simple_calc_powder__ponsin():
 # Debug
 
 if __name__ == '__main__':
-    os.system(f'./Simple_calc_powder SrTiO3s.cfl')
+    test__Simple_calc_powder__SrTiO3s()

@@ -64,6 +64,11 @@ def _python_tag():
     tag = f'py{version}'
     return tag
 
+def _processor():
+    processor = platform.processor()
+    processor = processor.split()[0]  # get the 1st word from string, such as 'Intel64 Family 6 Model 154 Stepping 3, GenuineIntel'
+    return processor
+
 def _fix_file_permissions(path: str):
     os.chmod(path, 0o777)
 
@@ -132,6 +137,15 @@ def _compiler_build_shared_template():
             break
     return template
 
+def _compiler_build_exe_template():
+    compiler = _compiler_name()
+    template = ''
+    for build in CONFIG['build-objs']:
+        if _platform() in build['platforms'] and compiler in build['compilers']:
+            template = build['build-exe']
+            break
+    return template
+
 def _compiling_mode():
     mode = 'debug'  # default
     if ARGS.mode:
@@ -182,7 +196,11 @@ def _compile_objs_script_lines(modules: str,
                 cmd = cmd.replace('{COMPILER}', compiler)
                 cmd = cmd.replace('{OPTIONS}', options)
                 cmd = cmd.replace('{PATH}', path)
+                cmd = f'{cmd}&'  # start this bash command in background for parallel compilation
                 lines.append(cmd)
+                if current % 11 == 0:  # do not parallelise for more than 10 compilations
+                    lines.append('wait')  # wait for all parallel bash commands to finish
+            lines.append('wait')  # wait for all parallel bash commands to finish
     return lines
 
 def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):
@@ -195,7 +213,7 @@ def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):
     python_lib = CONFIG['build']['python-lib'][_platform()]
     python_lib = python_lib.replace('{PYTHON311_VERSION}', platform.python_version())
     compiler = _compiler_name()
-    if compiler == 'ifort' or compiler == 'ifx':
+    if _platform() == 'linux' and (compiler == 'ifort' or compiler == 'ifx'):
         ifc_lib = '-L/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin -lifport'
     else:
         ifc_lib = ''
@@ -218,17 +236,19 @@ def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):
             cmd = cmd.replace('{CFML_LIB_NAME}', cfml_lib_name)
             cmd = cmd.replace('{IFC_LIB}', ifc_lib)
             cmd = cmd.replace('{PYTHON_LIB}', python_lib)
+            #lines.append(f"echo '>>>>> {cmd}'")
             lines.append(cmd)
     return lines
 
 def _compile_executables_script_lines(section_prefix: str,
                                       src_path: str,
                                       include_path: str,
-                                      lib_path: str,
+                                      lib_dir: str,
                                       lib_name: str):
     src_ext = CONFIG['build']['src-ext'][section_prefix]
+    lib_ext = CONFIG['build']['static-lib-ext'][_platform()]
     tests = f'{section_prefix}-tests'
-    template_cmd = CONFIG['template']['build-exe']
+    template_cmd = _compiler_build_exe_template()
     compiler = _compiler_name()
     options = _compiler_options()
     total = _total_src_file_count(tests)
@@ -247,9 +267,11 @@ def _compile_executables_script_lines(section_prefix: str,
         cmd = cmd.replace('{OPTIONS}', options)
         cmd = cmd.replace('{EXE_NAME}', main_name)
         cmd = cmd.replace('{SOURCE_PATH}', source_path)
-        cmd = cmd.replace('{INCLUDE_PATH}', include_path)
-        cmd = cmd.replace('{LIB_PATH}', lib_path)
-        cmd = cmd.replace('{LIB_NAME}', lib_name)
+        cmd = cmd.replace('{CFML_INCLUDE_PATH}', include_path)
+        cmd = cmd.replace('{CFML_LIB_DIR}', lib_dir)
+        cmd = cmd.replace('{CFML_LIB_NAME}', lib_name)
+        cmd = cmd.replace('{LIB_EXT}', lib_ext)
+        #lines.append(f"echo '>>>>> {cmd}'")
         lines.append(cmd)
     return lines
 
@@ -285,6 +307,7 @@ def loaded_config(name: str):
     if _bash_syntax():
         for idx, build in enumerate(config['build-objs']):
             config['build-objs'][idx]['build-shared'] = build['build-shared'].replace('/', '-')
+            config['build-objs'][idx]['build-exe'] = build['build-exe'].replace('/', '-')
             config['build-objs'][idx]['modes']['base'] = build['modes']['base'].replace('/', '-')
             config['build-objs'][idx]['modes']['debug'] = build['modes']['debug'].replace('/', '-')
             config['build-objs'][idx]['modes']['release'] = build['modes']['release'].replace('/', '-')
@@ -309,18 +332,16 @@ def append_to_main_script(obj: str | list):
     _fix_file_permissions(path)
 
 def print_debug_info():
-    platform = _platform()
-    mode = _compiling_mode()
-    compiler = _compiler_name()
-    options = _compiler_options()
     lines = []
-    msg = _echo_msg(f"Platform '{platform}'")
+    msg = _echo_msg(f"Platform '{_platform()}'")
     lines.append(msg)
-    msg = _echo_msg(f"Compiling mode '{mode}'")
+    msg = _echo_msg(f"Processor '{_processor()}'")
     lines.append(msg)
-    msg = _echo_msg(f"Fortran compiler '{compiler}'")
+    msg = _echo_msg(f"Compiling mode '{_compiling_mode()}'")
     lines.append(msg)
-    #msg = _echo_msg(f"Compiler options '{options}'")
+    msg = _echo_msg(f"Fortran compiler '{_compiler_name()}'")
+    lines.append(msg)
+    #msg = _echo_msg(f"Compiler options '{_compiler_options()}'")
     #lines.append(msg)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
@@ -756,9 +777,9 @@ def change_runpath_for_built_pycfml():
     # otool -L pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
     # otool -l pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so | grep RPATH -A2
     try:
-        rpaths = CONFIG['build']['rpaths'][_platform()][_compiler_name()]
+        rpaths = CONFIG['build']['rpaths'][_platform()][_processor()][_compiler_name()]
     except KeyError:
-        msg = _echo_msg(f"No change of runtime paths are needed for platform '{_platform()}' and compiler '{_compiler_name()}'")
+        msg = _echo_msg(f"No change of runtime paths are needed for platform '{_platform()} ({_processor()})' and compiler '{_compiler_name()}'")
         lines = [msg]
         script_name = f'{sys._getframe().f_code.co_name}.sh'
         _write_lines_to_file(lines, script_name)
@@ -798,7 +819,7 @@ def change_runpath_for_built_pycfml():
                     lines.append(cmd)
     elif _platform() == 'macos':
         try:
-            dependent_libs = CONFIG['build']['dependent-libs'][_platform()][_compiler_name()]
+            dependent_libs = CONFIG['build']['dependent-libs'][_platform()][_processor()][_compiler_name()]
             change_lib_template_cmd = CONFIG['template']['dependent-lib']['change'][_platform()]
         except KeyError:
             dependent_libs = []
@@ -842,7 +863,7 @@ def change_runpath_for_built_pycfml():
 
 def copy_extra_libs_to_pycfml_dist():
     try:
-        extra_libs = CONFIG['build']['extra-libs'][_platform()][_compiler_name()]
+        extra_libs = CONFIG['build']['extra-libs'][_platform()][_processor()][_compiler_name()]
     except KeyError:
         msg = _echo_msg(f"No extra libraries are needed for platform '{_platform()}' and compiler '{_compiler_name()}'")
         lines = [msg]
@@ -1036,8 +1057,10 @@ if __name__ == '__main__':
     create_cfml_dist_dir()
     copy_built_to_cfml_dist()
 
-    headers = _echo_header(f"Running {cfml_project_name} test programs")
+    headers = _echo_header(f"Creating and running {cfml_project_name} test programs")
+    append_to_main_script(headers)
     build_cfml_test_programs()
+    run_cfml_functional_tests()
 
     headers = _echo_header(f"Creating {pycfml_project_name} shared objects or dynamic libraries")
     append_to_main_script(headers)
@@ -1063,10 +1086,6 @@ if __name__ == '__main__':
     headers = _echo_header(f"Installing {pycfml_project_name} from python wheel")
     append_to_main_script(headers)
     install_pycfml_from_wheel()
-
-    headers = _echo_header(f"Running {cfml_project_name} tests")
-    append_to_main_script(headers)
-    run_cfml_functional_tests()
 
     headers = _echo_header(f"Running {pycfml_project_name} tests")
     append_to_main_script(headers)

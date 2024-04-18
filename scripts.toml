@@ -203,8 +203,8 @@ obj-ext = 'o'
 build-shared = "{COMPILER} -shared {PATH}.o -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {IFC_LIB} {PYTHON_LIB}"
 build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} -L{CFML_LIB_DIR} -l{CFML_LIB_NAME}'
 modes.base = '-fpp -fPIC -heap-arrays -nologo'
-modes.debug = '-g3'
-modes.release = '-O3'
+modes.debug = ''  # -g3
+modes.release = ''  # -O3
 
 [[build-objs]]
 platforms = ['windows']

@@ -236,7 +236,7 @@ def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):
             cmd = cmd.replace('{CFML_LIB_NAME}', cfml_lib_name)
             cmd = cmd.replace('{IFC_LIB}', ifc_lib)
             cmd = cmd.replace('{PYTHON_LIB}', python_lib)
-            lines.append(f"echo '>>>>> {cmd}'")
+            #lines.append(f"echo '>>>>> {cmd}'")
             lines.append(cmd)
     return lines
 

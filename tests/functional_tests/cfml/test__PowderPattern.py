@@ -35,7 +35,7 @@ def run_exe_with_args(file_name:str, args:str=''):
     cmd = f'{file_name}'
     if args:
         cmd = f'{file_name} {args}'
-    os.system(f"echo '::::: {cmd}'")
+    #os.system(f"echo '::::: {cmd}'")
     os.system(f'{cmd}')
     time.sleep(2)
 

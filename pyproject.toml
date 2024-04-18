@@ -33,8 +33,9 @@ ci = [
   'wheel'
 ]
 test = [
-  "deepdiff",
-  "pytest>=5.2"
+  'deepdiff',
+  'pytest>=5.2',
+  'pytest-benchmark'
 ]
 
 [project.urls]

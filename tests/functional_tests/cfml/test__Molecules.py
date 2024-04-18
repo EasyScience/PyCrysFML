@@ -7,6 +7,7 @@ import tomllib
 import subprocess
 import platform
 from io import StringIO
+import pytest
 import numpy as np
 from numpy.testing import assert_allclose, assert_almost_equal
 
@@ -38,7 +39,7 @@ def run_exe_with_args(file_name:str, args:str=''):
         cmd = f'{file_name} {args}'
     #os.system(f"echo '::::: {cmd}'")
     os.system(f'{cmd}')
-    time.sleep(2)
+    #time.sleep(2)
 
 def dat_to_ndarray(file_name:str, skip_begin:int=3, skip_end:int=4):
     """Parses the file to extract an array of data and converts it to a numpy array."""
@@ -57,10 +58,10 @@ change_cwd_to_tests()
 
 # Tests
 
-def test__mol_tpcr__molecule_PPH3_Z():
-    # run fortran program to produce the actual output
-    run_exe_with_args('mol_tpcr', args='molecule_PPH3_Z.cfl')
-    # compare the actual output with the desired one
+def test__mol_tpcr__molecule_PPH3_Z(benchmark):
+    @benchmark
+    def result():
+        run_exe_with_args('mol_tpcr', args='molecule_PPH3_Z.cfl')
     desired = dat_to_ndarray('molecule_PPH3_Z_fc_desired.cfl', skip_begin=7, skip_end=1)
     actual = dat_to_ndarray('molecule_PPH3_Z_fc.cfl', skip_begin=7, skip_end=1)
     assert_allclose(desired, actual, rtol=1e-03, verbose=True)
@@ -68,4 +69,4 @@ def test__mol_tpcr__molecule_PPH3_Z():
 # Debug
 
 if __name__ == '__main__':
-    test__mol_tpcr__molecule_PPH3_Z()
+    pass

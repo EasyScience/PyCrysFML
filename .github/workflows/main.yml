@@ -98,6 +98,7 @@ jobs:
           scripts/copy_built_to_cfml_dist.sh
 
       - name: Build and run CFML functional tests
+        if: runner.os != 'macOS' || matrix.toolchain.exe != 'ifort'  # this combination fails with 'Undefined symbols...' error
         shell: bash
         run: |
           scripts/build_cfml_test_programs.sh

@@ -197,23 +197,13 @@ modes.debug = ''
 modes.release = ''
 
 [[build-objs]]
-platforms = ['linux']
+platforms = ['linux', 'macos']
 compilers = ['ifort', 'ifx']
 obj-ext = 'o'
 build-shared = "{COMPILER} -shared {PATH}.o -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {IFC_LIB} {PYTHON_LIB}"
 build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} -L{CFML_LIB_DIR} -l{CFML_LIB_NAME}'
 modes.base = '-fpp -fPIC -heap-arrays -nologo'
-modes.debug = ''  # -g
-modes.release = '-O3'
-
-[[build-objs]]
-platforms = ['macos']
-compilers = ['ifort', 'ifx']
-obj-ext = 'o'
-build-shared = "{COMPILER} -shared {PATH}.o -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {IFC_LIB} {PYTHON_LIB}"
-build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} -L{CFML_LIB_DIR} -l{CFML_LIB_NAME}'
-modes.base = '-fpp -fPIC -heap-arrays -nologo'
-modes.debug = ''  # -g
+modes.debug = '-g3'
 modes.release = '-O3'
 
 [[build-objs]]
@@ -918,35 +908,40 @@ main-file = 'Calc_Sfac'
 # ifort / ifx (unix)
 ####################
 
-#'-fpp',                  # -[no]fpp
-                          # run Fortran preprocessor on source files prior to compilation
-#'-fPIC',                 # -fpic, -fPIC
-                          # generate position independent code (-fno-pic/-fno-PIC is DEFAULT)
-#'-heap-arrays',          # -heap-arrays [n]
-                          # temporary arrays of minimum size n (in kilobytes) are allocated in heap memory rather than on the stack.  If n is not specified, all temporary arrays are allocated in heap memory.
-#'-std08'                 # -stand [<keyword>]
-                          # specifies level of conformance with ANSI standard to check for.  If keyword is not specified, level of conformance is f18
+# -fpic, -fPIC            # generate position independent code (-fno-pic/-fno-PIC is DEFAULT)
+# -[no]fpp                # run Fortran preprocessor on source files prior to compilation
+# -g[level]               # Produce symbolic debug information.
+                          # Valid [level] values:
+                          # 0  - Disable generation of symbolic debug information.
+                          # 1  - Emit minimal debug information for performing stack traces.
+                          # 2  - Emit complete debug information. (default for -g)
+                          # 3  - Emit extra information which may be useful for some tools.
+# -heap-arrays [n]        # temporary arrays of minimum size n (in kilobytes) are allocated in
+                          # heap memory rather than on the stack.  If n is not specified,
+                          # all temporary arrays are allocated in heap memory.
+# -[no]logo               # display compiler version information.  -nologo disables the output
+# -stand [<keyword>]      # specifies level of conformance with ANSI standard to check
+                          # for.  If keyword is not specified, level of conformance is f18
                           # keywords: f90 (same as -std90), f95 (same as -std95),
                           # f03 (same as -std03), f08 (same as -std08),
                           # f18 (same as -std18),none (same as -nostand)
-#-w                       # disable all warnings
-#-[no]logo                # display compiler version information.  -nologo disables the output
+# -w                      # disable all warnings
 
 #######################
 # ifort / ifx (windows)
 #######################
 
-#'-DWIN32=ON',
-#'/fpp',                  # /[no]fpp   run Fortran preprocessor on source files prior to compilation
-#'/heap-arrays',          # /heap-arrays[:n]
+# -DWIN32=ON
+
+# /[no]fpp                # run Fortran preprocessor on source files prior to compilation
+# /heap-arrays            # /heap-arrays[:n]
                           # temporary arrays of minimum size n (in kilobytes) are allocated in
                           # heap memory rather than on the stack.  If n is not specified,
                           # all temporary arrays are allocated in heap memory.
-#'/nologo',               # /[no]logo
-                          # display compiler version information.  /nologo disables the output
-#'/stand:f08'             # /stand[:<keyword>]
-                          # specifies level of conformance with ANSI standard to check
+# /[no]logo               # display compiler version information.  /nologo disables the output
+# /stand[:<keyword>]      # specifies level of conformance with ANSI standard to check
                           # for.  If keyword is not specified, level of conformance is f18
                           # keywords: f90 (same as /4Ys), f95,
                           # f03, f08, f18,
                           # none (same as /nostand)
+# /w                      # disable all warnings

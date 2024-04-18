@@ -37,7 +37,7 @@ def run_exe_with_args(file_name:str, args:str=''):
         cmd = f'{file_name} {args}'
     #os.system(f"echo '::::: {cmd}'")
     os.system(f'{cmd}')
-    time.sleep(1)
+    time.sleep(2)
 
 def dat_to_ndarray(file_name:str, skip_begin:int=3, skip_end:int=4):
     """Parses the file to extract an array of data and converts it to a numpy array."""

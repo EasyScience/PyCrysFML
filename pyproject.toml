@@ -35,7 +35,8 @@ ci = [
 test = [
   'deepdiff',
   'pytest>=5.2',
-  'pytest-benchmark'
+  'pytest-benchmark',
+  'pytest-codspeed'
 ]
 
 [project.urls]

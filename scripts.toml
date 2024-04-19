@@ -55,7 +55,7 @@ build-wheel = 'python3 -m build --wheel --outdir {PATH}'
 rename-wheel = 'python3 -m wheel tags --python-tag {PYTHON_TAG} --platform-tag {PLATFORM_TAG} --remove {PATH}'
 install-wheel = 'python3 -m pip install {PACKAGE} --force-reinstall --find-links={PATH}'                       # Dependencies "{PACKAGE}[test]" are installed via ci script
 run-python = 'python3 {PATH}'
-run-tests = 'pytest {PATH} --benchmark-json output.json'
+run-tests = 'pytest {PATH} --codspeed'
 
 [build]
 package-version = '0.0.1a0' # NEED FIX: get from pyproject.toml (consider merging) or from 'build --wheel ...'

@@ -601,6 +601,7 @@ def run_cfml_functional_tests_with_benchmarks():
     lines.append(msg)
     cmd = CONFIG['template']['run-benchmarks']
     cmd = cmd.replace('{PATH}', abspath)
+    cmd = cmd.replace('{COMPILER}', _compiler_name())
     lines.append(cmd)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)

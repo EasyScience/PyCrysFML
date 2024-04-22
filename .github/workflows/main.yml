@@ -116,8 +116,8 @@ jobs:
       - uses: EndBug/add-and-commit@v9
         with:
           add: '.benchmarks'
-          message: 'Auto add benchmark results by GitHub Action'
-          pull: '--rebase'
+          message: 'Auto add benchmark results by GitHub Action: ${{ runner.os }} (${{ matrix.toolchain.exe }})'
+          pull: '--rebase --autostash'
 
       - name: Download PYCFML repository
         shell: bash

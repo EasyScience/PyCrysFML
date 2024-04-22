@@ -57,10 +57,10 @@ change_cwd_to_tests()
 
 # Tests
 
-def test__Bond_StrN__LiFePO4n():
-    # run fortran program to produce the actual output
-    run_exe_with_args('Bond_StrN', args='LiFePO4n.cfl')
-    # compare the actual output with the desired one
+def test__Bond_StrN__LiFePO4n(benchmark):
+    @benchmark
+    def bench():
+        run_exe_with_args('Bond_StrN', args='LiFePO4n.cfl')
     desired = dat_to_ndarray('LiFePO4n_sum_desired.bvs')
     actual = dat_to_ndarray('LiFePO4n_sum.bvs')
     assert_allclose(desired, actual, rtol=1e-02, verbose=True)

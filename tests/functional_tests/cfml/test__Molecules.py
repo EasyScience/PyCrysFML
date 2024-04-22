@@ -60,7 +60,7 @@ change_cwd_to_tests()
 
 def test__mol_tpcr__molecule_PPH3_Z(benchmark):
     @benchmark
-    def result():
+    def bench():
         run_exe_with_args('mol_tpcr', args='molecule_PPH3_Z.cfl')
     desired = dat_to_ndarray('molecule_PPH3_Z_fc_desired.cfl', skip_begin=7, skip_end=1)
     actual = dat_to_ndarray('molecule_PPH3_Z_fc.cfl', skip_begin=7, skip_end=1)

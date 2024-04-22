@@ -93,14 +93,7 @@ jobs:
           scripts/create_cfml_dist_dir.sh
           scripts/copy_built_to_cfml_dist.sh
 
-
-      #- name: Download previous benchmark data
-      #  uses: actions/cache@v4
-      #  with:
-      #    path: ./cache
-      #    key: ${{ runner.os }}-benchmark
-
-      - name: Build CFML functional test programs
+      - name: Build und run CFML functional test programs
         # 1st combination: this always fails with 'Undefined symbols...' error
         # 2nd combination: this randomly fails with test__Simple_calc_powder__SrTiO3s 'forrtl: severe (157): Program Exception - access violation'
         if: |
@@ -108,18 +101,9 @@ jobs:
           &&
           (runner.os != 'Windows' || matrix.toolchain.exe != 'ifx')
         shell: bash
-        run: scripts/build_cfml_test_programs.sh
-
-      - name: Run CFML functional tests (without benchmarks)
-        shell: bash
         run: |
-          export TERM=xterm-color
+          scripts/build_cfml_test_programs.sh
           scripts/run_cfml_functional_tests_no_benchmarks.sh
-
-      - name: Run CFML functional tests (with benchmarks)
-        shell: bash
-        run: |
-          export TERM=xterm-color
           scripts/run_cfml_functional_tests_with_benchmarks.sh
 
       - uses: EndBug/add-and-commit@v9

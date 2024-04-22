@@ -112,11 +112,15 @@ jobs:
 
       - name: Run CFML functional tests (without benchmarks)
         shell: bash
-        run: scripts/run_cfml_functional_tests_no_benchmarks.sh
+        run: |
+          export TERM=xterm-color
+          scripts/run_cfml_functional_tests_no_benchmarks.sh
 
       - name: Run CFML functional tests (with benchmarks)
         shell: bash
-        run: scripts/run_cfml_functional_tests_with_benchmarks.sh
+        run: |
+          export TERM=xterm-color
+          scripts/run_cfml_functional_tests_with_benchmarks.sh
 
       - uses: EndBug/add-and-commit@v9
         with:

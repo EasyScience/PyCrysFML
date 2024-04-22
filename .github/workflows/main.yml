@@ -110,21 +110,12 @@ jobs:
         shell: bash
         run: scripts/build_cfml_test_programs.sh
 
-      #- name: Store benchmark result
-      #  uses: benchmark-action/github-action-benchmark@v1
-      #  with:
-      #    tool: 'pytest'
-      #    output-file-path: output.json
-      #    external-data-json-path: ./cache/benchmark-data.json
-      #    fail-on-alert: true
-      #    auto-push: false
-
       - name: Run CFML functional tests (with benchmarks)
-        uses: CodSpeedHQ/action@v2
+        run: scripts/run_cfml_functional_tests.sh
+
+      - uses: EndBug/add-and-commit@v9
         with:
-          run: scripts/run_cfml_functional_tests.sh
-
-
+          add: '.benchmarks'
 
       - name: Download PYCFML repository
         shell: bash

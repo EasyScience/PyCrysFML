@@ -116,6 +116,7 @@ jobs:
       - uses: EndBug/add-and-commit@v9
         with:
           add: '.benchmarks'
+          message: 'Add benchmark results by GitHub Actions'
 
       - name: Download PYCFML repository
         shell: bash

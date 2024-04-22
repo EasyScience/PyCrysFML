@@ -57,18 +57,14 @@ change_cwd_to_tests()
 
 # Tests
 
-def _test__Calc_Sfac__mfe_sfac(benchmark):
-    @benchmark
-    def bench():
-        run_exe_with_args('Calc_Sfac', args='mfe_sfac.cfl 1.0')
+def _test__Calc_Sfac__mfe_sfac():
+    run_exe_with_args('Calc_Sfac', args='mfe_sfac.cfl 1.0')
     #desired = dat_to_ndarray('SrTiO3s_desired.dat', skip_lines=2)
     #actual = dat_to_ndarray('SrTiO3s.dat', skip_lines=2)
     #assert_allclose(desired, actual, rtol=1e-03, verbose=True)
 
-def _test__Calc_Sfac__mfe_msfac(benchmark):
-    @benchmark
-    def bench():
-        run_exe_with_args('Calc_Sfac', args='mfe_msfac.cfl 1.0')
+def _test__Calc_Sfac__mfe_msfac():
+    run_exe_with_args('Calc_Sfac', args='mfe_msfac.cfl 1.0')
     #desired = dat_to_ndarray('SrTiO3s_desired.dat', skip_lines=2)
     #actual = dat_to_ndarray('SrTiO3s.dat', skip_lines=2)
     #assert_allclose(desired, actual, rtol=1e-03, verbose=True)

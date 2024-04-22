@@ -580,13 +580,26 @@ def build_cfml_test_programs():
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
 
-def run_cfml_functional_tests():
+def run_cfml_functional_tests_no_benchmarks():
     relpath = os.path.join('tests', 'functional_tests', 'cfml')
     abspath = os.path.join(_project_path(), relpath)
     lines = []
     msg = _echo_msg(f"Running functional tests from '{relpath}'")
     lines.append(msg)
     cmd = CONFIG['template']['run-tests']
+    cmd = cmd.replace('{PATH}', abspath)
+    lines.append(cmd)
+    script_name = f'{sys._getframe().f_code.co_name}.sh'
+    _write_lines_to_file(lines, script_name)
+    append_to_main_script(lines)
+
+def run_cfml_functional_tests_with_benchmarks():
+    relpath = os.path.join('tests', 'functional_tests', 'cfml')
+    abspath = os.path.join(_project_path(), relpath)
+    lines = []
+    msg = _echo_msg(f"Running functional tests from '{relpath}'")
+    lines.append(msg)
+    cmd = CONFIG['template']['run-benchmarks']
     cmd = cmd.replace('{PATH}', abspath)
     lines.append(cmd)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
@@ -1060,7 +1073,8 @@ if __name__ == '__main__':
     headers = _echo_header(f"Creating and running {cfml_project_name} test programs")
     append_to_main_script(headers)
     build_cfml_test_programs()
-    run_cfml_functional_tests()
+    run_cfml_functional_tests_no_benchmarks()
+    run_cfml_functional_tests_with_benchmarks()
 
     headers = _echo_header(f"Creating {pycfml_project_name} shared objects or dynamic libraries")
     append_to_main_script(headers)

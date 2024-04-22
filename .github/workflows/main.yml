@@ -110,8 +110,13 @@ jobs:
         shell: bash
         run: scripts/build_cfml_test_programs.sh
 
+      - name: Run CFML functional tests (without benchmarks)
+        shell: bash
+        run: scripts/run_cfml_functional_tests_no_benchmarks.sh
+
       - name: Run CFML functional tests (with benchmarks)
-        run: scripts/run_cfml_functional_tests.sh
+        shell: bash
+        run: scripts/run_cfml_functional_tests_with_benchmarks.sh
 
       - uses: EndBug/add-and-commit@v9
         with:

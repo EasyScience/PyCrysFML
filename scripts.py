@@ -8,6 +8,11 @@ import platform
 global ARGS
 global CONFIG
 
+def _github_actions():
+    if 'GITHUB_ACTIONS' in os.environ:
+        return True
+    return False
+
 def _project_dir():
     return os.path.dirname(__file__)
 
@@ -597,11 +602,16 @@ def run_cfml_functional_tests_with_benchmarks():
     relpath = os.path.join('tests', 'functional_tests', 'cfml')
     abspath = os.path.join(_project_path(), relpath)
     lines = []
-    msg = _echo_msg(f"Running functional tests from '{relpath}'")
+    msg = _echo_msg(f"Running functional tests with benchmarks from '{relpath}'")
     lines.append(msg)
     cmd = CONFIG['template']['run-benchmarks']
     cmd = cmd.replace('{PATH}', abspath)
+    if _github_actions():
+        cmd = cmd.replace('{RUNNER}', 'github')
+    else:
+        cmd = cmd.replace('{RUNNER}', 'local')
     cmd = cmd.replace('{COMPILER}', _compiler_name())
+    cmd = cmd.replace('{PROCESSOR}', _processor())
     lines.append(cmd)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)

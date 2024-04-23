@@ -56,8 +56,9 @@ rename-wheel = 'python3 -m wheel tags --python-tag {PYTHON_TAG} --platform-tag {
 install-wheel = 'python3 -m pip install {PACKAGE} --force-reinstall --find-links={PATH}'                       # Dependencies "{PACKAGE}[test]" are installed via ci script
 run-python = 'python3 {PATH}'
 run-tests = 'pytest {PATH} --color=yes --benchmark-disable'
-#run-benchmarks = 'pytest {PATH} --color=yes --benchmark-only --benchmark-storage="file://./.benchmarks/{RUNNER}/{COMPILER}/{PROCESSOR}" --benchmark-autosave --benchmark-warmup=on --benchmark-columns="median, iqr, ops" --benchmark-compare=0001 --benchmark-compare-fail=median:10%'
-run-benchmarks = 'pytest {PATH} --color=yes --benchmark-only --benchmark-warmup=on --benchmark-columns="median, iqr, ops" --benchmark-compare=0001 --benchmark-compare-fail=median:10%'
+run-benchmarks.base = 'pytest {PATH} --color=yes --benchmark-only --benchmark-storage="file://./.benchmarks/{RUNNER}/{COMPILER}/{PROCESSOR}" --benchmark-warmup=on --benchmark-columns="median, iqr, ops"'
+run-benchmarks.master-branch = '--benchmark-autosave'
+run-benchmarks.non-master-branch = '--benchmark-compare --benchmark-compare-fail=median:10%'
 
 [build]
 package-version = '0.0.1a0' # NEED FIX: get from pyproject.toml (consider merging) or from 'build --wheel ...'

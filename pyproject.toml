@@ -30,7 +30,8 @@ dependencies = [
 ci = [
   'validate-pyproject[all]',
   'build',
-  'wheel'
+  'wheel',
+  'pygit2'
 ]
 test = [
   'deepdiff',

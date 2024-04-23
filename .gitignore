@@ -10,5 +10,6 @@ build
 .DS_Store
 
 # Misc
+.benchmarks/local
 crysfml*
 pycrysfml*

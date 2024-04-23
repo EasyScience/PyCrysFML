@@ -4,6 +4,7 @@ import tomllib
 import argparse
 import sysconfig
 import platform
+from pygit2 import Repository
 
 global ARGS
 global CONFIG
@@ -12,6 +13,9 @@ def _github_actions():
     if 'GITHUB_ACTIONS' in os.environ:
         return True
     return False
+
+def _github_branch():
+    return Repository('.').head.shorthand
 
 def _project_dir():
     return os.path.dirname(__file__)
@@ -604,7 +608,11 @@ def run_cfml_functional_tests_with_benchmarks():
     lines = []
     msg = _echo_msg(f"Running functional tests with benchmarks from '{relpath}'")
     lines.append(msg)
-    cmd = CONFIG['template']['run-benchmarks']
+    cmd = CONFIG['template']['run-benchmarks']['base']
+    if _github_branch == 'master' or 'main':
+        cmd += ' ' + CONFIG['template']['run-benchmarks']['master-branch']
+    else:
+        cmd += ' ' + CONFIG['template']['run-benchmarks']['non-master-branch']
     cmd = cmd.replace('{PATH}', abspath)
     if _github_actions():
         cmd = cmd.replace('{RUNNER}', 'github')

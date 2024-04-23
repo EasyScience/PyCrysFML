@@ -4,9 +4,18 @@ import tomllib
 import argparse
 import sysconfig
 import platform
+from pygit2 import Repository
 
 global ARGS
 global CONFIG
+
+def _github_actions():
+    if 'GITHUB_ACTIONS' in os.environ:
+        return True
+    return False
+
+def _github_branch():
+    return Repository('.').head.shorthand
 
 def _project_dir():
     return os.path.dirname(__file__)
@@ -580,7 +589,7 @@ def build_cfml_test_programs():
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
 
-def run_cfml_functional_tests():
+def run_cfml_functional_tests_no_benchmarks():
     relpath = os.path.join('tests', 'functional_tests', 'cfml')
     abspath = os.path.join(_project_path(), relpath)
     lines = []
@@ -588,6 +597,29 @@ def run_cfml_functional_tests():
     lines.append(msg)
     cmd = CONFIG['template']['run-tests']
     cmd = cmd.replace('{PATH}', abspath)
+    lines.append(cmd)
+    script_name = f'{sys._getframe().f_code.co_name}.sh'
+    _write_lines_to_file(lines, script_name)
+    append_to_main_script(lines)
+
+def run_cfml_functional_tests_with_benchmarks():
+    relpath = os.path.join('tests', 'functional_tests', 'cfml')
+    abspath = os.path.join(_project_path(), relpath)
+    lines = []
+    msg = _echo_msg(f"Running functional tests with benchmarks from '{relpath}'")
+    lines.append(msg)
+    cmd = CONFIG['template']['run-benchmarks']['base']
+    if _github_branch() == 'master':
+        cmd += ' ' + CONFIG['template']['run-benchmarks']['master-branch']
+    else:
+        cmd += ' ' + CONFIG['template']['run-benchmarks']['non-master-branch']
+    cmd = cmd.replace('{PATH}', abspath)
+    if _github_actions():
+        cmd = cmd.replace('{RUNNER}', 'github')
+    else:
+        cmd = cmd.replace('{RUNNER}', 'local')
+    cmd = cmd.replace('{COMPILER}', _compiler_name())
+    cmd = cmd.replace('{PROCESSOR}', _processor())
     lines.append(cmd)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
@@ -1060,7 +1092,8 @@ if __name__ == '__main__':
     headers = _echo_header(f"Creating and running {cfml_project_name} test programs")
     append_to_main_script(headers)
     build_cfml_test_programs()
-    run_cfml_functional_tests()
+    run_cfml_functional_tests_no_benchmarks()
+    run_cfml_functional_tests_with_benchmarks()
 
     headers = _echo_header(f"Creating {pycfml_project_name} shared objects or dynamic libraries")
     append_to_main_script(headers)

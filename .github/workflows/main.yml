@@ -11,8 +11,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        #os: [windows-2022, ubuntu-22.04, macos-12]
-        os: [windows-2022, ubuntu-22.04, macos-12, flyci-macos-14-m2]
+        #os: [ubuntu-22.04, windows-2022, macos-12]
+        os: [ubuntu-22.04, windows-2022, macos-12, flyci-macos-14-m2]
         toolchain:
           - { exe: gfortran, compiler: gcc, version: 13 }
           - { exe: ifort, compiler: intel-classic, version: "2021.10" }
@@ -97,7 +97,7 @@ jobs:
           scripts/create_cfml_dist_dir.sh
           scripts/copy_built_to_cfml_dist.sh
 
-      - name: Build and run CFML functional tests
+      - name: Build und run CFML functional test programs (incl. benchmarks)
         # 1st combination: this always fails with 'Undefined symbols...' error
         # 2nd combination: this randomly fails with test__Simple_calc_powder__SrTiO3s 'forrtl: severe (157): Program Exception - access violation'
         if: |
@@ -107,7 +107,15 @@ jobs:
         shell: bash
         run: |
           scripts/build_cfml_test_programs.sh
-          scripts/run_cfml_functional_tests.sh
+          scripts/run_cfml_functional_tests_no_benchmarks.sh
+          scripts/run_cfml_functional_tests_with_benchmarks.sh
+
+      - name: Push benchmark results to repository
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: '.benchmarks'
+          message: 'Auto push benchmark results by GitHub Action for ${{ runner.os }} + ${{ matrix.toolchain.exe }}'
+          pull: '--rebase --autostash'
 
       - name: Download PYCFML repository
         shell: bash
@@ -156,11 +164,11 @@ jobs:
           compression-level: 0
 
   tests: # the second job
-    strategy: # current job matrix. copy of the strategy from the previous job
+    strategy:
       fail-fast: false
       matrix:
-        #os: [windows-2022, ubuntu-22.04, macos-12]
-        os: [windows-2022, ubuntu-22.04, macos-12, flyci-macos-14-m2]
+        #os: [ubuntu-22.04, windows-2022, macos-12]
+        os: [ubuntu-22.04, windows-2022, macos-12, flyci-macos-14-m2]
         toolchain:
           - { exe: gfortran, compiler: gcc, version: 13 }
           - { exe: ifort, compiler: intel-classic, version: "2021.10" }

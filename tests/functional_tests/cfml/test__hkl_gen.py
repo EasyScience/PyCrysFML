@@ -58,9 +58,7 @@ change_cwd_to_tests()
 # Tests
 
 def test__hkl_gen__test_d19():
-    # run fortran program to produce the actual output
     run_exe_with_args('hkl_gen', args='test_d19.cfl')
-    # compare the actual output with the desired one
     desired = dat_to_ndarray('test_d19_desired.hkl', skip_begin=1, skip_end=1)
     actual = dat_to_ndarray('test_d19.hkl', skip_begin=1, skip_end=1)
     assert_allclose(desired, actual, rtol=1e-03, verbose=True)

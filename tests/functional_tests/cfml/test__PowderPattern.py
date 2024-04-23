@@ -57,18 +57,16 @@ change_cwd_to_tests()
 
 # Tests
 
-def test__Simple_calc_powder__SrTiO3s():
-    # run fortran program to produce the actual output
-    run_exe_with_args('Simple_calc_powder', args='SrTiO3s.cfl')
-    # compare the actual output with the desired one
+def test__Simple_calc_powder__SrTiO3s(benchmark):
+    @benchmark
+    def bench():
+        run_exe_with_args('Simple_calc_powder', args='SrTiO3s.cfl')
     desired = dat_to_ndarray('SrTiO3s_desired.dat', skip_lines=2)
     actual = dat_to_ndarray('SrTiO3s.dat', skip_lines=2)
     assert_allclose(desired, actual, rtol=1e-03, verbose=True)
 
 def test__Simple_calc_powder__ponsin():
-    # run fortran program to produce the actual output
     run_exe_with_args('Simple_calc_powder', args='ponsin.cfl')
-    # compare the actual output with the desired one
     desired = dat_to_ndarray('if_ponsin_desired.dat', skip_lines=2)
     actual = dat_to_ndarray('if_ponsin.dat', skip_lines=2)
     assert_allclose(desired, actual, rtol=1e-03, verbose=True)

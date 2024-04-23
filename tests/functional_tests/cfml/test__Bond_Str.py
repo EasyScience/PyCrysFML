@@ -14,7 +14,7 @@ from numpy.testing import assert_array_equal, assert_almost_equal, assert_allclo
 
 def set_crysfml_db_path():
     """Sets the env variable 'CRYSFML_DB' as the path to the 'Databases' directory containing the file 'magnetic_data.txt'."""
-    project_dir = os.getenv('GITHUB_WORKSPACE', default=os.getcwd())
+    project_dir = os.getenv('GITHUB_WORKSPACE', default=os.getcwd())  # locally do: export GITHUB_WORKSPACE=`pwd`
     config_path = os.path.join(project_dir, 'scripts.toml')
     with open(config_path, 'rb') as f:
         CONFIG = tomllib.load(f)
@@ -58,9 +58,7 @@ change_cwd_to_tests()
 # Tests
 
 def test__Bond_StrN__LiFePO4n():
-    # run fortran program to produce the actual output
     run_exe_with_args('Bond_StrN', args='LiFePO4n.cfl')
-    # compare the actual output with the desired one
     desired = dat_to_ndarray('LiFePO4n_sum_desired.bvs')
     actual = dat_to_ndarray('LiFePO4n_sum.bvs')
     assert_allclose(desired, actual, rtol=1e-02, verbose=True)

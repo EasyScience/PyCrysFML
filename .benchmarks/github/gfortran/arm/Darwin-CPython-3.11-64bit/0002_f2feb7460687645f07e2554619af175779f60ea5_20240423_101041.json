@@ -1,0 +1,113 @@
+{
+    "machine_info": {
+        "node": "Mac-1713866990433.local",
+        "processor": "arm",
+        "machine": "arm64",
+        "python_compiler": "Clang 13.0.0 (clang-1300.0.29.30)",
+        "python_implementation": "CPython",
+        "python_implementation_version": "3.11.8",
+        "python_version": "3.11.8",
+        "python_build": [
+            "v3.11.8:db85d51d3e",
+            "Feb  6 2024 18:02:37"
+        ],
+        "release": "23.3.0",
+        "system": "Darwin",
+        "cpu": {
+            "python_version": "3.11.8.final.0 (64 bit)",
+            "cpuinfo_version": [
+                9,
+                0,
+                0
+            ],
+            "cpuinfo_version_string": "9.0.0",
+            "arch": "ARM_8",
+            "bits": 64,
+            "count": 4,
+            "arch_string_raw": "arm64",
+            "brand_raw": "Apple M2 (Virtual)"
+        }
+    },
+    "commit_info": {
+        "id": "f2feb7460687645f07e2554619af175779f60ea5",
+        "time": "2024-04-23T12:09:18+02:00",
+        "author_time": "2024-04-23T12:09:18+02:00",
+        "dirty": false,
+        "project": "TEST_PyCrysFML",
+        "branch": "master"
+    },
+    "benchmarks": [
+        {
+            "group": null,
+            "name": "test__mol_tpcr__molecule_PPH3_Z",
+            "fullname": "tests/functional_tests/cfml/test__Molecules.py::test__mol_tpcr__molecule_PPH3_Z",
+            "params": null,
+            "param": null,
+            "extra_info": {},
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 5,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": 100000
+            },
+            "stats": {
+                "min": 0.003856708000000708,
+                "max": 0.016496250000002988,
+                "mean": 0.004136255176706824,
+                "stddev": 0.000878790311658476,
+                "rounds": 249,
+                "median": 0.00399637499999983,
+                "iqr": 0.00012539524998445017,
+                "q1": 0.003946031500007052,
+                "q3": 0.0040714267499915024,
+                "iqr_outliers": 26,
+                "stddev_outliers": 6,
+                "outliers": "6;26",
+                "ld15iqr": 0.003856708000000708,
+                "hd15iqr": 0.0042609169999963115,
+                "ops": 241.76458107117398,
+                "total": 1.0299275389999991,
+                "iterations": 1
+            }
+        },
+        {
+            "group": null,
+            "name": "test__Simple_calc_powder__SrTiO3s",
+            "fullname": "tests/functional_tests/cfml/test__PowderPattern.py::test__Simple_calc_powder__SrTiO3s",
+            "params": null,
+            "param": null,
+            "extra_info": {},
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 5,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": 100000
+            },
+            "stats": {
+                "min": 2.3009696660000003,
+                "max": 2.3492622499999953,
+                "mean": 2.319624449799997,
+                "stddev": 0.018051904001394337,
+                "rounds": 5,
+                "median": 2.3162478329999914,
+                "iqr": 0.01850345849998547,
+                "q1": 2.308893197750006,
+                "q3": 2.3273966562499915,
+                "iqr_outliers": 0,
+                "stddev_outliers": 2,
+                "outliers": "2;0",
+                "ld15iqr": 2.3009696660000003,
+                "hd15iqr": 2.3492622499999953,
+                "ops": 0.4311042677991354,
+                "total": 11.598122248999985,
+                "iterations": 1
+            }
+        }
+    ],
+    "datetime": "2024-04-23T10:11:16.252795",
+    "version": "4.0.0"
+}

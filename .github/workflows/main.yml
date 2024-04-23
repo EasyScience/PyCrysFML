@@ -45,6 +45,10 @@ jobs:
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1
 
+      #- name: debug
+      #  shell: bash
+      #  run: ifort -help
+
       - name: Set up Python environment
         uses: actions/setup-python@v5
         with:

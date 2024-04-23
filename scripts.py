@@ -609,7 +609,7 @@ def run_cfml_functional_tests_with_benchmarks():
     msg = _echo_msg(f"Running functional tests with benchmarks from '{relpath}'")
     lines.append(msg)
     cmd = CONFIG['template']['run-benchmarks']['base']
-    if _github_branch == 'master' or 'main':
+    if _github_branch() == 'master':
         cmd += ' ' + CONFIG['template']['run-benchmarks']['master-branch']
     else:
         cmd += ' ' + CONFIG['template']['run-benchmarks']['non-master-branch']

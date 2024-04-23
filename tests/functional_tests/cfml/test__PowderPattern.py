@@ -65,8 +65,10 @@ def test__Simple_calc_powder__SrTiO3s(benchmark):
     actual = dat_to_ndarray('SrTiO3s.dat', skip_lines=2)
     assert_allclose(desired, actual, rtol=1e-03, verbose=True)
 
-def test__Simple_calc_powder__ponsin():
-    run_exe_with_args('Simple_calc_powder', args='ponsin.cfl')
+def test__Simple_calc_powder__ponsin(benchmark):
+    @benchmark
+    def bench():
+        run_exe_with_args('Simple_calc_powder', args='ponsin.cfl')
     desired = dat_to_ndarray('if_ponsin_desired.dat', skip_lines=2)
     actual = dat_to_ndarray('if_ponsin.dat', skip_lines=2)
     assert_allclose(desired, actual, rtol=1e-03, verbose=True)

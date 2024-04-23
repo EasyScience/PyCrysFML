@@ -30,13 +30,13 @@ dependencies = [
 ci = [
   'validate-pyproject[all]',
   'build',
-  'wheel',
-  'pygit2'
+  'wheel'
 ]
 test = [
   'deepdiff',
   'pytest>=5.2',
-  'pytest-benchmark'
+  'pytest-benchmark',
+  'pygit2'
 ]
 
 [project.urls]

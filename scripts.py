@@ -309,6 +309,12 @@ def parsed_args():
                         help="print pycfml wheel directory name")
     return parser.parse_args()
 
+def loaded_pyproject():
+    path = os.path.join(_project_dir(), 'pyproject.toml')
+    with open(path, 'rb') as f:
+        pyproject = tomllib.load(f)
+    return pyproject
+
 def loaded_config(name: str):
     path = _config_path(name)
     with open(path, 'rb') as f:
@@ -988,7 +994,7 @@ def create_pycfml_python_wheel():
 def rename_pycfml_python_wheel():
     project_name = CONFIG['pycfml']['log-name']
     pycfml_package_dir = CONFIG['pycfml']['dir']['dist-package']
-    dist_package_version = CONFIG['build']['package-version']
+    dist_package_version = PYPROJECT['project']['version']
     initial_wheel_name = f'{pycfml_package_dir}-{dist_package_version}-py3-none-any.whl'
     wheel_dir = CONFIG['pycfml']['dir']['wheel']
     wheel_relpath = os.path.join(wheel_dir, initial_wheel_name)
@@ -1062,6 +1068,7 @@ def run_powder_mod_main():
 
 if __name__ == '__main__':
     ARGS = parsed_args()
+    PYPROJECT = loaded_pyproject()
     CONFIG = loaded_config('scripts.toml')
 
     if ARGS.print_wheel_dir:  # NEED FIX. Maybe save extras to toml as in EDA?

@@ -61,7 +61,6 @@ run-benchmarks.master-branch = '--benchmark-autosave'
 run-benchmarks.non-master-branch = '--benchmark-compare --benchmark-compare-fail=median:10%'
 
 [build]
-package-version = '0.0.1a0' # NEED FIX: get from pyproject.toml (consider merging) or from 'build --wheel ...'
 src-ext = { cfml = 'f90', pycfml = 'F90' }
 static-lib-prefix = { macos = 'lib', linux = 'lib', windows = '' }
 static-lib-ext = { macos = 'a', linux = 'a', windows = 'lib' }

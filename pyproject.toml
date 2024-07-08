@@ -40,7 +40,7 @@ test = [
 ]
 
 [project.urls]
-Homepage = 'https://github.com/AndrewSazonov/test_pycrysfml08_build'
+Homepage = 'https://github.com/easyscience/TEST_PyCrysFML'
 
 [tool.hatch.build.targets.wheel]
 packages = ['pycrysfml08_dist/pycrysfml08']

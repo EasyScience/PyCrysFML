@@ -71,6 +71,8 @@ shared-lib-ext = { macos = 'so', linux = 'so', windows = 'pyd' } # *.dylib doesn
 #site-packages.macos = '/Users/runner/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages'
 #site-packages.linux = '/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages'
 #site-packages.windows = 'c:\hostedtoolcache\windows\Python\3.11.9\x64\lib\site-packages'
+ifport-lib.linux.ifort = '-L/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin -lifport'
+ifport-lib.linux.ifx = '-L/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin -lifport'
 extra-libs.macos.i386.gfortran = [
     '/usr/local/opt/gcc/lib/gcc/current/libgfortran.5.dylib',
     '/usr/local/opt/gcc/lib/gcc/current/libgcc_s.1.1.dylib',
@@ -202,7 +204,7 @@ modes.release = ''
 platforms = ['linux', 'macos']
 compilers = ['ifort', 'ifx']
 obj-ext = 'o'
-build-shared = "{COMPILER} -shared {PATH}.o -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {IFC_LIB} {PYTHON_LIB}"
+build-shared = "{COMPILER} -shared {PATH}.o -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {IFPORT_LIB} {PYTHON_LIB}"
 build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} -L{CFML_LIB_DIR} -l{CFML_LIB_NAME}'
 modes.base = '-fpp -fPIC -heap-arrays -nologo'
 modes.debug = ''  # -g3

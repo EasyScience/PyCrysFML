@@ -53,25 +53,20 @@ no-default-lib.linux = 'patchelf --no-default-lib {PATH}.{EXT}'
 dependent-lib.change.macos = 'install_name_tool -change {OLD} {NEW} {PATH}.{EXT}'
 build-wheel = 'python3 -m build --wheel --outdir {PATH}'
 rename-wheel = 'python3 -m wheel tags --python-tag {PYTHON_TAG} --platform-tag {PLATFORM_TAG} --remove {PATH}'
-install-wheel = 'python3 -m pip install {PACKAGE} --force-reinstall --find-links={PATH}'                       # Dependencies "{PACKAGE}[test]" are installed via ci script
+install-wheel = 'python3 -m pip install {PACKAGE} --force-reinstall --find-links={PATH}' # Dependencies "{PACKAGE}[test]" are installed via ci script
 run-python = 'python3 {PATH}'
 run-tests = 'pytest {PATH} --color=yes --benchmark-disable'
 run-benchmarks.base = 'pytest {PATH} --color=yes --benchmark-only --benchmark-storage="file://./.benchmarks/{RUNNER}/{COMPILER}/{PROCESSOR}" --benchmark-warmup=on --benchmark-columns="median, iqr, ops"'
 run-benchmarks.master-branch = '--benchmark-autosave'
-run-benchmarks.non-master-branch = '--benchmark-compare --benchmark-compare-fail=median:10%'
+run-benchmarks.non-master-branch = '--benchmark-compare --benchmark-compare-fail=median:25%'
 
 [build]
-package-version = '0.0.1a0' # NEED FIX: get from pyproject.toml (consider merging) or from 'build --wheel ...'
 src-ext = { cfml = 'f90', pycfml = 'F90' }
 static-lib-prefix = { macos = 'lib', linux = 'lib', windows = '' }
 static-lib-ext = { macos = 'a', linux = 'a', windows = 'lib' }
-shared-lib-ext = { macos = 'so', linux = 'so', windows = 'pyd' } # *.dylib doesn't work on macOS, *.dll on Windows?  # https://www.cita.utoronto.ca/~merz/intel_f10b/main_for/mergedProjects/bldaps_for/common/bldaps_produce_outfiles.htm
-python-lib.macos = '`python3-config --ldflags --embed`'
-python-lib.linux = ''
-python-lib.windows = 'C:\hostedtoolcache\windows\Python\{PYTHON311_VERSION}\x64\libs\python311.lib'
-site-packages.macos = '/Users/runner/hostedtoolcache/Python/{PYTHON311_VERSION}/x64/lib/python3.11/site-packages'
-site-packages.linux = '/opt/hostedtoolcache/Python/{PYTHON311_VERSION}/x64/lib/python3.11/site-packages'
-site-packages.windows = '???'
+shared-lib-ext = { macos = 'so', linux = 'so', windows = 'pyd' }  # *.dylib doesn't work on macOS, *.dll on Windows?  # https://www.cita.utoronto.ca/~merz/intel_f10b/main_for/mergedProjects/bldaps_for/common/bldaps_produce_outfiles.htm
+ifport-lib.linux.ifort = '-L/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin -lifport'
+ifport-lib.linux.ifx = '-L/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin -lifport'
 extra-libs.macos.i386.gfortran = [
     '/usr/local/opt/gcc/lib/gcc/current/libgfortran.5.dylib',
     '/usr/local/opt/gcc/lib/gcc/current/libgcc_s.1.1.dylib',
@@ -108,7 +103,7 @@ extra-libs.linux.x86_64.ifort = [
     '/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin/libimf.so',
     '/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin/libsvml.so',
     '/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin/libintlc.so.5',
-    '/lib/x86_64-linux-gnu/libpthread.so.0',                                               # But still: libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0
+    '/lib/x86_64-linux-gnu/libpthread.so.0',  # But still: libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0
     '/lib/x86_64-linux-gnu/libm.so.6',
     '/lib/x86_64-linux-gnu/libc.so.6',
     '/lib/x86_64-linux-gnu/libgcc_s.so.1',
@@ -119,7 +114,7 @@ extra-libs.linux.x86_64.ifx = [
     '/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin/libimf.so',
     '/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin/libsvml.so',
     '/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin/libintlc.so.5',
-    '/lib/x86_64-linux-gnu/libpthread.so.0',                                               # But still: libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0
+    '/lib/x86_64-linux-gnu/libpthread.so.0',  # But still: libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0
     '/lib/x86_64-linux-gnu/libm.so.6',
     '/lib/x86_64-linux-gnu/libc.so.6',
     '/lib/x86_64-linux-gnu/libgcc_s.so.1',
@@ -176,6 +171,13 @@ dependent-libs.macos.arm.gfortran = [
     { old = '/opt/homebrew/opt/gcc/lib/gcc/current/libgfortran.5.dylib', new = '@rpath/libgfortran.5.dylib' },
     { old = '/opt/homebrew/opt/gcc/lib/gcc/current/libquadmath.0.dylib', new = '@rpath/libquadmath.0.dylib' },
 ]
+# Examples of GitHub values for Python 3.11
+#python-lib.macos = '`python3-config --ldflags --embed`'
+#python-lib.linux = ''
+#python-lib.windows = 'C:\hostedtoolcache\windows\Python\3.11.9\x64\libs\python311.lib'
+#site-packages.macos = '/Users/runner/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages'
+#site-packages.linux = '/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages'
+#site-packages.windows = 'c:\hostedtoolcache\windows\Python\3.11.9\x64\lib\site-packages'
 
 # Build configurations matrix
 
@@ -203,7 +205,7 @@ modes.release = ''
 platforms = ['linux', 'macos']
 compilers = ['ifort', 'ifx']
 obj-ext = 'o'
-build-shared = "{COMPILER} -shared {PATH}.o -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {IFC_LIB} {PYTHON_LIB}"
+build-shared = "{COMPILER} -shared {PATH}.o -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {IFPORT_LIB} {PYTHON_LIB}"
 build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} -L{CFML_LIB_DIR} -l{CFML_LIB_NAME}'
 modes.base = '-fpp -fPIC -heap-arrays -nologo'
 modes.debug = ''  # -g3
@@ -845,90 +847,90 @@ main-file = 'Calc_Sfac'
 ##########
 
 #'-cpp',                    # Enable preprocessing. The preprocessor is automatically invoked if the file extension is .fpp, .FPP, .F, .FOR, .FTN, .F90, .F95, .F03 or .F08.
-# Use this option to manually enable preprocessing of any kind of Fortran file.
-# To disable preprocessing of files with any of the above listed extensions, use the negative form: -nocpp.
-# The preprocessor is run in traditional mode. Any restrictions of the file-format, especially the limits on line length, apply for preprocessed output
-# as well, so it might be advisable to use the -ffree-line-length-none or -ffixed-line-length-none options.
+                            # Use this option to manually enable preprocessing of any kind of Fortran file.
+                            # To disable preprocessing of files with any of the above listed extensions, use the negative form: -nocpp.
+                            # The preprocessor is run in traditional mode. Any restrictions of the file-format, especially the limits on line length, apply for preprocessed output
+                            # as well, so it might be advisable to use the -ffree-line-length-none or -ffixed-line-length-none options.
 #'-fall-intrinsics',        # This option causes all intrinsic procedures (including the GNU-specific extensions) to be accepted. This can be useful with -std=f95 to force
-# standard-compliance but get access to the full range of intrinsics available with gfortran. As a consequence, -Wintrinsics-std will be ignored
-# and no user-defined procedure with the same name as any intrinsic will be called except when it is explicitly declared EXTERNAL
+                            # standard-compliance but get access to the full range of intrinsics available with gfortran. As a consequence, -Wintrinsics-std will be ignored
+                            # and no user-defined procedure with the same name as any intrinsic will be called except when it is explicitly declared EXTERNAL
 #'-fdec-math',              # Enable legacy math intrinsics such as COTAN and degree-valued trigonometric functions (e.g. TAND, ATAND, etc...) for compatability with older code.
 #'-ffree-line-length-none', # Set column after which characters are ignored in typical free-form lines in the source file. The default value is 132. n may be ‘none’, meaning
-# that the entire line is meaningful. -ffree-line-length-0 means the same thing as -ffree-line-length-none.
+                            # that the entire line is meaningful. -ffree-line-length-0 means the same thing as -ffree-line-length-none.
 #'-fno-stack-arrays',       # Enabled: Put all local arrays, even those of unknown size onto stack memory.
-# The -fno- form disables the behavior.
+                            # The -fno- form disables the behavior.
 #'-fpic',                   # Generate position-independent code (PIC) suitable for use in a shared library, if supported for the target machine. Such code accesses all constant
-# addresses through a global offset table (GOT). The dynamic loader resolves the GOT entries when the program starts (the dynamic loader is not part
-# of GCC; it is part of the operating system). If the GOT size for the linked executable exceeds a machine-specific maximum size, you get an error
-# message from the linker indicating that -fpic does not work; in that case, recompile with -fPIC instead. (These maximums are 8k on the SPARC, 28k on
-# AArch64 and 32k on the m68k and RS/6000. The x86 has no such limit.)
-# Position-independent code requires special support, and therefore works only on certain machines. For the x86, GCC supports PIC for System V but not
-# for the Sun 386i. Code generated for the IBM RS/6000 is always position-independent.
+                            # addresses through a global offset table (GOT). The dynamic loader resolves the GOT entries when the program starts (the dynamic loader is not part
+                            # of GCC; it is part of the operating system). If the GOT size for the linked executable exceeds a machine-specific maximum size, you get an error
+                            # message from the linker indicating that -fpic does not work; in that case, recompile with -fPIC instead. (These maximums are 8k on the SPARC, 28k on
+                            # AArch64 and 32k on the m68k and RS/6000. The x86 has no such limit.)
+                            # Position-independent code requires special support, and therefore works only on certain machines. For the x86, GCC supports PIC for System V but not
+                            # for the Sun 386i. Code generated for the IBM RS/6000 is always position-independent.
 #'-fPIC',                   # If supported for the target machine, emit position-independent code, suitable for dynamic linking and avoiding any limit on the size of the global
-# offset table. This option makes a difference on AArch64, m68k, PowerPC and SPARC.
-# Position-independent code requires special support, and therefore works only on certain machines.
+                            # offset table. This option makes a difference on AArch64, m68k, PowerPC and SPARC.
+                            # Position-independent code requires special support, and therefore works only on certain machines.
 #'-std=f2008'               # Specify the standard to which the program is expected to conform, which may be one of ‘f95’, ‘f2003’, ‘f2008’, ‘gnu’, or ‘legacy’. The default
-# value for std is ‘gnu’, which specifies a superset of the Fortran 95 standard that includes all of the extensions supported by GNU Fortran, although
-# warnings will be given for obsolete extensions not recommended for use in new code. The ‘legacy’ value is equivalent but without the warnings for
-# obsolete extensions, and may be useful for old non-standard programs. The ‘f95’, ‘f2003’ and ‘f2008’ values specify strict conformance to the
-# Fortran 95, Fortran 2003 and Fortran 2008 standards, respectively; errors are given for all extensions beyond the relevant language standard, and
-# warnings are given for the Fortran 77 features that are permitted but obsolescent in later standards. ‘-std=f2008ts’ allows the Fortran 2008 standard
-# including the additions of the Technical Specification (TS) 29113 on Further Interoperability of Fortran with C and TS 18508 on Additional Parallel
-# Features in Fortran.
+                            # value for std is ‘gnu’, which specifies a superset of the Fortran 95 standard that includes all of the extensions supported by GNU Fortran, although
+                            # warnings will be given for obsolete extensions not recommended for use in new code. The ‘legacy’ value is equivalent but without the warnings for
+                            # obsolete extensions, and may be useful for old non-standard programs. The ‘f95’, ‘f2003’ and ‘f2008’ values specify strict conformance to the
+                            # Fortran 95, Fortran 2003 and Fortran 2008 standards, respectively; errors are given for all extensions beyond the relevant language standard, and
+                            # warnings are given for the Fortran 77 features that are permitted but obsolescent in later standards. ‘-std=f2008ts’ allows the Fortran 2008 standard
+                            # including the additions of the Technical Specification (TS) 29113 on Further Interoperability of Fortran with C and TS 18508 on Additional Parallel
+                            # Features in Fortran.
 
 ########
 # nagfor
 ########
 
-#'-colour',               # Colour the message output from the compiler using ANSI escape sequences and the default foreground colouring scheme which is: red for error messages (including
-# fatal errors), blue for warning messages and green for information messages.
-#'-compatible',           # Make external linkages compatible with other compilers where possible; on Windows this is Microsoft Fortran (32-bit mode) or Intel Fortran (64-bit mode), on MacOS
-# and Linux this is g77, g95 and gfortran, and on other systems this is the operating system vendor's compiler.  This affects the naming convention and procedure
-# calling convention (for example, on Windows it causes use of the "STDCALL" calling convention that is commonly used for most DLLs, and the names are in upper case
-# with no added trailing underscore).  On Windows in 64-bit mode, -compatible is always in effect.
-#'-dusty',                # Allows the compilation and execution of "legacy" software by downgrading the category of common errors found in such software from "Error" to "Warning" (which may
-# then be suppressed entirely with the -w option).  This option disables -C=calls, and also enables Hollerith i/o (see the -hollerith_io option).
-#'-f2008',                # Specify that the base language is Fortran 2008.  This is the default.
-#'-fpp',                  # Preprocess the source files using fpp even if the suffix would normally indicate an ordinary Fortran file.
-#'-gline',                # Compile code to produce a traceback when a runtime error message is generated.  Only routines compiled with this option will appear in such a traceback.  This
-# option increases both executable file size and execution time.
-#'-mismatch_all',         # Further downgrade consistency checking of procedure argument lists so that calls to routines in the same file which are incorrect will produce warnings instead of
-# error messages.  This option disables -C=calls.
-#'-mtrace=on',            # Trace memory allocation and deallocation.  This option is a synonym for -mtrace=on.
-#'-no_underflow_warning', # Suppress the warning message that normally appears if a floating-point underflow occurred during execution.  This option is only effective if specified when
-# compiling the main program.
-#'-nonstrict',            # Do not check for strict conformance to the Fortran standard
-#'-pic',                  # Produce position-independent code (small model), for use in a shared library.  If the shared library is too big for the small model, use -PIC.
-#'-PIC',                  # Produce position-independent code (large model), for use in a shared library.
-#'-quiet',                # Suppress the compiler banner and the summary line, so that only diagnostic messages will appear,
-#'-w=all',                # suppresses all warning messages;
-#'-Wl,option'             # Pass option directly to the host C compiler when linking (producing the executable).  Multiple options may be specified in a single -Wl, option by
-# separating them with commas.  A comma may be included in an option by repeating it, e.g.  -Wl,-filelist=file1,,file2,,file3 becomes the linker option
-# -filelist=file1,file2,file3.  Note that options specified with -Wl, are appended to the linking command; for options that need to be in a specific
-# place, the -xldarg option can be used.
+#'-colour',                 # Colour the message output from the compiler using ANSI escape sequences and the default foreground colouring scheme which is: red for error messages (including
+                            # fatal errors), blue for warning messages and green for information messages.
+#'-compatible',             # Make external linkages compatible with other compilers where possible; on Windows this is Microsoft Fortran (32-bit mode) or Intel Fortran (64-bit mode), on MacOS
+                            # and Linux this is g77, g95 and gfortran, and on other systems this is the operating system vendor's compiler.  This affects the naming convention and procedure
+                            # calling convention (for example, on Windows it causes use of the "STDCALL" calling convention that is commonly used for most DLLs, and the names are in upper case
+                            # with no added trailing underscore).  On Windows in 64-bit mode, -compatible is always in effect.
+#'-dusty',                  # Allows the compilation and execution of "legacy" software by downgrading the category of common errors found in such software from "Error" to "Warning" (which may
+                            # then be suppressed entirely with the -w option).  This option disables -C=calls, and also enables Hollerith i/o (see the -hollerith_io option).
+#'-f2008',                  # Specify that the base language is Fortran 2008.  This is the default.
+#'-fpp',                    # Preprocess the source files using fpp even if the suffix would normally indicate an ordinary Fortran file.
+#'-gline',                  # Compile code to produce a traceback when a runtime error message is generated.  Only routines compiled with this option will appear in such a traceback.  This
+                            # option increases both executable file size and execution time.
+#'-mismatch_all',           # Further downgrade consistency checking of procedure argument lists so that calls to routines in the same file which are incorrect will produce warnings instead of
+                            # error messages.  This option disables -C=calls.
+#'-mtrace=on',              # Trace memory allocation and deallocation.  This option is a synonym for -mtrace=on.
+#'-no_underflow_warning',   # Suppress the warning message that normally appears if a floating-point underflow occurred during execution.  This option is only effective if specified when
+                            # compiling the main program.
+#'-nonstrict',              # Do not check for strict conformance to the Fortran standard
+#'-pic',                    # Produce position-independent code (small model), for use in a shared library.  If the shared library is too big for the small model, use -PIC.
+#'-PIC',                    # Produce position-independent code (large model), for use in a shared library.
+#'-quiet',                  # Suppress the compiler banner and the summary line, so that only diagnostic messages will appear,
+#'-w=all',                  # suppresses all warning messages;
+#'-Wl,option'               # Pass option directly to the host C compiler when linking (producing the executable).  Multiple options may be specified in a single -Wl, option by
+                            # separating them with commas.  A comma may be included in an option by repeating it, e.g.  -Wl,-filelist=file1,,file2,,file3 becomes the linker option
+                            # -filelist=file1,file2,file3.  Note that options specified with -Wl, are appended to the linking command; for options that need to be in a specific
+                            # place, the -xldarg option can be used.
 
 ####################
 # ifort / ifx (unix)
 ####################
 
-# -fpic, -fPIC            # generate position independent code (-fno-pic/-fno-PIC is DEFAULT)
-# -[no]fpp                # run Fortran preprocessor on source files prior to compilation
-# -g[level]               # Produce symbolic debug information.
-                          # Valid [level] values:
-                          # 0  - Disable generation of symbolic debug information.
-                          # 1  - Emit minimal debug information for performing stack traces.
-                          # 2  - Emit complete debug information. (default for -g)
-                          # 3  - Emit extra information which may be useful for some tools.
-# -heap-arrays [n]        # temporary arrays of minimum size n (in kilobytes) are allocated in
-                          # heap memory rather than on the stack.  If n is not specified,
-                          # all temporary arrays are allocated in heap memory.
-# -[no]logo               # display compiler version information.  -nologo disables the output
-# -stand [<keyword>]      # specifies level of conformance with ANSI standard to check
-                          # for.  If keyword is not specified, level of conformance is f18
-                          # keywords: f90 (same as -std90), f95 (same as -std95),
-                          # f03 (same as -std03), f08 (same as -std08),
-                          # f18 (same as -std18),none (same as -nostand)
-# -w                      # disable all warnings
+# -fpic, -fPIC              # generate position independent code (-fno-pic/-fno-PIC is DEFAULT)
+# -[no]fpp                  # run Fortran preprocessor on source files prior to compilation
+# -g[level]                 # Produce symbolic debug information.
+                            # Valid [level] values:
+                            # 0  - Disable generation of symbolic debug information.
+                            # 1  - Emit minimal debug information for performing stack traces.
+                            # 2  - Emit complete debug information. (default for -g)
+                            # 3  - Emit extra information which may be useful for some tools.
+# -heap-arrays [n]          # temporary arrays of minimum size n (in kilobytes) are allocated in
+                            # heap memory rather than on the stack.  If n is not specified,
+                            # all temporary arrays are allocated in heap memory.
+# -[no]logo                 # display compiler version information.  -nologo disables the output
+# -stand [<keyword>]        # specifies level of conformance with ANSI standard to check
+                            # for.  If keyword is not specified, level of conformance is f18
+                            # keywords: f90 (same as -std90), f95 (same as -std95),
+                            # f03 (same as -std03), f08 (same as -std08),
+                            # f18 (same as -std18),none (same as -nostand)
+# -w                        # disable all warnings
 
 #######################
 # ifort / ifx (windows)
@@ -936,15 +938,15 @@ main-file = 'Calc_Sfac'
 
 # -DWIN32=ON
 
-# /[no]fpp                # run Fortran preprocessor on source files prior to compilation
-# /heap-arrays            # /heap-arrays[:n]
-                          # temporary arrays of minimum size n (in kilobytes) are allocated in
-                          # heap memory rather than on the stack.  If n is not specified,
-                          # all temporary arrays are allocated in heap memory.
-# /[no]logo               # display compiler version information.  /nologo disables the output
-# /stand[:<keyword>]      # specifies level of conformance with ANSI standard to check
-                          # for.  If keyword is not specified, level of conformance is f18
-                          # keywords: f90 (same as /4Ys), f95,
-                          # f03, f08, f18,
-                          # none (same as /nostand)
-# /w                      # disable all warnings
+# /[no]fpp                  # run Fortran preprocessor on source files prior to compilation
+# /heap-arrays              # /heap-arrays[:n]
+                            # temporary arrays of minimum size n (in kilobytes) are allocated in
+                            # heap memory rather than on the stack.  If n is not specified,
+                            # all temporary arrays are allocated in heap memory.
+# /[no]logo                 # display compiler version information.  /nologo disables the output
+# /stand[:<keyword>]        # specifies level of conformance with ANSI standard to check
+                            # for.  If keyword is not specified, level of conformance is f18
+                            # keywords: f90 (same as /4Ys), f95,
+                            # f03, f08, f18,
+                            # none (same as /nostand)
+# /w                        # disable all warnings

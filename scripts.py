@@ -74,13 +74,14 @@ def _platform_tag():
     tag = tag.replace('.', '_')
     return tag
 
-def _python_version():  # full version, e.g., '3.11.6'
+def _python_version_full():  # full version, e.g., '3.11.6'
     return platform.python_version()
 
-def _python_tag():  # short version, e.g., '311'
-    version = sysconfig.get_config_var('py_version_nodot')
-    tag = f'py{version}'
-    return tag
+def _python_version_short():  # short version, e.g., '311'
+    return sysconfig.get_config_var('py_version_nodot')
+
+def _python_tag():  # tag, e.g., 'py311'
+    return f'py{_python_version_short()}'
 
 def _python_site_packages():
     site_packages = site.getsitepackages()
@@ -88,13 +89,13 @@ def _python_site_packages():
     return site_packages
 
 def _python_lib():
-    site_packages_parent = os.path.dirname(_python_site_packages())
     if _platform() == 'macos':
         python_lib = '`python3-config --ldflags --embed`'
     elif _platform() == 'linux':
         python_lib = ''
     elif _platform() == 'windows':
-        python_lib = f'python{_python_tag()}.lib'
+        lib_file = f'python{_python_version_short()}.lib'
+        python_lib = os.path.join(_python_site_packages(), 'libs', lib_file)
     else:
         raise Exception(f'Unsupported platform {_platform()}')
     return python_lib
@@ -241,11 +242,11 @@ def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):
     cfml_lib_dist_dir = CONFIG['cfml']['dir']['dist-lib']
     cfml_lib_dist_path = os.path.join(cfml_dist_path, cfml_lib_dist_dir)
     #python_lib = CONFIG['build']['python-lib'][_platform()]
-    #python_lib = python_lib.replace('{PYTHON_VERSION_FULL}', _python_version())
+    #python_lib = python_lib.replace('{PYTHON_VERSION_FULL}', _python_version_full())
     python_lib = _python_lib()
     compiler = _compiler_name()
     if _platform() == 'linux' and (compiler == 'ifort' or compiler == 'ifx'):
-        ifc_lib = '-L/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin -lifport'
+        ifc_lib = '-L/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin -lifport'  # NEED FIX: move to scripts.toml
     else:
         ifc_lib = ''
     template_cmd = _compiler_build_shared_template()
@@ -380,7 +381,7 @@ def print_debug_info():
     #lines.append(msg)
     msg = _echo_msg(f"Fortran compiler '{_compiler_name()}'")
     lines.append(msg)
-    msg = _echo_msg(f"Python version '{_python_version()}'")
+    msg = _echo_msg(f"Python version '{_python_version_full()}'")
     lines.append(msg)
     msg = _echo_msg(f"Python tag '{_python_tag()}'")
     lines.append(msg)

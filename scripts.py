@@ -1,5 +1,6 @@
 import os
 import sys
+import site
 import tomllib
 import argparse
 import sysconfig
@@ -56,6 +57,11 @@ def _echo_header(msg: str):
     lines.append(f'echo "{sep}"')
     return lines
 
+def _processor():
+    processor = platform.processor()
+    processor = processor.split()[0]  # get the 1st word from string, such as 'Intel64 Family 6 Model 154 Stepping 3, GenuineIntel'
+    return processor
+
 def _platform():
     platform = 'macos'  # default
     if ARGS.platform:
@@ -68,15 +74,30 @@ def _platform_tag():
     tag = tag.replace('.', '_')
     return tag
 
-def _python_tag():
+def _python_version():  # full version, e.g., '3.11.6'
+    return platform.python_version()
+
+def _python_tag():  # short version, e.g., '311'
     version = sysconfig.get_config_var('py_version_nodot')
     tag = f'py{version}'
     return tag
 
-def _processor():
-    processor = platform.processor()
-    processor = processor.split()[0]  # get the 1st word from string, such as 'Intel64 Family 6 Model 154 Stepping 3, GenuineIntel'
-    return processor
+def _python_site_packages():
+    site_packages = site.getsitepackages()
+    site_packages = site_packages[0]  # get the first location from the list
+    return site_packages
+
+def _python_lib():
+    site_packages_parent = os.path.dirname(_python_site_packages())
+    if _platform() == 'macos':
+        python_lib = '`python3-config --ldflags --embed`'
+    elif _platform() == 'linux':
+        python_lib = ''
+    elif _platform() == 'windows':
+        python_lib = f'python{_python_tag()}.lib'
+    else:
+        raise Exception(f'Unsupported platform {_platform()}')
+    return python_lib
 
 def _fix_file_permissions(path: str):
     os.chmod(path, 0o777)
@@ -219,8 +240,9 @@ def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):
     cfml_dist_path = os.path.join(_project_path(), cfml_dist_dir)
     cfml_lib_dist_dir = CONFIG['cfml']['dir']['dist-lib']
     cfml_lib_dist_path = os.path.join(cfml_dist_path, cfml_lib_dist_dir)
-    python_lib = CONFIG['build']['python-lib'][_platform()]
-    python_lib = python_lib.replace('{PYTHON311_VERSION}', platform.python_version())
+    #python_lib = CONFIG['build']['python-lib'][_platform()]
+    #python_lib = python_lib.replace('{PYTHON_VERSION_FULL}', _python_version())
+    python_lib = _python_lib()
     compiler = _compiler_name()
     if _platform() == 'linux' and (compiler == 'ifort' or compiler == 'ifx'):
         ifc_lib = '-L/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin -lifport'
@@ -354,10 +376,18 @@ def print_debug_info():
     lines.append(msg)
     msg = _echo_msg(f"Compiling mode '{_compiling_mode()}'")
     lines.append(msg)
-    msg = _echo_msg(f"Fortran compiler '{_compiler_name()}'")
-    lines.append(msg)
     #msg = _echo_msg(f"Compiler options '{_compiler_options()}'")
     #lines.append(msg)
+    msg = _echo_msg(f"Fortran compiler '{_compiler_name()}'")
+    lines.append(msg)
+    msg = _echo_msg(f"Python version '{_python_version()}'")
+    lines.append(msg)
+    msg = _echo_msg(f"Python tag '{_python_tag()}'")
+    lines.append(msg)
+    msg = _echo_msg(f"Python site packages '{_python_site_packages()}'")
+    lines.append(msg)
+    msg = _echo_msg(f"Python lib '{_python_lib()}'")
+    lines.append(msg)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
@@ -416,12 +446,11 @@ def rename_global_deps_file():
     repo_dir = CONFIG['cfml']['dir']['repo']
     src_ext = CONFIG['build']['src-ext']['cfml']
     src_dir = CONFIG['cfml']['dir']['repo-src']
-    platform = _platform()
-    if platform == 'macos':
+    if _platform() == 'macos':
         platform_suffix = 'MacOS'
-    elif platform == 'linux':
+    elif _platform() == 'linux':
         platform_suffix = 'Linux'
-    elif platform == 'windows':
+    elif _platform() == 'windows':
         platform_suffix = 'Windows'
     compiler = _compiler_name()
     if compiler in ['gfortran', 'nagfor']:

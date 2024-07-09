@@ -65,12 +65,12 @@ src-ext = { cfml = 'f90', pycfml = 'F90' }
 static-lib-prefix = { macos = 'lib', linux = 'lib', windows = '' }
 static-lib-ext = { macos = 'a', linux = 'a', windows = 'lib' }
 shared-lib-ext = { macos = 'so', linux = 'so', windows = 'pyd' } # *.dylib doesn't work on macOS, *.dll on Windows?  # https://www.cita.utoronto.ca/~merz/intel_f10b/main_for/mergedProjects/bldaps_for/common/bldaps_produce_outfiles.htm
-python-lib.macos = '`python3-config --ldflags --embed`'
-python-lib.linux = ''
-python-lib.windows = 'C:\hostedtoolcache\windows\Python\{PYTHON311_VERSION}\x64\libs\python311.lib'
-site-packages.macos = '/Users/runner/hostedtoolcache/Python/{PYTHON311_VERSION}/x64/lib/python3.11/site-packages'
-site-packages.linux = '/opt/hostedtoolcache/Python/{PYTHON311_VERSION}/x64/lib/python3.11/site-packages'
-site-packages.windows = '???'
+#python-lib.macos = '`python3-config --ldflags --embed`'
+#python-lib.linux = ''
+#python-lib.windows = 'C:\hostedtoolcache\windows\Python\{PYTHON_VERSION_FULL}\x64\libs\python311.lib'
+#site-packages.macos = '/Users/runner/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages'
+#site-packages.linux = '/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages'
+#site-packages.windows = 'c:\hostedtoolcache\windows\python\3.11.9\x64\lib\site-packages'
 extra-libs.macos.i386.gfortran = [
     '/usr/local/opt/gcc/lib/gcc/current/libgfortran.5.dylib',
     '/usr/local/opt/gcc/lib/gcc/current/libgcc_s.1.1.dylib',

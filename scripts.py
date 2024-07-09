@@ -10,6 +10,7 @@ from pygit2 import Repository
 global ARGS
 global CONFIG
 
+
 def _github_actions():
     if 'GITHUB_ACTIONS' in os.environ:
         return True
@@ -367,23 +368,23 @@ def append_to_main_script(obj: str | list):
 
 def print_debug_info():
     lines = []
-    msg = _echo_msg(f"Platform '{_platform()}'")
+    msg = _echo_msg(f"Platform: {_platform()}")
     lines.append(msg)
-    msg = _echo_msg(f"Processor '{_processor()}'")
+    msg = _echo_msg(f"Processor: {_processor()}")
     lines.append(msg)
-    msg = _echo_msg(f"Compiling mode '{_compiling_mode()}'")
+    msg = _echo_msg(f"Compiling mode: {_compiling_mode()}")
     lines.append(msg)
     #msg = _echo_msg(f"Compiler options '{_compiler_options()}'")
     #lines.append(msg)
-    msg = _echo_msg(f"Fortran compiler '{_compiler_name()}'")
+    msg = _echo_msg(f"Fortran compiler: {_compiler_name()}")
     lines.append(msg)
-    msg = _echo_msg(f"Python version '{_python_version_full()}'")
+    msg = _echo_msg(f"Python version: {_python_version_full()}")
     lines.append(msg)
-    msg = _echo_msg(f"Python tag '{_python_tag()}'")
+    msg = _echo_msg(f"Python tag: {_python_tag()}")
     lines.append(msg)
-    msg = _echo_msg(f"Python site packages '{_python_site_packages()}'")
+    msg = _echo_msg(f"Python site packages: {_python_site_packages()}")
     lines.append(msg)
-    msg = _echo_msg(f"Python lib '{_python_lib()}'")
+    msg = _echo_msg(f"Python lib: {_python_lib()}")
     lines.append(msg)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)

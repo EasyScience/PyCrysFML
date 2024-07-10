@@ -79,17 +79,17 @@ jobs:
           --bash-syntax
 
       - name: Print some build-specific variables
-        shell: bash
+        #shell: bash
         run: scripts/print_build_variables.sh  # bash -x scripts/print_build_variables.sh for printing commands
 
       - name: Download CFML repository
-        shell: bash
+        #shell: bash
         run: |
           scripts/create_cfml_repo_dir.sh
           scripts/download_cfml_repo.sh
 
       - name: Build CFML static library
-        shell: bash
+        #shell: bash
         run: |
           scripts/create_cfml_build_dir.sh
           scripts/rename_global_deps_file.sh

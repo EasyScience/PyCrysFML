@@ -15,7 +15,8 @@ from numpy.testing import assert_allclose, assert_almost_equal
 
 def set_crysfml_db_path():
     """Sets the env variable 'CRYSFML_DB' as the path to the 'Databases' directory containing the file 'magnetic_data.txt'."""
-    project_dir = os.getenv('GITHUB_WORKSPACE', default=os.getcwd())
+    default = os.path.join(os.getcwd(), '..', '..', '..')
+    project_dir = os.getenv('GITHUB_WORKSPACE', default=default)  # locally do: export GITHUB_WORKSPACE=`pwd`
     config_path = os.path.join(project_dir, 'scripts.toml')
     with open(config_path, 'rb') as f:
         CONFIG = tomllib.load(f)
@@ -52,8 +53,8 @@ def dat_to_ndarray(file_name:str, skip_begin:int=3, skip_end:int=4):
 
 # Set up paths
 
-set_crysfml_db_path()
 change_cwd_to_tests()
+set_crysfml_db_path()
 
 # Tests
 

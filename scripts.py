@@ -1,5 +1,6 @@
 import os
 import sys
+import site
 import tomllib
 import argparse
 import sysconfig
@@ -8,6 +9,7 @@ from pygit2 import Repository
 
 global ARGS
 global CONFIG
+
 
 def _github_actions():
     if 'GITHUB_ACTIONS' in os.environ:
@@ -56,6 +58,11 @@ def _echo_header(msg: str):
     lines.append(f'echo "{sep}"')
     return lines
 
+def _processor():
+    processor = platform.processor()
+    processor = processor.split()[0]  # get the 1st word from string, such as 'Intel64 Family 6 Model 154 Stepping 3, GenuineIntel'
+    return processor
+
 def _platform():
     platform = 'macos'  # default
     if ARGS.platform:
@@ -68,15 +75,31 @@ def _platform_tag():
     tag = tag.replace('.', '_')
     return tag
 
-def _python_tag():
-    version = sysconfig.get_config_var('py_version_nodot')
-    tag = f'py{version}'
-    return tag
+def _python_version_full():  # full version, e.g., '3.11.6'
+    return platform.python_version()
 
-def _processor():
-    processor = platform.processor()
-    processor = processor.split()[0]  # get the 1st word from string, such as 'Intel64 Family 6 Model 154 Stepping 3, GenuineIntel'
-    return processor
+def _python_version_short():  # short version, e.g., '311'
+    return sysconfig.get_config_var('py_version_nodot')
+
+def _python_tag():  # tag, e.g., 'py311'
+    return f'py{_python_version_short()}'
+
+def _python_site_packages():
+    site_packages = site.getsitepackages()
+    site_packages = site_packages[0]  # get the first location from the list
+    return site_packages
+
+def _python_lib():
+    if _platform() == 'macos':
+        python_lib = '`python3-config --ldflags --embed`'
+    elif _platform() == 'linux':
+        python_lib = ''
+    elif _platform() == 'windows':
+        lib_file = f'python{_python_version_short()}.lib'
+        python_lib = os.path.join(_python_site_packages(), 'libs', lib_file)
+    else:
+        raise Exception(f'Unsupported platform {_platform()}')
+    return python_lib
 
 def _fix_file_permissions(path: str):
     os.chmod(path, 0o777)
@@ -219,15 +242,12 @@ def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):
     cfml_dist_path = os.path.join(_project_path(), cfml_dist_dir)
     cfml_lib_dist_dir = CONFIG['cfml']['dir']['dist-lib']
     cfml_lib_dist_path = os.path.join(cfml_dist_path, cfml_lib_dist_dir)
-    python_lib = CONFIG['build']['python-lib'][_platform()]
-    python_lib = python_lib.replace('{PYTHON311_VERSION}', platform.python_version())
-    compiler = _compiler_name()
-    if _platform() == 'linux' and (compiler == 'ifort' or compiler == 'ifx'):
-        ifc_lib = '-L/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin -lifport'
-    else:
-        ifc_lib = ''
     template_cmd = _compiler_build_shared_template()
     shared_lib_ext = CONFIG['build']['shared-lib-ext'][_platform()]
+    try:
+        ifport_lib = CONFIG['build'][_platform()][_compiler_name()]
+    except KeyError:
+        ifport_lib = ''
     total = _total_src_file_count(modules)
     current = 0
     lines = []
@@ -238,13 +258,13 @@ def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):
             msg = _echo_progress_msg(current, total, f'{name}.{obj_ext}')
             lines.append(msg)
             cmd = template_cmd
-            cmd = cmd.replace('{COMPILER}', compiler)
+            cmd = cmd.replace('{COMPILER}', _compiler_name())
             cmd = cmd.replace('{PATH}', name)
             cmd = cmd.replace('{EXT}', shared_lib_ext)
             cmd = cmd.replace('{CFML_LIB_PATH}', cfml_lib_dist_path)
             cmd = cmd.replace('{CFML_LIB_NAME}', cfml_lib_name)
-            cmd = cmd.replace('{IFC_LIB}', ifc_lib)
-            cmd = cmd.replace('{PYTHON_LIB}', python_lib)
+            cmd = cmd.replace('{IFPORT_LIB}', ifport_lib)
+            cmd = cmd.replace('{PYTHON_LIB}', _python_lib())
             #lines.append(f"echo '>>>>> {cmd}'")
             lines.append(cmd)
     return lines
@@ -309,6 +329,12 @@ def parsed_args():
                         help="print pycfml wheel directory name")
     return parser.parse_args()
 
+def loaded_pyproject():
+    path = os.path.join(_project_dir(), 'pyproject.toml')
+    with open(path, 'rb') as f:
+        pyproject = tomllib.load(f)
+    return pyproject
+
 def loaded_config(name: str):
     path = _config_path(name)
     with open(path, 'rb') as f:
@@ -340,18 +366,26 @@ def append_to_main_script(obj: str | list):
             file.write(line + '\n')
     _fix_file_permissions(path)
 
-def print_debug_info():
+def print_build_variables():
     lines = []
-    msg = _echo_msg(f"Platform '{_platform()}'")
+    msg = _echo_msg(f"Platform: {_platform()}")
     lines.append(msg)
-    msg = _echo_msg(f"Processor '{_processor()}'")
+    msg = _echo_msg(f"Processor: {_processor()}")
     lines.append(msg)
-    msg = _echo_msg(f"Compiling mode '{_compiling_mode()}'")
-    lines.append(msg)
-    msg = _echo_msg(f"Fortran compiler '{_compiler_name()}'")
+    msg = _echo_msg(f"Compiling mode: {_compiling_mode()}")
     lines.append(msg)
     #msg = _echo_msg(f"Compiler options '{_compiler_options()}'")
     #lines.append(msg)
+    msg = _echo_msg(f"Fortran compiler: {_compiler_name()}")
+    lines.append(msg)
+    msg = _echo_msg(f"Python version: {_python_version_full()}")
+    lines.append(msg)
+    msg = _echo_msg(f"Python tag: {_python_tag()}")
+    lines.append(msg)
+    msg = _echo_msg(f"Python site packages: {_python_site_packages()}")
+    lines.append(msg)
+    msg = _echo_msg(f"Python lib: {_python_lib()}")
+    lines.append(msg)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
@@ -410,12 +444,11 @@ def rename_global_deps_file():
     repo_dir = CONFIG['cfml']['dir']['repo']
     src_ext = CONFIG['build']['src-ext']['cfml']
     src_dir = CONFIG['cfml']['dir']['repo-src']
-    platform = _platform()
-    if platform == 'macos':
+    if _platform() == 'macos':
         platform_suffix = 'MacOS'
-    elif platform == 'linux':
+    elif _platform() == 'linux':
         platform_suffix = 'Linux'
-    elif platform == 'windows':
+    elif _platform() == 'windows':
         platform_suffix = 'Windows'
     compiler = _compiler_name()
     if compiler in ['gfortran', 'nagfor']:
@@ -988,7 +1021,7 @@ def create_pycfml_python_wheel():
 def rename_pycfml_python_wheel():
     project_name = CONFIG['pycfml']['log-name']
     pycfml_package_dir = CONFIG['pycfml']['dir']['dist-package']
-    dist_package_version = CONFIG['build']['package-version']
+    dist_package_version = PYPROJECT['project']['version']
     initial_wheel_name = f'{pycfml_package_dir}-{dist_package_version}-py3-none-any.whl'
     wheel_dir = CONFIG['pycfml']['dir']['wheel']
     wheel_relpath = os.path.join(wheel_dir, initial_wheel_name)
@@ -1062,6 +1095,7 @@ def run_powder_mod_main():
 
 if __name__ == '__main__':
     ARGS = parsed_args()
+    PYPROJECT = loaded_pyproject()
     CONFIG = loaded_config('scripts.toml')
 
     if ARGS.print_wheel_dir:  # NEED FIX. Maybe save extras to toml as in EDA?
@@ -1075,7 +1109,7 @@ if __name__ == '__main__':
 
     headers = _echo_header(f"Info")
     append_to_main_script(headers)
-    print_debug_info()
+    print_build_variables()
 
     headers = _echo_header(f"Creating {cfml_project_name} static library")
     append_to_main_script(headers)

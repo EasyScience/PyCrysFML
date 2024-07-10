@@ -57,11 +57,11 @@ jobs:
           python-version: 3.11
 
       - name: Upgrade package installer for Python
-        shell: bash
+        #shell: bash
         run: python3 -m pip install --upgrade pip
 
       - name: Install Python dependences
-        shell: bash
+        #shell: bash
         run: python3 -m pip install '.[ci,test]'  # ci extras from pyproject.toml
 
       - name: Fix reinstalling gcc [macOS]  # needed because of `brew reinstall gcc`

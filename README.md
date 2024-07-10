@@ -4,25 +4,23 @@ This is a repository for testing the build process of both the fortran crystallo
 
 ### Build matrix
 
-| Platform / Compiler       | gfortran | ifx | ifort | nagfor |
-| ------------------------- | -------- | --- | ----- | ------ |
-| Windows                   | +        | +   | +     |        |
-| Ubuntu 22.04              | +        | +   | +     |        |
-| macOS 12 (Intel)          | +        | N/A | +     |        |
-| macOS 14 (Apple Silicone) | +        | N/A | N/A   | LOCAL  |
-
-
+| Platform / Compiler       | gfortran | ifx        | ifort         | nagfor     |
+| ------------------------- | -------- | ---------- | ------------- | ---------- |
+| Windows 10                | ✅   | ✅    | ✅         |            |
+| Ubuntu 22.04              | ✅       | ✅    | ✅           |            |
+| macOS 12 (Intel)          | ✅       | Unsupported | ✅          |            |
+| macOS 14 (Apple Silicone) | ✅       | Unsupported | Unsupported | ✅ Local  |
 
 ### Main steps
 
-* Download the [CrysFML2008](https://code.ill.fr/rodriguez-carvajal/CrysFML2008) project (`nagfor` branch).
-* Build the CrysFML2008 static library with the `gfortran`, `ifort/ifx` or `nagfor` fortran compiler.
-* Build and run CrysFML2008 functional test programs.
-* Download the [PyCrysFML08](https://code.ill.fr/scientific-software/PyCrysFML08) project (`master` branch).
-* Build selected PyCrysFML08 modules with the `gfortran`, `ifort/ifx` or `nagfor` fortran compiler.
-* Create the PyCrysFML08 python package and install PyCrysFML08 from it.
-* Run the PyCrysFML08 unit tests.
-* Run `powder_mod` from PyCrysFML08 to generate the powder diffraction pattern.
+* Download the [CrysFML2008](https://code.ill.fr/rodriguez-carvajal/CrysFML2008) project (`nagfor` branch)
+* Build the CrysFML2008 static library
+* Build and run CrysFML2008 functional test programs
+* Download the [PyCrysFML08](https://code.ill.fr/scientific-software/PyCrysFML08) project (`master` branch)
+* Build selected PyCrysFML08 modules
+* Create the PyCrysFML08 python package and install PyCrysFML08 from it
+* Run the PyCrysFML08 unit tests
+* Run `powder_mod` from PyCrysFML08 to generate the powder diffraction pattern
 
 More details are in the [CI script](.github/workflows/main.yml).
 

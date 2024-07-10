@@ -59,9 +59,9 @@ jobs:
 
       - name: Install Python dependences
         shell: bash
-        run: python3 -m pip install '.[ci,test]' # ci extras from pyproject.toml
+        run: python3 -m pip install '.[ci,test]'  # ci extras from pyproject.toml
 
-      - name: Fix reinstalling gcc [macOS] # needed because of `brew reinstall gcc`
+      - name: Fix reinstalling gcc [macOS]  # needed because of `brew reinstall gcc`
         if: runner.os == 'macOS'
         shell: bash
         run: echo "MACOSX_DEPLOYMENT_TARGET=$(sw_vers -productVersion)" >> $GITHUB_ENV
@@ -75,9 +75,9 @@ jobs:
           --mode debug
           --bash-syntax
 
-      - name: Print some debug info
+      - name: Print some build-specific variables
         shell: bash
-        run: scripts/print_build_variables.sh # bash -x scripts/print_build_variables.sh for printing commands
+        run: scripts/print_build_variables.sh  # bash -x scripts/print_build_variables.sh for printing commands
 
       - name: Download CFML repository
         shell: bash
@@ -156,9 +156,9 @@ jobs:
 
       - name: Upload zipped Python package wheel of PYCFML for next job
         uses: actions/upload-artifact@v4
-        with: # if name or path modified, remember to UPDATE those in the download step of the next job
+        with:  # if name or path modified, remember to UPDATE those in the download step of the next job
           name: pycfml-wheel_${{ matrix.os }}_${{ matrix.toolchain.exe }} # name (without .zip) of the zip file to be uploaded
-          path: ${{ env.WHEEL_DIR }} # all files from this directory are zipped
+          path: ${{ env.WHEEL_DIR }}  # all files from this directory are zipped
           if-no-files-found: "error"
           compression-level: 0
 
@@ -173,19 +173,19 @@ jobs:
           - { exe: ifx, compiler: intel, version: "2023.2" }
         exclude:
           - os: macos-12
-            toolchain: { exe: ifx, compiler: intel, version: "2023.2" } # no support for macOS
+            toolchain: { exe: ifx, compiler: intel, version: "2023.2" }  # no support for macOS
           - os: macos-14
-            toolchain: { exe: ifx, compiler: intel, version: "2023.2" } # no support for macOS on arm64
+            toolchain: { exe: ifx, compiler: intel, version: "2023.2" }  # no support for macOS on arm64
           - os: macos-14
-            toolchain: { exe: ifort, compiler: intel-classic, version: "2021.10" } # no support for macOS on arm64
+            toolchain: { exe: ifort, compiler: intel-classic, version: "2021.10" }  # no support for macOS on arm64
 
     runs-on: ${{ matrix.os }}
 
     timeout-minutes: 30
 
-    needs: wheel # previous job need to be finished first
+    needs: wheel  # previous job need to be finished first
 
-    steps: # job steps
+    steps:  # job steps
       - name: Check-out repository
         uses: actions/checkout@v4
 
@@ -200,7 +200,7 @@ jobs:
 
       - name: Install Python dependences
         shell: bash
-        run: python3 -m pip install '.[test]' # test extras from pyproject.toml
+        run: python3 -m pip install '.[test]'  # test extras from pyproject.toml
 
       - name: Create job step scripts
         shell: bash
@@ -217,9 +217,9 @@ jobs:
 
       - name: Download zipped PYCFML wheel from previous job
         uses: actions/download-artifact@v4
-        with: # name or path are taken from the upload step of the previous job
-          name: pycfml-wheel_${{ matrix.os }}_${{ matrix.toolchain.exe }} # name (without .zip) of the zipped artifact uploaded on the previous jobs
-          path: ${{ env.WHEEL_DIR }} # directory to extract downloaded zipped artifacts
+        with:  # name or path are taken from the upload step of the previous job
+          name: pycfml-wheel_${{ matrix.os }}_${{ matrix.toolchain.exe }}  # name (without .zip) of the zipped artifact uploaded on the previous jobs
+          path: ${{ env.WHEEL_DIR }}  # directory to extract downloaded zipped artifacts
 
       - name: Install PYCFML from downloaded Python package wheel (with dev extras)
         shell: bash

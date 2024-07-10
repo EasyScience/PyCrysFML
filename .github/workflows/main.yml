@@ -35,13 +35,13 @@ jobs:
       - name: Check-out repository
         uses: actions/checkout@v4
 
-      - name: Set up Fortran compiler (FC) [all except Windows + gfortran] # except: use pre-installed gfortran
-        if: runner.os != 'Windows' || matrix.toolchain.exe != 'gfortran' || matrix.toolchain.exe != 'nagfor'
-        uses: fortran-lang/setup-fortran@v1
-        id: setup-fortran
-        with:
-          compiler: ${{ matrix.toolchain.compiler }}
-          version: ${{ matrix.toolchain.version }}
+      # - name: Set up Fortran compiler (FC) [all except Windows + gfortran] # except: use pre-installed gfortran
+      #   if: runner.os != 'Windows' || matrix.toolchain.exe != 'gfortran'
+      #   uses: fortran-lang/setup-fortran@v1
+      #   id: setup-fortran
+      #   with:
+      #     compiler: ${{ matrix.toolchain.compiler }}
+      #     version: ${{ matrix.toolchain.version }}
 
       - name: Set up NMake build tool [Windows]
         if: runner.os == 'Windows'

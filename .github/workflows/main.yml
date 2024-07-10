@@ -77,7 +77,7 @@ jobs:
 
       - name: Print some debug info
         shell: bash
-        run: scripts/print_debug_info.sh # bash -x scripts/print_debug_info.sh for printing commands
+        run: scripts/print_build_variables.sh # bash -x scripts/print_build_variables.sh for printing commands
 
       - name: Download CFML repository
         shell: bash

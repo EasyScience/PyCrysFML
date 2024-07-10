@@ -366,7 +366,7 @@ def append_to_main_script(obj: str | list):
             file.write(line + '\n')
     _fix_file_permissions(path)
 
-def print_debug_info():
+def print_build_variables():
     lines = []
     msg = _echo_msg(f"Platform: {_platform()}")
     lines.append(msg)
@@ -1109,7 +1109,7 @@ if __name__ == '__main__':
 
     headers = _echo_header(f"Info")
     append_to_main_script(headers)
-    print_debug_info()
+    print_build_variables()
 
     headers = _echo_header(f"Creating {cfml_project_name} static library")
     append_to_main_script(headers)

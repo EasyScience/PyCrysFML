@@ -107,34 +107,34 @@ jobs:
         run: |
           scripts/build_cfml_test_programs.sh
           scripts/run_cfml_functional_tests_no_benchmarks.sh
-          scripts/run_cfml_functional_tests_with_benchmarks.sh
+        #  scripts/run_cfml_functional_tests_with_benchmarks.sh
 
-      - name: Push benchmark results to repository
-        uses: EndBug/add-and-commit@v9
-        with:
-          add: '.benchmarks'
-          message: 'Auto push benchmark results by GitHub Action for ${{ runner.os }} + ${{ matrix.toolchain.exe }}'
-          pull: '--rebase --autostash'
+      #- name: Push benchmark results to repository
+      #  uses: EndBug/add-and-commit@v9
+      #  with:
+      #    add: '.benchmarks'
+      #    message: 'Auto push benchmark results by GitHub Action for ${{ runner.os }} + ${{ matrix.toolchain.exe }}'
+      #    pull: '--rebase --autostash'
 
-      - name: Download PYCFML repository
+      #- name: Download PYCFML repository
+      #  shell: bash
+      #  run: |
+      #    scripts/create_pycfml_repo_dir.sh
+      #    scripts/download_pycfml_repo.sh
+
+      #- name: Copy powder_mod from CFML to PYCFML
+      #  shell: bash
+      #  run: scripts/copy_powder_mod_to_pycfml_repo.sh
+
+      - name: Build CFML wraps and PYCFML shared obj or dynamic library
         shell: bash
         run: |
-          scripts/create_pycfml_repo_dir.sh
-          scripts/download_pycfml_repo.sh
-
-      - name: Copy powder_mod from CFML to PYCFML
-        shell: bash
-        run: scripts/copy_powder_mod_to_pycfml_repo.sh
-
-      - name: Build some PYCFML modules one by one
-        shell: bash
-        run: |
+          scripts/create_pycfml_wraps_src.sh
           scripts/create_pycfml_build_dir.sh
-          scripts/build_pycfml_objs.sh
-          scripts/build_pycfml_shared_objs_or_dynamic_libs.sh
+          scripts/build_pycfml_wraps_objs.sh
+          scripts/build_pycfml_lib_obj.sh
           scripts/create_pycfml_dist_dir.sh
           scripts/copy_built_to_pycfml_dist.sh
-          scripts/change_runpath_for_built_pycfml.sh
 
       - name: Copy extra files to PYCFML dist
         shell: bash

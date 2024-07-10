@@ -3,14 +3,17 @@
 [cfml]
 log-name = 'CrysFML2008'
 static-lib-name = 'CrysFML08' # without 'lib' prefix on unix-based platforms
+apigen-dir = 'Src/python_scripts'
+apigen-file = 'apigen.py'
 
 [cfml.git]
-url = 'https://code.ill.fr/rodriguez-carvajal/crysfml2008.git'
-branch = 'nagfor'
+url = 'https://code.ill.fr/scientific-software/crysfml2008.git'
+branch = 'powder_mod_fix'
 
 [cfml.dir]
 repo = 'crysfml08_repo'
 repo-src = 'Src'
+repo-wraps = 'Python_API/Fortran'
 repo-tests = 'Testing'
 build = 'crysfml08_build'
 dist = 'crysfml08_dist'
@@ -21,6 +24,8 @@ dist-include = 'include'
 
 [pycfml]
 log-name = 'PyCrysFML08'
+dynamic-lib-name = 'pycrysfml08'
+src-name = 'crysfml08lib'
 
 [pycfml.git]
 url = 'https://code.ill.fr/scientific-software/pycrysfml08.git'
@@ -61,7 +66,8 @@ run-benchmarks.master-branch = '--benchmark-autosave'
 run-benchmarks.non-master-branch = '--benchmark-compare --benchmark-compare-fail=median:25%'
 
 [build]
-src-ext = { cfml = 'f90', pycfml = 'F90' }
+#src-ext = { cfml = 'f90', pycfml = 'F90' }
+src-ext = 'f90'
 static-lib-prefix = { macos = 'lib', linux = 'lib', windows = '' }
 static-lib-ext = { macos = 'a', linux = 'a', windows = 'lib' }
 shared-lib-ext = { macos = 'so', linux = 'so', windows = 'pyd' }  # *.dylib doesn't work on macOS, *.dll on Windows?  # https://www.cita.utoronto.ca/~merz/intel_f10b/main_for/mergedProjects/bldaps_for/common/bldaps_produce_outfiles.htm
@@ -187,7 +193,7 @@ compilers = ['gfortran']
 obj-ext = 'o'
 build-shared = '{COMPILER} -shared {PATH}.o -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {PYTHON_LIB}'
 build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} -L{CFML_LIB_DIR} -l{CFML_LIB_NAME}'
-modes.base = '-std=f2008 -cpp -fPIC -fno-stack-arrays -ffree-line-length-none'
+modes.base = '-cpp -fdec-math -fPIC -fno-stack-arrays -ffree-line-length-none'
 modes.debug = ''
 modes.release = ''
 
@@ -226,8 +232,8 @@ modes.release = ''
 [[cfml-modules]]
 main-file = 'Forpy'
 
-[[cfml-modules]]
-main-file = 'CFML_Degree_Trigonometric'
+#[[cfml-modules]]
+#main-file = 'CFML_Degree_Trigonometric'
 
 [[cfml-modules]]
 main-file = 'CFML_GlobalDeps'
@@ -780,22 +786,8 @@ components-files = [
     'EnBVS_SetTab'
 ]
 
-# PyCrysFML fortran source files
-
-[[pycfml-modules]]
-main-file = 'py_cfml_metrics'
-
-[[pycfml-modules]]
-main-file = 'py_cfml_profiles'
-
-[[pycfml-modules]]
-main-file = 'py_cfml_sxtal_geom'
-
-[[pycfml-modules]]
-main-file = 'powder_mod'
-
-[[pycfml-modules]]
-main-file = 'powder_mod_2'
+[[cfml-modules]]
+main-file = 'CFML_Wraps_Utils'
 
 # CrysFML test programs source files
 
@@ -835,6 +827,37 @@ main-file = 'Simple_calc_Mag_powder'
 main-dir = 'StructureFactors'
 main-file = 'Calc_Sfac'
 
+# CrysFML wraps for Python API
+
+[[cfml-wraps]]
+main-file = 'CFML_Wraps'
+components-dir = 'CFML_Wraps'
+components-files = [
+    'Wraps_Bonds_Tables',
+    'Wraps_Strings',
+    'Wraps_BckPeaks',
+    'Wraps_Scattering_Tables',
+    'Wraps_Structure_Factors',
+    'Wraps_Geom',
+    'Wraps_Metrics',
+    'Wraps_ExtinCorr',
+    'Wraps_Symmetry_Tables',
+    'Wraps_DiffPatt',
+    'Wraps_EoS',
+    'Wraps_IOForm',
+    'Wraps_Molecules',
+    'Wraps_Propagation_Vectors',
+    'Wraps_ILL_Instrm_Data',
+    'Wraps_Reflections',
+    'Wraps_BVS_Tables',
+    'Wraps_EnBVS',
+    'Wraps_SXTAL_Geom',
+    'Wraps_Simulated_Annealing',
+    'Wraps_Profiles',
+    'Wraps_Rational',
+    'Wraps_gSpaceGroups',
+    'Wraps_kvec_Symmetry'
+]
 
 ##################
 ##################

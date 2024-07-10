@@ -192,7 +192,7 @@ modes.debug = ''
 modes.release = ''
 
 [[build-objs]]
-platforms = ['macos']
+platforms = ['macos', 'windows']
 compilers = ['nagfor']
 obj-ext = 'o'
 build-shared = '{COMPILER} -Wl,-shared {PATH}.o -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {PYTHON_LIB}'

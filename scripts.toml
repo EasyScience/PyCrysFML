@@ -789,6 +789,13 @@ components-files = [
 [[cfml-modules]]
 main-file = 'CFML_Wraps_Utils'
 
+[[cfml-modules]]
+main-file = 'CFML_Utilities'
+components-dir = 'CFML_Utilities'
+components-files = [
+    'Utilities_Patterns'
+]
+
 # CrysFML test programs source files
 
 [[cfml-tests]]

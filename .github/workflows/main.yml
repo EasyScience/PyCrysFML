@@ -110,7 +110,6 @@ jobs:
         run: |
           scripts/build_cfml_test_programs.sh
           scripts/run_cfml_functional_tests_no_benchmarks.sh
-          scripts/run_cfml_functional_tests_with_benchmarks.sh
 
       - name: Push benchmark results to repository
         uses: EndBug/add-and-commit@v9
@@ -166,25 +165,19 @@ jobs:
           compression-level: 0
 
   tests: # the second job
-    # don't run it
-    if: false
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, windows-2022, macos-12, macos-14]
+        #os: [ubuntu-22.04, windows-2022, macos-12, macos-14]
+        os: [windows-2022]
         toolchain:
-          - { exe: gfortran, compiler: gcc, version: 13 }
-          - { exe: ifort, compiler: intel-classic, version: "2021.10" }
-          - { exe: ifx, compiler: intel, version: "2023.2" }
-        exclude:
-          - os: macos-12
-            toolchain: { exe: ifx, compiler: intel, version: "2023.2" }  # no support for macOS
-          - os: macos-14
-            toolchain: { exe: ifx, compiler: intel, version: "2023.2" }  # no support for macOS on arm64
-          - os: macos-14
-            toolchain: { exe: ifort, compiler: intel-classic, version: "2021.10" }  # no support for macOS on arm64
+          # - { exe: gfortran, compiler: gcc, version: 13 }
+          # - { exe: ifort, compiler: intel-classic, version: "2021.10" }
+          # - { exe: ifx, compiler: intel, version: "2023.2" }
+          - { exe: nagfor, compiler: nagfor, version: "7.0"}
 
-    runs-on: ${{ matrix.os }}
+    #runs-on: ${{ matrix.os }}
+    runs-on: self-hosted
 
     timeout-minutes: 30
 

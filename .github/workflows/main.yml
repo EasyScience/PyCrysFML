@@ -57,11 +57,11 @@ jobs:
           python-version: 3.11
 
       - name: Upgrade package installer for Python
-        #shell: bash
+        shell: bash
         run: python3 -m pip install --upgrade pip
 
       - name: Install Python dependences
-        #shell: bash
+        shell: bash
         run: python3 -m pip install '.[ci,test]'  # ci extras from pyproject.toml
 
       - name: Fix reinstalling gcc [macOS]  # needed because of `brew reinstall gcc`
@@ -70,7 +70,7 @@ jobs:
         run: echo "MACOSX_DEPLOYMENT_TARGET=$(sw_vers -productVersion)" >> $GITHUB_ENV
 
       - name: Create job scripts
-        #shell: bash
+        shell: bash
         run: >
           python3 scripts.py
           --platform ${{ runner.os }}
@@ -79,17 +79,17 @@ jobs:
           --bash-syntax
 
       - name: Print some build-specific variables
-        #shell: bash
+        shell: bash
         run: scripts/print_build_variables.sh  # bash -x scripts/print_build_variables.sh for printing commands
 
       - name: Download CFML repository
-        #shell: bash
+        shell: bash
         run: |
           scripts/create_cfml_repo_dir.sh
           scripts/download_cfml_repo.sh
 
       - name: Build CFML static library
-        #shell: bash
+        shell: bash
         run: |
           scripts/create_cfml_build_dir.sh
           scripts/rename_global_deps_file.sh
@@ -120,17 +120,17 @@ jobs:
           pull: '--rebase --autostash'
 
       - name: Download PYCFML repository
-        #shell: bash
+        shell: bash
         run: |
           scripts/create_pycfml_repo_dir.sh
           scripts/download_pycfml_repo.sh
 
       - name: Copy powder_mod from CFML to PYCFML
-        #shell: bash
+        shell: bash
         run: scripts/copy_powder_mod_to_pycfml_repo.sh
 
       - name: Build some PYCFML modules one by one
-        #shell: bash
+        shell: bash
         run: |
           scripts/create_pycfml_build_dir.sh
           scripts/build_pycfml_objs.sh
@@ -140,21 +140,21 @@ jobs:
           scripts/change_runpath_for_built_pycfml.sh
 
       - name: Copy extra files to PYCFML dist
-        #shell: bash
+        shell: bash
         run: |
           scripts/copy_extra_libs_to_pycfml_dist.sh
           scripts/copy_init_file_to_pycfml_dist.sh
           scripts/copy_cfml_databases_to_pycfml_dist.sh
 
       - name: Create Python package wheel of PYCFML
-        #shell: bash
+        shell: bash
         run: |
           scripts/validate_pyproject_toml.sh
           scripts/create_pycfml_python_wheel.sh
           scripts/rename_pycfml_python_wheel.sh
 
       - name: Prepare for uploading Python package wheel of PYCFML
-        #shell: bash
+        shell: bash
         run: echo "WHEEL_DIR=$(python3 scripts.py --print-wheel-dir)" >> $GITHUB_ENV
 
       - name: Upload zipped Python package wheel of PYCFML for next job

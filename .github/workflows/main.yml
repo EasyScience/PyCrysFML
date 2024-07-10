@@ -70,7 +70,7 @@ jobs:
         run: echo "MACOSX_DEPLOYMENT_TARGET=$(sw_vers -productVersion)" >> $GITHUB_ENV
 
       - name: Create job scripts
-        shell: bash
+        #shell: bash
         run: >
           python3 scripts.py
           --platform ${{ runner.os }}

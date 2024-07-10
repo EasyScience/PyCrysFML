@@ -106,7 +106,7 @@ jobs:
           (runner.os != 'macOS' || matrix.toolchain.exe != 'ifort')
           &&
           (runner.os != 'Windows' || matrix.toolchain.exe != 'ifx')
-        #shell: bash
+        shell: bash
         run: |
           scripts/build_cfml_test_programs.sh
           scripts/run_cfml_functional_tests_no_benchmarks.sh

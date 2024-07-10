@@ -106,7 +106,7 @@ jobs:
           (runner.os != 'macOS' || matrix.toolchain.exe != 'ifort')
           &&
           (runner.os != 'Windows' || matrix.toolchain.exe != 'ifx')
-        shell: bash
+        #shell: bash
         run: |
           scripts/build_cfml_test_programs.sh
           scripts/run_cfml_functional_tests_no_benchmarks.sh
@@ -120,17 +120,17 @@ jobs:
           pull: '--rebase --autostash'
 
       - name: Download PYCFML repository
-        shell: bash
+        #shell: bash
         run: |
           scripts/create_pycfml_repo_dir.sh
           scripts/download_pycfml_repo.sh
 
       - name: Copy powder_mod from CFML to PYCFML
-        shell: bash
+        #shell: bash
         run: scripts/copy_powder_mod_to_pycfml_repo.sh
 
       - name: Build some PYCFML modules one by one
-        shell: bash
+        #shell: bash
         run: |
           scripts/create_pycfml_build_dir.sh
           scripts/build_pycfml_objs.sh
@@ -140,21 +140,21 @@ jobs:
           scripts/change_runpath_for_built_pycfml.sh
 
       - name: Copy extra files to PYCFML dist
-        shell: bash
+        #shell: bash
         run: |
           scripts/copy_extra_libs_to_pycfml_dist.sh
           scripts/copy_init_file_to_pycfml_dist.sh
           scripts/copy_cfml_databases_to_pycfml_dist.sh
 
       - name: Create Python package wheel of PYCFML
-        shell: bash
+        #shell: bash
         run: |
           scripts/validate_pyproject_toml.sh
           scripts/create_pycfml_python_wheel.sh
           scripts/rename_pycfml_python_wheel.sh
 
       - name: Prepare for uploading Python package wheel of PYCFML
-        shell: bash
+        #shell: bash
         run: echo "WHEEL_DIR=$(python3 scripts.py --print-wheel-dir)" >> $GITHUB_ENV
 
       - name: Upload zipped Python package wheel of PYCFML for next job

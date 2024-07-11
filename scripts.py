@@ -988,31 +988,31 @@ def change_runpath_for_built_pycfml():
     package_dir = CONFIG['pycfml']['dir']['dist-package']
     package_relpath = os.path.join(dist_dir, package_dir)
     package_abspath = os.path.join(_project_path(), dist_dir, package_dir)
-    total = 1
-    current = 0
+    #total = 1
+    #current = 0
     lines = []
     if _platform() == 'linux':
         set_rpath_template_cmd = CONFIG['template']['rpath']['set'][_platform()]
         no_default_lib_template_cmd = CONFIG['template']['no-default-lib'][_platform()]
         msg = _echo_msg(f"Changing runpath(s) for built {project_name} shared objects")
         lines.append(msg)
-        for module in [CONFIG['pycfml']['src-name']]:
-            if 'main-file' in module:
-                for rpath in rpaths:
-                    current += 1
-                    name = f'{module["main-file"]}'
-                    path = os.path.join(package_abspath, name)
-                    msg = _echo_progress_msg(current, total, f'{name}.{shared_lib_ext}')
-                    lines.append(msg)
-                    cmd = set_rpath_template_cmd
-                    cmd = cmd.replace('{NEW}', rpath['new'])
-                    cmd = cmd.replace('{PATH}', path)
-                    cmd = cmd.replace('{EXT}', shared_lib_ext)
-                    lines.append(cmd)
-                    cmd = no_default_lib_template_cmd
-                    cmd = cmd.replace('{PATH}', path)
-                    cmd = cmd.replace('{EXT}', shared_lib_ext)
-                    lines.append(cmd)
+        name = CONFIG['pycfml']['src-name']
+        path = os.path.join(package_abspath, name)
+        for rpath in rpaths:
+            #current += 1
+            #name = f'{module["main-file"]}'
+            #path = os.path.join(package_abspath, name)
+            #msg = _echo_progress_msg(current, total, f'{name}.{shared_lib_ext}')
+            #lines.append(msg)
+            cmd = set_rpath_template_cmd
+            cmd = cmd.replace('{NEW}', rpath['new'])
+            cmd = cmd.replace('{PATH}', path)
+            cmd = cmd.replace('{EXT}', shared_lib_ext)
+            lines.append(cmd)
+            cmd = no_default_lib_template_cmd
+            cmd = cmd.replace('{PATH}', path)
+            cmd = cmd.replace('{EXT}', shared_lib_ext)
+            lines.append(cmd)
     elif _platform() == 'macos':
         try:
             dependent_libs = CONFIG['build']['dependent-libs'][_platform()][_processor()][_compiler_name()]
@@ -1307,7 +1307,7 @@ if __name__ == '__main__':
     build_pycfml_lib_obj()
     build_pycfml_shared_obj_or_dynamic_lib()
     copy_built_to_pycfml_dist()
-    #change_runpath_for_built_pycfml()
+    change_runpath_for_built_pycfml()
 
     headers = _echo_header(f"Creating {pycfml_project_name} python package wheel")
     append_to_main_script(headers)

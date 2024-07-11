@@ -8,7 +8,7 @@ apigen-file = 'apigen.py'
 
 [cfml.git]
 url = 'https://code.ill.fr/scientific-software/crysfml2008.git'
-branch = 'powder_mod_fix'
+branch = 'powder_mod_fix_old'
 
 [cfml.dir]
 repo = 'crysfml08_repo'

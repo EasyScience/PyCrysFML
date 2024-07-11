@@ -946,7 +946,7 @@ def copy_built_to_pycfml_dist():
     cmd = f'cp {from_path} {package_abspath}'
     lines.append(cmd)
 
-    lines.append(f"ls -l {os.path.join(_project_path(), CONFIG['pycfml']['dir']['dist'])}")
+    #lines.append(f"ls -l {os.path.join(_project_path(), CONFIG['pycfml']['dir']['dist']), CONFIG['pycfml']['dir']['dist-package'])}")
 
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
@@ -982,14 +982,13 @@ def change_runpath_for_built_pycfml():
         _write_lines_to_file(lines, script_name)
         append_to_main_script(lines)
         return
-    modules = 'pycfml-modules'
     project_name = CONFIG['pycfml']['log-name']
     shared_lib_ext = CONFIG['build']['shared-lib-ext'][_platform()]
     dist_dir = CONFIG['pycfml']['dir']['dist']
     package_dir = CONFIG['pycfml']['dir']['dist-package']
     package_relpath = os.path.join(dist_dir, package_dir)
     package_abspath = os.path.join(_project_path(), dist_dir, package_dir)
-    total = _total_src_file_count(modules)
+    total = 1
     current = 0
     lines = []
     if _platform() == 'linux':
@@ -997,7 +996,7 @@ def change_runpath_for_built_pycfml():
         no_default_lib_template_cmd = CONFIG['template']['no-default-lib'][_platform()]
         msg = _echo_msg(f"Changing runpath(s) for built {project_name} shared objects")
         lines.append(msg)
-        for module in CONFIG[modules]:
+        for module in [CONFIG['pycfml']['src-name']]:
             if 'main-file' in module:
                 for rpath in rpaths:
                     current += 1
@@ -1024,7 +1023,7 @@ def change_runpath_for_built_pycfml():
         change_rpath_template_cmd = CONFIG['template']['rpath']['change'][_platform()]
         msg = _echo_msg(f"Changing runpath(s) for built {project_name} shared objects")
         lines.append(msg)
-        for module in CONFIG[modules]:
+        for module in [CONFIG['pycfml']['src-name']]:
             if 'main-file' in module:
                 current += 1
                 name = f'{module["main-file"]}'
@@ -1079,8 +1078,26 @@ def copy_extra_libs_to_pycfml_dist():
         cmd = f'cp {lib_path} {package_abspath}'
         lines.append(cmd)
 
-    lines.append(f"ls -l {os.path.join(_project_path(), CONFIG['pycfml']['dir']['dist'])}")
+    #lines.append(f"ls -l {os.path.join(_project_path(), CONFIG['pycfml']['dir']['dist']), CONFIG['pycfml']['dir']['dist-package'])}")
 
+    script_name = f'{sys._getframe().f_code.co_name}.sh'
+    _write_lines_to_file(lines, script_name)
+    append_to_main_script(lines)
+
+def copy_py_api_files_to_pycfml_dist():
+    project_name = CONFIG['pycfml']['log-name']
+    repo_dir = CONFIG['cfml']['dir']['repo']
+    dist_dir = CONFIG['pycfml']['dir']['dist']
+    from_dir = os.path.join(repo_dir, 'Python_API', '*.py')
+    from_path = os.path.join(_project_path(), from_dir)
+    package_dir = CONFIG['pycfml']['dir']['dist-package']
+    package_relpath = os.path.join(dist_dir, package_dir)
+    package_abspath = os.path.join(_project_path(), package_relpath)
+    lines = []
+    msg = _echo_msg(f"Copying {project_name} python api files from '{from_dir}' to dist dir '{package_relpath}'")
+    lines.append(msg)
+    cmd = f'cp {from_path} {package_abspath}'
+    lines.append(cmd)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
@@ -1100,7 +1117,7 @@ def copy_init_file_to_pycfml_dist():
     cmd = f'cp {from_path} {package_abspath}'
     lines.append(cmd)
 
-    lines.append(f"ls -l {os.path.join(_project_path(), CONFIG['pycfml']['dir']['dist'])}")
+    #lines.append(f"ls -l {os.path.join(_project_path(), CONFIG['pycfml']['dir']['dist']), CONFIG['pycfml']['dir']['dist-package'])}")
 
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
@@ -1129,7 +1146,7 @@ def copy_cfml_databases_to_pycfml_dist():
     cmd = f'cp {cfml_databases_abspath} {pycfml_databases_abspath}'
     lines.append(cmd)
 
-    lines.append(f"ls -l {os.path.join(_project_path(), CONFIG['pycfml']['dir']['dist'])}")
+    #lines.append(f"ls -l {os.path.join(_project_path(), CONFIG['pycfml']['dir']['dist']), CONFIG['pycfml']['dir']['dist-package'])}")
 
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
@@ -1153,7 +1170,7 @@ def create_pycfml_python_wheel():
     msg = _echo_msg(f"Creating '{project_name}' python wheel in '{wheel_dir}'")
     lines.append(msg)
 
-    lines.append(f"ls -l {os.path.join(_project_path(), CONFIG['pycfml']['dir']['dist'])}")
+    #lines.append(f"ls -l {os.path.join(_project_path(), CONFIG['pycfml']['dir']['dist']), CONFIG['pycfml']['dir']['dist-package'])}")
 
     cmd = CONFIG['template']['build-wheel']
     cmd = cmd.replace('{PATH}', wheel_path)
@@ -1284,11 +1301,12 @@ if __name__ == '__main__':
     build_pycfml_lib_obj()
     build_pycfml_shared_obj_or_dynamic_lib()
     copy_built_to_pycfml_dist()
-    #change_runpath_for_built_pycfml()
+    change_runpath_for_built_pycfml()
 
     headers = _echo_header(f"Creating {pycfml_project_name} python package wheel")
     append_to_main_script(headers)
     copy_extra_libs_to_pycfml_dist()
+    copy_py_api_files_to_pycfml_dist()
     copy_init_file_to_pycfml_dist()
     copy_cfml_databases_to_pycfml_dist()
     validate_pyproject_toml()

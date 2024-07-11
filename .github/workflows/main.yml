@@ -27,7 +27,7 @@ jobs:
         #     toolchain: { exe: ifort, compiler: intel-classic, version: "2021.10" } # no support for macOS on arm64
 
     #runs-on: ${{ matrix.os }}
-    runs-on: self-hosted
+    runs-on: [Linux, Windows]
 
     timeout-minutes: 30
 

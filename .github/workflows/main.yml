@@ -70,21 +70,29 @@ jobs:
         shell: bash
         run: scripts/print_build_variables.sh  # bash -x scripts/print_build_variables.sh for printing commands
 
-      - name: Download CFML repository
+      - name: Create CFML and PYCFML directories
         shell: bash
         run: |
           scripts/create_cfml_repo_dir.sh
+          scripts/create_cfml_build_dir.sh
+          scripts/create_cfml_dist_dir.sh
+          scripts/create_pycfml_repo_dir.sh
+          scripts/create_pycfml_build_dir.sh
+          scripts/create_pycfml_dist_dir.sh
+
+      - name: Download CFML and PYCFML repositories
+        shell: bash
+        run: |
           scripts/download_cfml_repo.sh
+          scripts/download_pycfml_repo.sh
 
       - name: Build CFML static library
         shell: bash
         run: |
           scripts/rename_global_deps_file.sh
-          scripts/create_cfml_build_dir.sh
           scripts/build_cfml_objs.sh
           scripts/delete_renamed_global_deps_file.sh
           scripts/build_cfml_static_lib.sh
-          scripts/create_cfml_dist_dir.sh
           scripts/copy_built_to_cfml_dist.sh
 
       #- name: Build und run CFML functional test programs (incl. benchmarks)
@@ -107,12 +115,6 @@ jobs:
       #    message: 'Auto push benchmark results by GitHub Action for ${{ runner.os }} + ${{ matrix.toolchain.exe }}'
       #    pull: '--rebase --autostash'
 
-      - name: Download PYCFML repository
-        shell: bash
-        run: |
-          scripts/create_pycfml_repo_dir.sh
-          scripts/download_pycfml_repo.sh
-
       #- name: Copy powder_mod from CFML to PYCFML
       #  shell: bash
       #  run: scripts/copy_powder_mod_to_pycfml_repo.sh
@@ -120,8 +122,6 @@ jobs:
       - name: Build CFML wraps and PYCFML shared obj or dynamic library
         shell: bash
         run: |
-          scripts/create_pycfml_build_dir.sh
-          scripts/create_pycfml_dist_dir.sh
           scripts/create_pycfml_wraps_src.sh
           scripts/build_pycfml_wraps_objs.sh
           scripts/build_pycfml_lib_obj.sh

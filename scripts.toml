@@ -844,6 +844,7 @@ main-file = 'Calc_Sfac'
 main-file = 'CFML_Wraps'
 components-dir = 'CFML_Wraps'
 components-files = [
+    'Wraps_Atoms',
     'Wraps_Bonds_Tables',
     'Wraps_Strings',
     'Wraps_BckPeaks',

@@ -27,7 +27,7 @@ jobs:
         #     toolchain: { exe: ifort, compiler: intel-classic, version: "2021.10" } # no support for macOS on arm64
 
     #runs-on: ${{ matrix.os }}
-    runs-on: [Linux, Windows]
+    runs-on: ['self-hosted', 'self-hosted-linux']
 
     timeout-minutes: 30
 
@@ -177,7 +177,7 @@ jobs:
           - { exe: nagfor, compiler: nagfor, version: "7.0"}
 
     #runs-on: ${{ matrix.os }}
-    runs-on: self-hosted
+    runs-on: ['self-hosted', 'self-hosted-linux']
 
     timeout-minutes: 30
 

@@ -1088,7 +1088,7 @@ def copy_py_api_files_to_pycfml_dist():
     project_name = CONFIG['pycfml']['log-name']
     repo_dir = CONFIG['cfml']['dir']['repo']
     dist_dir = CONFIG['pycfml']['dir']['dist']
-    from_dir = os.path.join(repo_dir, 'Python_API', '*.py')
+    from_dir = os.path.join(repo_dir, 'build', 'Python_API', '*.py')
     from_path = os.path.join(_project_path(), from_dir)
     package_dir = CONFIG['pycfml']['dir']['dist-package']
     package_relpath = os.path.join(dist_dir, package_dir)

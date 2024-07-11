@@ -3,17 +3,17 @@
 [cfml]
 log-name = 'CrysFML2008'
 static-lib-name = 'CrysFML08' # without 'lib' prefix on unix-based platforms
-apigen-dir = 'Src/python_scripts'
+apigen-dir = 'Scripts/PythonAPI'
 apigen-file = 'apigen.py'
 
 [cfml.git]
 url = 'https://code.ill.fr/scientific-software/crysfml2008.git'
-branch = 'powder_mod_fix_old'
+branch = 'powder_mod_fix'
 
 [cfml.dir]
 repo = 'crysfml08_repo'
 repo-src = 'Src'
-repo-wraps = 'Python_API/Fortran'
+repo-wraps = 'build/Fortran'
 repo-tests = 'Testing'
 build = 'crysfml08_build'
 dist = 'crysfml08_dist'

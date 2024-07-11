@@ -26,11 +26,11 @@ More details are in the [CI script](.github/workflows/main.yml).
 
 ### To run locally
 
-* Create and activate a python environment (_optional_)
+* Create and activate a python environment (_optional_) 
 
   ```
   $ python3.11 -m venv .venv
-  $ source .venv/bin/activate 
+  $ source .venv/bin/activate
   ```
 
 * Upgrade the package installer for Python (_optional_)
@@ -38,7 +38,7 @@ More details are in the [CI script](.github/workflows/main.yml).
   ```
   $ python -m pip install --upgrade pip
   ```
-  
+
 * Install Python dependences, including extras
 
   ```
@@ -48,7 +48,7 @@ More details are in the [CI script](.github/workflows/main.yml).
 * Print possible options for creating job scripts (_optional_)
 
   ```
-  $ python scripts.py --help 
+  $ python scripts.py --help
   ```
 
 * Create job scripts with default options
@@ -68,4 +68,3 @@ More details are in the [CI script](.github/workflows/main.yml).
   ```
   $ scripts/main_script.sh
   ```
-  

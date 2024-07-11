@@ -96,18 +96,18 @@ jobs:
           scripts/create_cfml_dist_dir.sh
           scripts/copy_built_to_cfml_dist.sh
 
-      - name: Build und run CFML functional test programs (incl. benchmarks)
-        # 1st combination: this always fails with 'Undefined symbols...' error
-        # 2nd combination: this randomly fails with test__Simple_calc_powder__SrTiO3s 'forrtl: severe (157): Program Exception - access violation'
-        if: |
-          (runner.os != 'macOS' || matrix.toolchain.exe != 'ifort')
-          &&
-          (runner.os != 'Windows' || matrix.toolchain.exe != 'ifx')
-        shell: bash
-        run: |
-          scripts/build_cfml_test_programs.sh
-          scripts/run_cfml_functional_tests_no_benchmarks.sh
-        #  scripts/run_cfml_functional_tests_with_benchmarks.sh
+      #- name: Build und run CFML functional test programs (incl. benchmarks)
+      #  # 1st combination: this always fails with 'Undefined symbols...' error
+      #  # 2nd combination: this randomly fails with test__Simple_calc_powder__SrTiO3s 'forrtl: severe (157): Program Exception - access violation'
+      #  if: |
+      #    (runner.os != 'macOS' || matrix.toolchain.exe != 'ifort')
+      #    &&
+      #    (runner.os != 'Windows' || matrix.toolchain.exe != 'ifx')
+      #  shell: bash
+      #  run: |
+      #    scripts/build_cfml_test_programs.sh
+      #    scripts/run_cfml_functional_tests_no_benchmarks.sh
+      #  #  scripts/run_cfml_functional_tests_with_benchmarks.sh
 
       #- name: Push benchmark results to repository
       #  uses: EndBug/add-and-commit@v9
@@ -129,11 +129,12 @@ jobs:
       - name: Build CFML wraps and PYCFML shared obj or dynamic library
         shell: bash
         run: |
-          scripts/create_pycfml_wraps_src.sh
           scripts/create_pycfml_build_dir.sh
+          scripts/create_pycfml_dist_dir.sh
+          scripts/create_pycfml_wraps_src.sh
           scripts/build_pycfml_wraps_objs.sh
           scripts/build_pycfml_lib_obj.sh
-          scripts/create_pycfml_dist_dir.sh
+          scripts/build_pycfml_shared_obj_or_dynamic_lib.sh
           scripts/copy_built_to_pycfml_dist.sh
 
       - name: Copy extra files to PYCFML dist

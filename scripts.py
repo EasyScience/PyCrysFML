@@ -195,7 +195,7 @@ def _compiling_progress(current: int, total: int):
     progress = round(current / total * 100)
     return progress
 
-def _compile_single_obj_script_cmd(src_path: str,
+def _compile_obj_script_line(src_path: str,
                                    include_path: str=''):
     compiler = _compiler_name()
     options = _compiler_options()
@@ -768,46 +768,19 @@ def create_pycfml_build_dir():
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
 
-def build_pycfml_objs():
-    project_name = CONFIG['pycfml']['log-name']
-    repo_dir = CONFIG['pycfml']['dir']['repo']
-    src_dir = CONFIG['pycfml']['dir']['repo-src']
-    src_path = os.path.join(_project_path(), repo_dir, src_dir)
-    build_dir = CONFIG['pycfml']['dir']['build']
-    build_path = os.path.join(_project_path(), build_dir)
-    dist_dir = CONFIG['cfml']['dir']['dist']
-    include_dist_dir = CONFIG['cfml']['dir']['dist-include']
-    include_dist_path = os.path.join(_project_path(), dist_dir, include_dist_dir)
-    lines = []
-    msg = _echo_msg(f"Entering build dir '{build_dir}'")
-    lines.append(msg)
-    cmd = f'cd {build_path}'
-    lines.append(cmd)
-    msg = _echo_msg(f"Building fortran objects for {project_name}:")
-    lines.append(msg)
-    compile_lines = _compile_objs_script_lines('pycfml-modules', src_path, include_dist_path)
-    lines.extend(compile_lines)
-    msg = _echo_msg(f"Exiting build dir '{build_dir}'")
-    lines.append(msg)
-    cmd = f'cd {_project_path()}'
-    lines.append(cmd)
-    script_name = f'{sys._getframe().f_code.co_name}.sh'
-    _write_lines_to_file(lines, script_name)
-    append_to_main_script(lines)
-
 def create_pycfml_wraps_src():
-    project_name = CONFIG['pycfml']['log-name']
+    project_name = CONFIG['cfml']['log-name']
     repo_dir = CONFIG['cfml']['dir']['repo']
     apigen_dir = CONFIG['cfml']['apigen-dir']
-    apigen_dir = os.path.join(_project_path(), repo_dir, *apigen_dir.split('/'))
-    #pigen_dir = os.path.abspath(apigen_dir)
+    apigen_dir = os.path.join(repo_dir, *apigen_dir.split('/'))
+    apigen_path = os.path.join(_project_path(), apigen_dir)
     apigen_file = CONFIG['cfml']['apigen-file']
     lines = []
     msg = _echo_msg(f"Entering apigen dir '{apigen_dir}'")
     lines.append(msg)
-    cmd = f'cd {apigen_dir}'
+    cmd = f'cd {apigen_path}'
     lines.append(cmd)
-    msg = _echo_msg(f"Building fortran objects for {project_name}:")
+    msg = _echo_msg(f"Creating {project_name} wraps:")
     lines.append(msg)
     cmd = CONFIG['template']['run-python']
     cmd = cmd.replace('{PATH}', apigen_file)
@@ -835,7 +808,7 @@ def build_pycfml_wraps_objs():
     lines.append(msg)
     cmd = f'cd {build_path}'
     lines.append(cmd)
-    msg = _echo_msg(f"Building fortran objects for {project_name}:")
+    msg = _echo_msg(f"Building fortran objects for {project_name} wraps:")
     lines.append(msg)
     compile_lines = _compile_objs_script_lines('cfml-wraps', src_path, include_dist_path)
     lines.extend(compile_lines)
@@ -865,9 +838,9 @@ def build_pycfml_lib_obj():
     lines.append(msg)
     cmd = f'cd {build_path}'
     lines.append(cmd)
-    msg = _echo_msg(f"Building fortran object for {project_name}:")
+    msg = _echo_msg(f"Building fortran object of {project_name} lib:")
     lines.append(msg)
-    compile_line = _compile_single_obj_script_cmd(src_path, include_dist_path)
+    compile_line = _compile_obj_script_line(src_path, include_dist_path)
     lines.append(compile_line)
     msg = _echo_msg(f"Exiting build dir '{build_dir}'")
     lines.append(msg)
@@ -905,9 +878,12 @@ def build_pycfml_shared_obj_or_dynamic_lib():
     lines = []
     msg = _echo_msg(f"Entering build dir '{build_dir}'")
     lines.append(msg)
+
+    lines.append(f'ls -l {build_path}')
+
     cmd = f'cd {build_path}'
     lines.append(cmd)
-    msg = _echo_msg(f"Building fortran shared obj or dynamic lib for {project_name}:")
+    msg = _echo_msg(f"Building {project_name} shared obj or dynamic lib:")
     lines.append(msg)
     compile_line = _compile_pycfml_shared_obj_or_dynamic_lib_script_line()
     lines.append(compile_line)
@@ -915,6 +891,9 @@ def build_pycfml_shared_obj_or_dynamic_lib():
     lines.append(msg)
     cmd = f'cd {_project_path()}'
     lines.append(cmd)
+
+    lines.append(f'ls -l {build_path}')
+
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
@@ -1274,11 +1253,11 @@ if __name__ == '__main__':
     headers = _echo_header(f"Creating {pycfml_project_name} shared object / dynamic library")
     append_to_main_script(headers)
     create_pycfml_build_dir()
+    create_pycfml_dist_dir()
     create_pycfml_wraps_src()
     build_pycfml_wraps_objs()
     build_pycfml_lib_obj()
     build_pycfml_shared_obj_or_dynamic_lib()
-    create_pycfml_dist_dir()
     copy_built_to_pycfml_dist()
     #change_runpath_for_built_pycfml()
 

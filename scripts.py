@@ -1003,7 +1003,8 @@ def change_runpath_for_built_pycfml():
             #name = f'{module["main-file"]}'
             #path = os.path.join(package_abspath, name)
             #msg = _echo_progress_msg(current, total, f'{name}.{shared_lib_ext}')
-            #lines.append(msg)
+            msg = _echo_msg(f"Changing runpath for {name}.{shared_lib_ext} from {rpath['old']} to {rpath['new']}")
+            lines.append(msg)
             cmd = set_rpath_template_cmd
             cmd = cmd.replace('{NEW}', rpath['new'])
             cmd = cmd.replace('{PATH}', path)

@@ -780,7 +780,7 @@ def create_pycfml_wraps_src():
     lines.append(msg)
     cmd = f'cd {apigen_path}'
     lines.append(cmd)
-    msg = _echo_msg(f"Creating {project_name} wraps:")
+    msg = _echo_msg(f"Creating {project_name} wraps")
     lines.append(msg)
     cmd = CONFIG['template']['run-python']
     cmd = cmd.replace('{PATH}', apigen_file)
@@ -808,7 +808,7 @@ def build_pycfml_wraps_objs():
     lines.append(msg)
     cmd = f'cd {build_path}'
     lines.append(cmd)
-    msg = _echo_msg(f"Building fortran objects for {project_name} wraps:")
+    msg = _echo_msg(f"Building fortran objects for {project_name} wraps")
     lines.append(msg)
     compile_lines = _compile_objs_script_lines('cfml-wraps', src_path, include_dist_path)
     lines.extend(compile_lines)
@@ -838,7 +838,7 @@ def build_pycfml_lib_obj():
     lines.append(msg)
     cmd = f'cd {build_path}'
     lines.append(cmd)
-    msg = _echo_msg(f"Building fortran object of {project_name} lib:")
+    msg = _echo_msg(f"Building fortran object of {project_name} lib")
     lines.append(msg)
     compile_line = _compile_obj_script_line(src_path, include_dist_path)
     lines.append(compile_line)

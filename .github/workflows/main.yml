@@ -116,11 +116,11 @@ jobs:
       #    message: 'Auto push benchmark results by GitHub Action for ${{ runner.os }} + ${{ matrix.toolchain.exe }}'
       #    pull: '--rebase --autostash'
 
-      #- name: Download PYCFML repository
-      #  shell: bash
-      #  run: |
-      #    scripts/create_pycfml_repo_dir.sh
-      #    scripts/download_pycfml_repo.sh
+      - name: Download PYCFML repository
+        shell: bash
+        run: |
+          scripts/create_pycfml_repo_dir.sh
+          scripts/download_pycfml_repo.sh
 
       #- name: Copy powder_mod from CFML to PYCFML
       #  shell: bash

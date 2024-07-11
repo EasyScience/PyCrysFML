@@ -1260,6 +1260,8 @@ if __name__ == '__main__':
 
     headers = _echo_header(f"Creating {pycfml_project_name} shared object / dynamic library")
     append_to_main_script(headers)
+    create_pycfml_repo_dir()
+    download_pycfml_repo()
     create_pycfml_build_dir()
     create_pycfml_dist_dir()
     create_pycfml_wraps_src()

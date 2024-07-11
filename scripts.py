@@ -101,6 +101,13 @@ def _python_lib():
         raise Exception(f'Unsupported platform {_platform()}')
     return python_lib
 
+def _ifport_lib():
+    try:
+        ifport_lib = CONFIG['build'][_platform()][_compiler_name()]
+    except KeyError:
+        ifport_lib = ''
+    return ifport_lib
+
 def _fix_file_permissions(path: str):
     os.chmod(path, 0o777)
 
@@ -203,6 +210,24 @@ def _compile_single_obj_script_cmd(src_path: str,
     cmd = cmd.replace('{PATH}', src_path)
     return cmd
 
+def _compile_pycfml_shared_obj_or_dynamic_lib_script_line():
+    src_name = CONFIG['pycfml']['src-name']
+    shared_lib_ext = CONFIG['build']['shared-lib-ext'][_platform()]
+    cfml_lib_name = CONFIG['cfml']['static-lib-name']
+    cfml_dist_dir = CONFIG['cfml']['dir']['dist']
+    cfml_dist_path = os.path.join(_project_path(), cfml_dist_dir)
+    cfml_lib_dist_dir = CONFIG['cfml']['dir']['dist-lib']
+    cfml_lib_dist_path = os.path.join(cfml_dist_path, cfml_lib_dist_dir)
+    cmd = _compiler_build_shared_template()
+    cmd = cmd.replace('{COMPILER}', _compiler_name())
+    cmd = cmd.replace('{PATH}', src_name)
+    cmd = cmd.replace('{EXT}', shared_lib_ext)
+    cmd = cmd.replace('{CFML_LIB_PATH}', cfml_lib_dist_path)
+    cmd = cmd.replace('{CFML_LIB_NAME}', cfml_lib_name)
+    cmd = cmd.replace('{IFPORT_LIB}', _ifport_lib())
+    cmd = cmd.replace('{PYTHON_LIB}', _python_lib())
+    return cmd
+
 def _compile_objs_script_lines(modules: str,
                                src_path: str,
                                include_path: str=''):
@@ -250,7 +275,6 @@ def _compile_objs_script_lines(modules: str,
     return lines
 
 def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):
-    obj_ext = _obj_ext()
     cfml_lib_name = CONFIG['cfml']['static-lib-name']
     cfml_dist_dir = CONFIG['cfml']['dir']['dist']
     cfml_dist_path = os.path.join(_project_path(), cfml_dist_dir)
@@ -258,10 +282,6 @@ def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):
     cfml_lib_dist_path = os.path.join(cfml_dist_path, cfml_lib_dist_dir)
     template_cmd = _compiler_build_shared_template()
     shared_lib_ext = CONFIG['build']['shared-lib-ext'][_platform()]
-    try:
-        ifport_lib = CONFIG['build'][_platform()][_compiler_name()]
-    except KeyError:
-        ifport_lib = ''
     total = _total_src_file_count(modules)
     current = 0
     lines = []
@@ -269,7 +289,7 @@ def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):
         if 'main-file' in module:
             current += 1
             name = f'{module["main-file"]}'
-            msg = _echo_progress_msg(current, total, f'{name}.{obj_ext}')
+            msg = _echo_progress_msg(current, total, f'{name}.{_obj_ext()}')
             lines.append(msg)
             cmd = template_cmd
             cmd = cmd.replace('{COMPILER}', _compiler_name())
@@ -277,7 +297,7 @@ def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):
             cmd = cmd.replace('{EXT}', shared_lib_ext)
             cmd = cmd.replace('{CFML_LIB_PATH}', cfml_lib_dist_path)
             cmd = cmd.replace('{CFML_LIB_NAME}', cfml_lib_name)
-            cmd = cmd.replace('{IFPORT_LIB}', ifport_lib)
+            cmd = cmd.replace('{IFPORT_LIB}', _ifport_lib())
             cmd = cmd.replace('{PYTHON_LIB}', _python_lib())
             #lines.append(f"echo '>>>>> {cmd}'")
             lines.append(cmd)
@@ -889,8 +909,8 @@ def build_pycfml_shared_obj_or_dynamic_lib():
     lines.append(cmd)
     msg = _echo_msg(f"Building fortran shared obj or dynamic lib for {project_name}:")
     lines.append(msg)
-    compile_lines = _compile_shared_objs_or_dynamic_libs_script_lines('pycfml-modules')
-    lines.extend(compile_lines)
+    compile_line = _compile_pycfml_shared_obj_or_dynamic_lib_script_line()
+    lines.append(compile_line)
     msg = _echo_msg(f"Exiting build dir '{build_dir}'")
     lines.append(msg)
     cmd = f'cd {_project_path()}'
@@ -898,6 +918,11 @@ def build_pycfml_shared_obj_or_dynamic_lib():
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
+
+
+
+
+
 
 def create_pycfml_dist_dir():
     dist_dir = CONFIG['pycfml']['dir']['dist']
@@ -1252,8 +1277,8 @@ if __name__ == '__main__':
     create_pycfml_wraps_src()
     build_pycfml_wraps_objs()
     build_pycfml_lib_obj()
+    build_pycfml_shared_obj_or_dynamic_lib()
     create_pycfml_dist_dir()
-    #build_pycfml_shared_obj_or_dynamic_lib()
     copy_built_to_pycfml_dist()
     #change_runpath_for_built_pycfml()
 

@@ -887,7 +887,7 @@ def build_pycfml_shared_obj_or_dynamic_lib():
     msg = _echo_msg(f"Entering build dir '{build_dir}'")
     lines.append(msg)
 
-    lines.append(f'ls -l {build_path}')
+    #lines.append(f'ls -l {build_path}')
 
     cmd = f'cd {build_path}'
     lines.append(cmd)
@@ -901,7 +901,7 @@ def build_pycfml_shared_obj_or_dynamic_lib():
     cmd = f'cd {_project_path()}'
     lines.append(cmd)
 
-    lines.append(f'ls -l {build_path}')
+    #lines.append(f'ls -l {build_path}')
 
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
@@ -945,6 +945,9 @@ def copy_built_to_pycfml_dist():
     from_path = os.path.join(build_path, f'*.{shared_lib_ext}')
     cmd = f'cp {from_path} {package_abspath}'
     lines.append(cmd)
+
+    lines.append(f"ls -l {os.path.join(_project_path(), CONFIG['pycfml']['dir']['dist'])}")
+
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
@@ -1075,6 +1078,9 @@ def copy_extra_libs_to_pycfml_dist():
         lines.append(msg)
         cmd = f'cp {lib_path} {package_abspath}'
         lines.append(cmd)
+
+    lines.append(f"ls -l {os.path.join(_project_path(), CONFIG['pycfml']['dir']['dist'])}")
+
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
@@ -1093,6 +1099,9 @@ def copy_init_file_to_pycfml_dist():
     from_path = os.path.join(repo_path, 'pycrysfml08', '__init__.py')
     cmd = f'cp {from_path} {package_abspath}'
     lines.append(cmd)
+
+    lines.append(f"ls -l {os.path.join(_project_path(), CONFIG['pycfml']['dir']['dist'])}")
+
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
@@ -1119,6 +1128,9 @@ def copy_cfml_databases_to_pycfml_dist():
     lines.append(msg)
     cmd = f'cp {cfml_databases_abspath} {pycfml_databases_abspath}'
     lines.append(cmd)
+
+    lines.append(f"ls -l {os.path.join(_project_path(), CONFIG['pycfml']['dir']['dist'])}")
+
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
@@ -1140,6 +1152,9 @@ def create_pycfml_python_wheel():
     lines = []
     msg = _echo_msg(f"Creating '{project_name}' python wheel in '{wheel_dir}'")
     lines.append(msg)
+
+    lines.append(f"ls -l {os.path.join(_project_path(), CONFIG['pycfml']['dir']['dist'])}")
+
     cmd = CONFIG['template']['build-wheel']
     cmd = cmd.replace('{PATH}', wheel_path)
     lines.append(cmd)

@@ -871,10 +871,18 @@ def build_pycfml_shared_objs_or_dynamic_libs():
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
 
+
+
+
+
+
 def build_pycfml_shared_obj_or_dynamic_lib():
     project_name = CONFIG['pycfml']['log-name']
     build_dir = CONFIG['pycfml']['dir']['build']
     build_path = os.path.join(_project_path(), build_dir)
+    lib_name = CONFIG['pycfml']['src-name']  # NED FIX: use CONFIG['pycfml']['dynamic-lib-name']
+    lib_ext = CONFIG['build']['shared-lib-ext'][_platform()]
+
     lines = []
     msg = _echo_msg(f"Entering build dir '{build_dir}'")
     lines.append(msg)
@@ -883,7 +891,8 @@ def build_pycfml_shared_obj_or_dynamic_lib():
 
     cmd = f'cd {build_path}'
     lines.append(cmd)
-    msg = _echo_msg(f"Building {project_name} shared obj or dynamic lib:")
+    msg = _echo_msg(f"Building fortran shared obj or dynamic lib '{lib_name}.{lib_ext}'")
+
     lines.append(msg)
     compile_line = _compile_pycfml_shared_obj_or_dynamic_lib_script_line()
     lines.append(compile_line)
@@ -897,7 +906,6 @@ def build_pycfml_shared_obj_or_dynamic_lib():
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
-
 
 
 

@@ -788,6 +788,10 @@ components-files = [
 
 [[cfml-modules]]
 main-file = 'CFML_Wraps_Utils'
+components-dir = 'CFML_Wraps_Utils'
+components-files = [
+    'Wraps_Utils'
+]
 
 [[cfml-modules]]
 main-file = 'CFML_Utilities'

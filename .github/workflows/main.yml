@@ -88,8 +88,8 @@ jobs:
       - name: Build CFML static library
         shell: bash
         run: |
-          scripts/create_cfml_build_dir.sh
           scripts/rename_global_deps_file.sh
+          scripts/create_cfml_build_dir.sh
           scripts/build_cfml_objs.sh
           scripts/delete_renamed_global_deps_file.sh
           scripts/build_cfml_static_lib.sh

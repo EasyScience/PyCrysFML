@@ -3,7 +3,7 @@ requires = ['hatchling']
 build-backend = 'hatchling.build'
 
 [project]
-name = 'pycrysfml'
+name = 'pycrysfml08'
 version = '0.1.0'
 description = 'Testing packaging for Python API to CrysFML08 from https://code.ill.fr/scientific-software/CrysFML2008'
 authors = [

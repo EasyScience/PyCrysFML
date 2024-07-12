@@ -13,8 +13,11 @@ from numpy.testing import assert_almost_equal
 def test__get_u_from_b__directly():
     try:
         from pycrysfml08 import crysfml08lib
-    except ImportError as e:
+    except Exception as e:
+        print('::::: test__get_u_from_b__directly :::::')
+        print('Error')
         print(e)
+        print()
         return
     nd_b = np.array([1.5, 1.6, 1.7, 1.0, 1.1, 1.2], dtype='f')
     desired = np.array([0.019, 0.0203, 0.0215, 0.0127, 0.0139, 0.0152], dtype='f')
@@ -26,8 +29,11 @@ def test__get_u_from_b__directly():
 def test__get_u_from_b__pyapi():
     try:
         from pycrysfml08 import cfml_metrics
-    except ImportError as e:
+    except Exception as e:
+        print('::::: test__get_u_from_b__pyapi :::::')
+        print('Error')
         print(e)
+        print()
         return
     nd_b = np.array([1.5, 1.6, 1.7, 1.0, 1.1, 1.2], dtype='f')
     desired = np.array([0.019, 0.0203, 0.0215, 0.0127, 0.0139, 0.0152], dtype='f')
@@ -39,4 +45,5 @@ def test__get_u_from_b__pyapi():
 # Debug
 
 if __name__ == '__main__':
-    pass
+    test__get_u_from_b__directly()
+    test__get_u_from_b__pyapi()

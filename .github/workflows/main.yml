@@ -210,6 +210,10 @@ jobs:
         shell: bash
         run: scripts/install_pycfml_from_wheel.sh
 
+      - name: Debug PYCFML import
+        shell: bash
+        run: python3 tests/unit_tests/pycfml/test__cfml_metrics__debug.py
+
       - name: Run PYCFML unit tests
         shell: bash
         run: scripts/run_pycfml_unit_tests.sh

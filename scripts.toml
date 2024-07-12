@@ -265,8 +265,6 @@ components-files = [
     'Math_Equal_Matrix',
     'Math_Inverse_Matrix',
     'Math_Is_Diagonal_Matrix',
-    'Math_Equal_Vector',
-    'Math_Determinant',
     'Math_PolynomialFit',
     'Math_Lower_Triangular',
     'Math_Is_Null_Vector',
@@ -330,7 +328,13 @@ components-files = [
     'Con_Info_Message',
     'Con_Err_Message',
     'Con_Write_ScrollMsg',
-    'Con_Wait_Message'
+    'Con_Wait_Message',
+    'Win_Err_Message',
+    'Win_Info_Message',
+    'Win_Question_Message',
+    'Win_Stop_Message',
+    'Win_Warning_Message',
+    'Win_Write_ScrollMsg'
 ]
 
 [[cfml-modules]]
@@ -402,7 +406,10 @@ components-files = [
     'Tab_Allocating_SuperSpaceDBase',
     'Tab_Read_SSG_DBase',
     'Tab_Allocating_MagneticDBase',
-    'Tab_Read_MagneticDBase'
+    'Tab_Read_MagneticDBase',
+    'Tab_Allocating_magSuperSpaceDBase',
+    'Tab_Read_magSSG_DBase'
+
 ]
 
 [[cfml-modules]]
@@ -467,7 +474,8 @@ components-files = [
     'DiffP_ReadPatt_TimeVar',
     'DiffP_ReadPatt_XYSIG',
     'DiffP_WritePatterns',
-    'DiffP_ReadPatterns'
+    'DiffP_ReadPatterns',
+    'DiffP_Add_Patterns'
 ]
 
 [[cfml-modules]]
@@ -801,6 +809,17 @@ main-file = 'CFML_Utilities'
 components-dir = 'CFML_Utilities'
 components-files = [
     'Utilities_Patterns'
+]
+
+[[cfml-modules]]
+main-file = 'CFML_kvec_Polarimetry'
+components-dir = 'CFML_kvec_Polarimetry'
+components-files = [
+    'Polar_Calculations_Dom',
+    'Polar_Calculations',
+    'Polar_Functions',
+    'Polar_Init',
+    'Polar_Write'
 ]
 
 # CrysFML test programs source files

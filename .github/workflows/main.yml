@@ -12,7 +12,7 @@ jobs:
       fail-fast: false
       matrix:
         #os: [ubuntu-22.04, windows-2022, macos-12, macos-14]
-        os: [windows-2022]
+        os: [ubuntu-22.04]
         toolchain:
           # - { exe: gfortran, compiler: gcc, version: 13 }
           # - { exe: ifort, compiler: intel-classic, version: "2021.10" }
@@ -27,7 +27,7 @@ jobs:
         #     toolchain: { exe: ifort, compiler: intel-classic, version: "2021.10" } # no support for macOS on arm64
 
     #runs-on: ${{ matrix.os }}
-    runs-on: ['self-hosted']
+    runs-on: ['self-hosted-linux']
 
     timeout-minutes: 30
 
@@ -169,7 +169,7 @@ jobs:
       fail-fast: false
       matrix:
         #os: [ubuntu-22.04, windows-2022, macos-12, macos-14]
-        os: [windows-2022]
+        os: [ubuntu-22.04]
         toolchain:
           # - { exe: gfortran, compiler: gcc, version: 13 }
           # - { exe: ifort, compiler: intel-classic, version: "2021.10" }
@@ -177,7 +177,7 @@ jobs:
           - { exe: nagfor, compiler: nagfor, version: "7.0"}
 
     #runs-on: ${{ matrix.os }}
-    runs-on: ['self-hosted']
+    runs-on: ['self-hosted-linux']
 
     timeout-minutes: 30
 

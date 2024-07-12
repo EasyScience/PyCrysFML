@@ -294,7 +294,8 @@ components-files = [
     'Math_RowEchelon',
     'Math_Swap',
     'Math_Rank',
-    'Math_Sort'
+    'Math_Sort',
+    'Math_In_Limits'
 ]
 
 [[cfml-modules]]

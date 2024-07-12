@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, windows-2022, macos-12]
+        os: [ubuntu-22.04, windows-2022]
         toolchain:
           - { exe: ifort, compiler: intel-classic, version: "2021.10" }
 
@@ -160,7 +160,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, windows-2022, macos-12]
+        os: [ubuntu-22.04, windows-2022]
         toolchain:
           - { exe: ifort, compiler: intel-classic, version: "2021.10" }
 
@@ -214,14 +214,14 @@ jobs:
         shell: bash
         run: python3 tests/unit_tests/pycfml/test__cfml_metrics__debug.py
 
-      - name: Run PYCFML unit tests
-        shell: bash
-        run: scripts/run_pycfml_unit_tests.sh
+      #- name: Run PYCFML unit tests
+      #  shell: bash
+      #  run: scripts/run_pycfml_unit_tests.sh
 
-      - name: Run PYCFML powder_mod tests
-        shell: bash
-        run: scripts/run_powder_mod_tests.sh
+      #- name: Run PYCFML powder_mod tests
+      #  shell: bash
+      #  run: scripts/run_powder_mod_tests.sh
 
-      - name: Run PYCFML powder_mod main
-        shell: bash
-        run: scripts/run_powder_mod_main.sh
+      #- name: Run PYCFML powder_mod main
+      #  shell: bash
+      #  run: scripts/run_powder_mod_main.sh

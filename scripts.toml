@@ -328,13 +328,13 @@ components-files = [
     'Con_Info_Message',
     'Con_Err_Message',
     'Con_Write_ScrollMsg',
-    'Con_Wait_Message',
-    'Win_Err_Message',
-    'Win_Info_Message',
-    'Win_Question_Message',
-    'Win_Stop_Message',
-    'Win_Warning_Message',
-    'Win_Write_ScrollMsg'
+    'Con_Wait_Message'#,
+    #'Win_Err_Message',
+    #'Win_Info_Message',
+    #'Win_Question_Message',
+    #'Win_Stop_Message',
+    #'Win_Warning_Message',
+    #'Win_Write_ScrollMsg'
 ]
 
 [[cfml-modules]]
@@ -406,10 +406,9 @@ components-files = [
     'Tab_Allocating_SuperSpaceDBase',
     'Tab_Read_SSG_DBase',
     'Tab_Allocating_MagneticDBase',
-    'Tab_Read_MagneticDBase',
-    'Tab_Allocating_magSuperSpaceDBase',
-    'Tab_Read_magSSG_DBase'
-
+    'Tab_Read_MagneticDBase'#,
+    #'Tab_Allocating_magSuperSpaceDBase',
+    #'Tab_Read_magSSG_DBase'
 ]
 
 [[cfml-modules]]

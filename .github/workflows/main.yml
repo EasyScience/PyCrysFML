@@ -212,7 +212,10 @@ jobs:
 
       - name: Debug PYCFML import
         shell: bash
-        run: python3 tests/unit_tests/pycfml/test__cfml_metrics__debug.py
+        run: |
+          echo "::::: Show the contents of the installed pycrysfml08 package :::::"
+          ls -l /opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/pycrysfml08/
+          python3 tests/unit_tests/pycfml/test__cfml_metrics__debug.py
 
       - name: Run PYCFML unit tests
         shell: bash

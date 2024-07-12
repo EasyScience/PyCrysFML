@@ -14,7 +14,7 @@ def test__get_u_from_b__directly():
     try:
         from pycrysfml08 import crysfml08lib
     except Exception as e:
-        print('::::: test__get_u_from_b__directly :::::')
+        print('::::: Run test__get_u_from_b__directly() :::::')
         print('Error')
         print(e)
         print()
@@ -30,7 +30,7 @@ def test__get_u_from_b__pyapi():
     try:
         from pycrysfml08 import cfml_metrics
     except Exception as e:
-        print('::::: test__get_u_from_b__pyapi :::::')
+        print('::::: Run test__get_u_from_b__pyapi() :::::')
         print('Error')
         print(e)
         print()

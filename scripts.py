@@ -212,6 +212,7 @@ def _compile_obj_script_line(src_path: str,
 
 def _compile_pycfml_shared_obj_or_dynamic_lib_script_line():
     src_name = CONFIG['pycfml']['src-name']
+    obj_ext = CONFIG['build']['obj-ext'][_platform()]
     shared_lib_ext = CONFIG['build']['shared-lib-ext'][_platform()]
     cfml_lib_name = CONFIG['cfml']['static-lib-name']
     cfml_dist_dir = CONFIG['cfml']['dir']['dist']
@@ -220,7 +221,9 @@ def _compile_pycfml_shared_obj_or_dynamic_lib_script_line():
     cfml_lib_dist_path = os.path.join(cfml_dist_path, cfml_lib_dist_dir)
     cmd = _compiler_build_shared_template()
     cmd = cmd.replace('{COMPILER}', _compiler_name())
-    cmd = cmd.replace('{PATH}', src_name)
+    #cmd = cmd.replace('{PATH}', src_name)
+    #cmd = cmd.replace('{OBJ_EXT}', obj_ext)
+    cmd = cmd.replace('{PATH}.{OBJ_EXT}', f'*.{obj_ext}')  # CFML_Wraps.o Wraps_*.o crysfml08lib.o
     cmd = cmd.replace('{EXT}', shared_lib_ext)
     cmd = cmd.replace('{CFML_LIB_PATH}', cfml_lib_dist_path)
     cmd = cmd.replace('{CFML_LIB_NAME}', cfml_lib_name)
@@ -275,13 +278,14 @@ def _compile_objs_script_lines(modules: str,
     return lines
 
 def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):
+    obj_ext = CONFIG['build']['obj-ext'][_platform()]
+    shared_lib_ext = CONFIG['build']['shared-lib-ext'][_platform()]
     cfml_lib_name = CONFIG['cfml']['static-lib-name']
     cfml_dist_dir = CONFIG['cfml']['dir']['dist']
     cfml_dist_path = os.path.join(_project_path(), cfml_dist_dir)
     cfml_lib_dist_dir = CONFIG['cfml']['dir']['dist-lib']
     cfml_lib_dist_path = os.path.join(cfml_dist_path, cfml_lib_dist_dir)
     template_cmd = _compiler_build_shared_template()
-    shared_lib_ext = CONFIG['build']['shared-lib-ext'][_platform()]
     total = _total_src_file_count(modules)
     current = 0
     lines = []
@@ -294,6 +298,7 @@ def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):
             cmd = template_cmd
             cmd = cmd.replace('{COMPILER}', _compiler_name())
             cmd = cmd.replace('{PATH}', name)
+            cmd = cmd.replace('{OBJ_EXT}', obj_ext)
             cmd = cmd.replace('{EXT}', shared_lib_ext)
             cmd = cmd.replace('{CFML_LIB_PATH}', cfml_lib_dist_path)
             cmd = cmd.replace('{CFML_LIB_NAME}', cfml_lib_name)

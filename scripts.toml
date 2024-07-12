@@ -34,6 +34,7 @@ branch = 'master'
 [pycfml.dir]
 repo = 'pycrysfml08_repo'
 repo-src = 'src'
+apigen = 'pycrysfml08_apigen'
 build = 'pycrysfml08_build'
 dist = 'pycrysfml08_dist'
 dist-package = 'pycrysfml08'
@@ -68,6 +69,7 @@ run-benchmarks.non-master-branch = '--benchmark-compare --benchmark-compare-fail
 [build]
 #src-ext = { cfml = 'f90', pycfml = 'F90' }
 src-ext = 'f90'
+obj-ext = { macos = 'o', linux = 'o', windows = 'obj' }
 static-lib-prefix = { macos = 'lib', linux = 'lib', windows = '' }
 static-lib-ext = { macos = 'a', linux = 'a', windows = 'lib' }
 shared-lib-ext = { macos = 'so', linux = 'so', windows = 'pyd' }  # *.dylib doesn't work on macOS, *.dll on Windows?  # https://www.cita.utoronto.ca/~merz/intel_f10b/main_for/mergedProjects/bldaps_for/common/bldaps_produce_outfiles.htm
@@ -191,7 +193,7 @@ dependent-libs.macos.arm.gfortran = [
 platforms = ['macos', 'linux', 'windows']
 compilers = ['gfortran']
 obj-ext = 'o'
-build-shared = '{COMPILER} -shared {PATH}.o -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {PYTHON_LIB}'
+build-shared = '{COMPILER} -shared {PATH}.{OBJ_EXT} -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {PYTHON_LIB}'
 build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} -L{CFML_LIB_DIR} -l{CFML_LIB_NAME}'
 modes.base = '-cpp -fdec-math -fPIC -fno-stack-arrays -ffree-line-length-none'
 modes.debug = ''
@@ -201,7 +203,7 @@ modes.release = ''
 platforms = ['macos']
 compilers = ['nagfor']
 obj-ext = 'o'
-build-shared = '{COMPILER} -Wl,-shared {PATH}.o -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {PYTHON_LIB}'
+build-shared = '{COMPILER} -Wl,-shared {PATH}.{OBJ_EXT} -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {PYTHON_LIB}'
 build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} -L{CFML_LIB_DIR} -l{CFML_LIB_NAME}'
 modes.base = '-f2008 -fpp -PIC -quiet -w=all -colour'
 modes.debug = ''
@@ -211,7 +213,7 @@ modes.release = ''
 platforms = ['linux', 'macos']
 compilers = ['ifort', 'ifx']
 obj-ext = 'o'
-build-shared = "{COMPILER} -shared {PATH}.o -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {IFPORT_LIB} {PYTHON_LIB}"
+build-shared = "{COMPILER} -shared {PATH}.{OBJ_EXT} -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {IFPORT_LIB} {PYTHON_LIB}"
 build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} -L{CFML_LIB_DIR} -l{CFML_LIB_NAME}'
 modes.base = '-w -fpp -fPIC -heap-arrays -nologo'
 modes.debug = ''  # -g3
@@ -221,7 +223,7 @@ modes.release = ''  # -O3
 platforms = ['windows']
 compilers = ['ifort', 'ifx']
 obj-ext = 'obj'
-build-shared = 'link {PATH}.obj /out:"{PATH}.{EXT}" /libpath:{CFML_LIB_PATH} /dll {CFML_LIB_NAME}.lib {PYTHON_LIB}'
+build-shared = 'link {PATH}.{OBJ_EXT} /out:"{PATH}.{EXT}" /libpath:{CFML_LIB_PATH} /dll {CFML_LIB_NAME}.lib {PYTHON_LIB}'
 build-exe = '{COMPILER} {OPTIONS} /exe:{EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} {CFML_LIB_DIR}\{CFML_LIB_NAME}.{LIB_EXT}'
 modes.base = '/w /fpp /heap-arrays /nologo -DWIN32=ON'
 modes.debug = ''

@@ -221,9 +221,9 @@ def _compile_pycfml_shared_obj_or_dynamic_lib_script_line():
     cfml_lib_dist_path = os.path.join(cfml_dist_path, cfml_lib_dist_dir)
     cmd = _compiler_build_shared_template()
     cmd = cmd.replace('{COMPILER}', _compiler_name())
-    #cmd = cmd.replace('{PATH}', src_name)
-    #cmd = cmd.replace('{OBJ_EXT}', obj_ext)
-    cmd = cmd.replace('{PATH}.{OBJ_EXT}', f'*.{obj_ext}')  # CFML_Wraps.o Wraps_*.o crysfml08lib.o
+    cmd = cmd.replace('{PATH}', src_name)
+    cmd = cmd.replace('{OBJ_EXT}', obj_ext)
+    #cmd = cmd.replace('{PATH}.{OBJ_EXT}', f'*.{obj_ext}')  # CFML_Wraps.o Wraps_*.o crysfml08lib.o
     cmd = cmd.replace('{EXT}', shared_lib_ext)
     cmd = cmd.replace('{CFML_LIB_PATH}', cfml_lib_dist_path)
     cmd = cmd.replace('{CFML_LIB_NAME}', cfml_lib_name)

@@ -8,6 +8,10 @@ import numpy as np
 from numpy.testing import assert_almost_equal
 
 
+from pycrysfml08 import crysfml08lib
+
+print('!!!!! IMPORTING SUCCESS !!!!!')
+
 # Tests
 
 def test__get_u_from_b__directly():

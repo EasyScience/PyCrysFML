@@ -3,7 +3,7 @@ requires = ['hatchling']
 build-backend = 'hatchling.build'
 
 [project]
-name = 'pycrysfml08'
+name = 'pycrysfml'
 version = '0.1.0'
 description = 'Testing packaging PyCrysFML08 from https://code.ill.fr/scientific-software/PyCrysFML08'
 authors = [
@@ -43,5 +43,5 @@ test = [
 Homepage = 'https://github.com/easyscience/TEST_PyCrysFML'
 
 [tool.hatch.build.targets.wheel]
-packages = ['pycrysfml08_dist/pycrysfml08']
+packages = ['dist/pyCFML/pycrysfml']  # NEED FIX: Replace based on scripts.toml - pycfml.dir.dist-package
 artifacts = ['*.py', '*.so', '*.so.*', '*.dylib', '*.pyd', '*.dll', '*.txt']

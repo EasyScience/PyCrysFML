@@ -532,7 +532,8 @@ def build_cfml_modules_obj():
     lines.append(cmd)
     msg = _echo_msg(f"Building fortran objects for {project_name} modules")
     lines.append(msg)
-    compile_lines = _compile_objs_script_lines('src-cfml-modules', src_path)
+    compile_lines = _compile_objs_script_lines('src-cfml-modules',
+                                               src_path)
     lines.extend(compile_lines)
     msg = _echo_msg(f"Exiting build dir '{build_dir}'")
     lines.append(msg)
@@ -864,13 +865,11 @@ def build_pycfml_shared_obj_or_dynamic_lib():
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
 
-
-
 def create_pycfml_dist_dir():
     dist_dir = CONFIG['pycfml']['dir']['dist']
     lib_dist_dir = CONFIG['pycfml']['dir']['dist-lib']
     include_dist_dir = CONFIG['pycfml']['dir']['dist-include']
-    package_dist_dir = CONFIG['pycfml']['dir']['dist-package']
+    package_dist_dir = CONFIG['pycfml']['dir']['dist-package'].replace('{PACKAGE_NAME}', PYPROJECT['project']['name'])
     wheel_dist_dir = CONFIG['pycfml']['dir']['dist-wheel']
     lines = []
     msg = _echo_msg(f"Deleting dist dir '{dist_dir}'")
@@ -906,7 +905,7 @@ def copy_built_to_pycfml_dist():
     shared_lib_ext = CONFIG['build']['shared-lib-ext'][_platform()]
     build_relpath = CONFIG['pycfml']['dir']['build-obj']
     build_abspath = os.path.join(_project_path(), build_relpath)
-    package_relpath = CONFIG['pycfml']['dir']['dist-package']
+    package_relpath = CONFIG['pycfml']['dir']['dist-package'].replace('{PACKAGE_NAME}', PYPROJECT['project']['name'])
     package_abspath = os.path.join(_project_path(), package_relpath)
     lines = []
     msg = _echo_msg(f"Copying built {project_name} shared objects / dynamic libs to '{package_relpath}'")
@@ -955,7 +954,7 @@ def change_runpath_for_built_pycfml():
     #package_dir = CONFIG['pycfml']['dir2']['dist-package']
     #package_relpath = os.path.join(dist_dir, package_dir)
     #package_abspath = os.path.join(_project_path(), dist_dir, package_dir)
-    package_relpath = CONFIG['pycfml']['dir']['dist-package']
+    package_relpath = CONFIG['pycfml']['dir']['dist-package'].replace('{PACKAGE_NAME}', PYPROJECT['project']['name'])
     package_abspath = os.path.join(_project_path(), package_relpath)
     #total = 1
     #current = 0
@@ -1037,7 +1036,7 @@ def copy_extra_libs_to_pycfml_dist():
         _write_lines_to_file(lines, script_name)
         append_to_main_script(lines)
         return
-    package_relpath = CONFIG['pycfml']['dir']['dist-package']
+    package_relpath = CONFIG['pycfml']['dir']['dist-package'].replace('{PACKAGE_NAME}', PYPROJECT['project']['name'])
     package_abspath = os.path.join(_project_path(), package_relpath)
     lines = []
     for lib_path in extra_libs:
@@ -1054,7 +1053,7 @@ def copy_py_api_files_to_pycfml_dist():
     py_api_relpath = CONFIG['pycfml']['dir']['build-src-python']
     py_api_abspath = os.path.join(_project_path(), py_api_relpath)
     from_path = os.path.join(py_api_abspath, '*.py')
-    package_relpath = CONFIG['pycfml']['dir']['dist-package']
+    package_relpath = CONFIG['pycfml']['dir']['dist-package'].replace('{PACKAGE_NAME}', PYPROJECT['project']['name'])
     package_abspath = os.path.join(_project_path(), package_relpath)
     to_path = package_abspath
     lines = []
@@ -1069,7 +1068,7 @@ def copy_py_api_files_to_pycfml_dist():
 def copy_init_file_to_pycfml_dist():
     project_name = CONFIG['pycfml']['log-name']
     from_path = os.path.join(_project_path(), '__init__.py')
-    package_relpath = CONFIG['pycfml']['dir']['dist-package']
+    package_relpath = CONFIG['pycfml']['dir']['dist-package'].replace('{PACKAGE_NAME}', PYPROJECT['project']['name'])
     package_abspath = os.path.join(_project_path(), package_relpath)
     to_path = package_abspath
     lines = []
@@ -1085,7 +1084,7 @@ def copy_cfml_databases_to_pycfml_dist():
     cfml_db_relpath = CONFIG['cfml']['dir']['repo-database']
     cfml_db_abspath = os.path.join(_project_path(), cfml_db_relpath)
     from_path = cfml_db_abspath
-    package_relpath = CONFIG['pycfml']['dir']['dist-package']
+    package_relpath = CONFIG['pycfml']['dir']['dist-package'].replace('{PACKAGE_NAME}', PYPROJECT['project']['name'])
     pycfml_db_relpath = os.path.join(package_relpath, 'Databases')
     pycfml_db_abspath = os.path.join(_project_path(), pycfml_db_relpath)
     to_path = pycfml_db_abspath
@@ -1128,9 +1127,9 @@ def create_pycfml_python_wheel():
 
 def rename_pycfml_python_wheel():
     project_name = CONFIG['pycfml']['log-name']
-    pycfml_package_name = CONFIG['pycfml']['package-name']
+    dist_package_name = PYPROJECT['project']['name']
     dist_package_version = PYPROJECT['project']['version']
-    initial_wheel_name = f'{pycfml_package_name}-{dist_package_version}-py3-none-any.whl'
+    initial_wheel_name = f'{dist_package_name}-{dist_package_version}-py3-none-any.whl'
     wheel_dir = CONFIG['pycfml']['dir']['dist-wheel']
     wheel_relpath = os.path.join(wheel_dir, initial_wheel_name)
     wheel_abspath = os.path.join(_project_path(), wheel_relpath)
@@ -1148,7 +1147,7 @@ def rename_pycfml_python_wheel():
 
 def install_pycfml_from_wheel():
     project_name = CONFIG['pycfml']['log-name']
-    package_name = CONFIG['pycfml']['package-name']
+    package_name = PYPROJECT['project']['name']
     wheel_dir = CONFIG['pycfml']['dir']['dist-wheel']
     wheel_path = os.path.join(_project_path(), wheel_dir)
     lines = []

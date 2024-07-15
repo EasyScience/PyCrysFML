@@ -140,7 +140,8 @@ jobs:
       - name: Make pyCFML distribution
         shell: bash
         run: |
-          scripts/copy_built_to_pycfml_dist.sh  # scripts/change_runpath_for_built_pycfml.sh
+          scripts/copy_built_to_pycfml_dist.sh
+          scripts/change_runpath_for_built_pycfml.sh
           scripts/copy_extra_libs_to_pycfml_dist.sh
           scripts/copy_py_api_files_to_pycfml_dist.sh
           scripts/copy_init_file_to_pycfml_dist.sh

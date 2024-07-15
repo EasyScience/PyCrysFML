@@ -681,7 +681,7 @@ def build_cfml_test_programs():
     append_to_main_script(lines)
 
 def run_cfml_functional_tests_no_benchmarks():
-    relpath = os.path.join('tests', 'functional_tests', 'cfml')
+    relpath = os.path.join('tests', 'functional_tests', 'CFML')
     abspath = os.path.join(_project_path(), relpath)
     lines = []
     msg = _echo_msg(f"Running functional tests from '{relpath}'")
@@ -694,7 +694,7 @@ def run_cfml_functional_tests_no_benchmarks():
     append_to_main_script(lines)
 
 def run_cfml_functional_tests_with_benchmarks():
-    relpath = os.path.join('tests', 'functional_tests', 'cfml')
+    relpath = os.path.join('tests', 'functional_tests', 'CFML')
     abspath = os.path.join(_project_path(), relpath)
     lines = []
     msg = _echo_msg(f"Running functional tests with benchmarks from '{relpath}'")
@@ -1171,7 +1171,7 @@ def install_pycfml_from_wheel():
     append_to_main_script(lines)
 
 def run_pycfml_unit_tests():
-    relpath = os.path.join('tests', 'unit_tests', 'pycfml')
+    relpath = os.path.join('tests', 'unit_tests', 'pyCFML')
     abspath = os.path.join(_project_path(), relpath)
     lines = []
     msg = _echo_msg(f"Running unit tests from '{relpath}'")
@@ -1184,7 +1184,7 @@ def run_pycfml_unit_tests():
     append_to_main_script(lines)
 
 def run_powder_mod_tests():
-    relpath = os.path.join('tests', 'functional_tests', 'pycfml')
+    relpath = os.path.join('tests', 'functional_tests', 'pyCFML')
     abspath = os.path.join(_project_path(), relpath)
     lines = []
     msg = _echo_msg(f"Running powder_mod tests from '{relpath}'")
@@ -1251,7 +1251,7 @@ if __name__ == '__main__':
 
     append_header_to_main_script(f"Creating and running {cfml_project_name} test programs")
     build_cfml_test_programs()
-    #run_cfml_functional_tests_no_benchmarks()
+    run_cfml_functional_tests_no_benchmarks()
     #run_cfml_functional_tests_with_benchmarks()
 
     append_header_to_main_script(f"Create {pycfml_project_name} source code")

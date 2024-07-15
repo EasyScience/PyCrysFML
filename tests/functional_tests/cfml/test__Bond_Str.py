@@ -1,13 +1,17 @@
 import os
+import sys
 import re
 import filecmp
 import time
 import tomllib
 import subprocess
 import platform
-from io import StringIO
 import numpy as np
+from io import StringIO
+from pathlib import Path
 from numpy.testing import assert_array_equal, assert_almost_equal, assert_allclose
+
+PROGS_PATH = Path(f'dist/CFML/progs').resolve()
 
 
 # Help functions
@@ -32,13 +36,13 @@ def run_exe_with_args(file_name:str, args:str=''):
     """Runs the executable with optional arguments."""
     if platform.system() == 'Windows':
         file_name = f'{file_name}.exe'
-    file_name = os.path.abspath(file_name)
-    cmd = f'{file_name}'
+    exe_path = os.path.join(PROGS_PATH, file_name)
+    cmd = f'{exe_path}'
     if args:
-        cmd = f'{file_name} {args}'
+        cmd = f'{exe_path} {args}'
     #os.system(f"echo '::::: {cmd}'")
     os.system(f'{cmd}')
-    time.sleep(2)
+    time.sleep(1)
 
 def dat_to_ndarray(file_name:str, skip_begin:int=3, skip_end:int=4):
     """Parses the file to extract an array of data and converts it to a numpy array."""

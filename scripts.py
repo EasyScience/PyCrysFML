@@ -589,27 +589,29 @@ def build_cfml_static_lib():
 
 def create_cfml_dist_dir():
     dist_dir = CONFIG['cfml']['dir']['dist']
-    dist_path = os.path.join(_project_path(), dist_dir)
-    lib_dist_dir = CONFIG['cfml']['dir']['dist-lib']
-    lib_dist_path = os.path.join(_project_path(), lib_dist_dir)
-    include_dist_dir = CONFIG['cfml']['dir']['dist-include']
-    include_dist_path = os.path.join(_project_path(), include_dist_dir)
+    lib_dir = CONFIG['cfml']['dir']['dist-lib']
+    include_dir = CONFIG['cfml']['dir']['dist-include']
+    progs_dir = CONFIG['cfml']['dir']['dist-progs']
     lines = []
     msg = _echo_msg(f"Deleting dist dir '{dist_dir}'")
     lines.append(msg)
-    cmd = f'rm -rf {dist_path}'
+    cmd = f'rm -rf {dist_dir}'
     lines.append(cmd)
     msg = _echo_msg(f"Creating dist dir '{dist_dir}'")
     lines.append(msg)
-    cmd = f'mkdir -p {dist_path}'
+    cmd = f'mkdir -p {dist_dir}'
     lines.append(cmd)
-    msg = _echo_msg(f"Creating dist dir '{lib_dist_dir}'")
+    msg = _echo_msg(f"Creating dist dir '{lib_dir}'")
     lines.append(msg)
-    cmd = f'mkdir -p {lib_dist_path}'
+    cmd = f'mkdir -p {lib_dir}'
     lines.append(cmd)
-    msg = _echo_msg(f"Creating dist dir '{include_dist_dir}'")
+    msg = _echo_msg(f"Creating dist dir '{include_dir}'")
     lines.append(msg)
-    cmd = f'mkdir -p {include_dist_path}'
+    cmd = f'mkdir -p {include_dir}'
+    lines.append(cmd)
+    msg = _echo_msg(f"Creating dist dir '{progs_dir}'")
+    lines.append(msg)
+    cmd = f'mkdir -p {progs_dir}'
     lines.append(cmd)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
@@ -643,10 +645,10 @@ def move_built_to_cfml_dist():
 
 def build_cfml_test_programs():
     project_name = CONFIG['cfml']['log-name']
-    repo_dir = CONFIG['cfml']['dir']['repo']
     src_dir = CONFIG['cfml']['dir']['repo-tests']
-    src_path = os.path.join(_project_path(), repo_dir, src_dir)
-    build_dir = os.path.join('tests', 'functional_tests', 'cfml')
+    src_path = os.path.join(_project_path(), src_dir)
+    #build_dir = os.path.join('tests', 'functional_tests', 'cfml')
+    build_dir = CONFIG['cfml']['dir']['dist-progs']
     build_path = os.path.join(_project_path(), build_dir)
     dist_dir = CONFIG['cfml']['dir']['dist']
     include_dir = CONFIG['cfml']['dir']['dist-include']
@@ -659,13 +661,17 @@ def build_cfml_test_programs():
     lines.append(msg)
     cmd = f'cd {build_path}'
     lines.append(cmd)
-    msg = _echo_msg(f"Building test programs for {project_name}:")
+    msg = _echo_msg(f"Building test programs for {project_name}")
     lines.append(msg)
     compile_lines = _compile_executables_script_lines('src-cfml-tests',
                                                       src_path, include_path,
                                                       lib_path,
                                                       lib_name)
     lines.extend(compile_lines)
+    msg = _echo_msg(f"Deleting *.mod/*.smod files in '{build_dir}'")
+    lines.append(msg)
+    cmd = f'rm -rf *.*mod'
+    lines.append(cmd)
     msg = _echo_msg(f"Exiting build dir '{build_dir}'")
     lines.append(msg)
     cmd = f'cd {_project_path()}'
@@ -1243,8 +1249,8 @@ if __name__ == '__main__':
     append_header_to_main_script(f"Make {cfml_project_name} distribution")
     move_built_to_cfml_dist()
 
-    #append_header_to_main_script(f"Creating and running {cfml_project_name} test programs")
-    #build_cfml_test_programs()
+    append_header_to_main_script(f"Creating and running {cfml_project_name} test programs")
+    build_cfml_test_programs()
     #run_cfml_functional_tests_no_benchmarks()
     #run_cfml_functional_tests_with_benchmarks()
 

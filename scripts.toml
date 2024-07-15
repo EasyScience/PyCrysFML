@@ -16,9 +16,10 @@ repo-tests = 'repo/CFML/Testing'
 repo-database = 'repo/CFML/Src/Databases/magnetic_data.txt'
 build = 'build/CFML'
 build-obj = 'build/CFML/obj'
-dist = 'dist/CFML'                        # Fortran CrysFML2008
-dist-include = 'dist/CFML/include'        # for .mod/.smod files
-dist-lib = 'dist/CFML/lib'                # for static library
+dist = 'dist/CFML'                  # Fortran CrysFML2008
+dist-include = 'dist/CFML/include'  # for .mod/.smod files
+dist-lib = 'dist/CFML/lib'          # for static library
+dist-progs = 'dist/CFML/progs'      # for test programs
 
 [cfml.git]
 url = 'https://code.ill.fr/scientific-software/crysfml2008.git'

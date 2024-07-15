@@ -9,6 +9,12 @@ build
 # macOS
 .DS_Store
 
+# Build
+build
+dist
+repo
+scripts
+
 # Misc
 .venv
 .benchmarks/local

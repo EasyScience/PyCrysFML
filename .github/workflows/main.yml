@@ -57,7 +57,7 @@ jobs:
         shell: bash
         run: echo "MACOSX_DEPLOYMENT_TARGET=$(sw_vers -productVersion)" >> $GITHUB_ENV
 
-      - name: Create job scripts
+      - name: Create build scripts in scripts/scripts
         shell: bash
         run: >
           python3 scripts.py
@@ -70,7 +70,7 @@ jobs:
         shell: bash
         run: scripts/print_build_variables.sh  # bash -x scripts/print_build_variables.sh for printing commands
 
-      - name: Create CFML and pyCFML directories
+      - name: Create scripts, CFML and pyCFML directories
         shell: bash
         run: |
           scripts/create_cfml_repo_dir.sh

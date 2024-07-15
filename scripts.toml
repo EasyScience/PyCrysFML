@@ -1,3 +1,6 @@
+[project.dir]
+scripts = 'scripts'
+
 ##############################
 # CrysFML Fortran 2008 Library
 ##############################
@@ -48,9 +51,6 @@ dist-wheel = 'dist/pyCFML/wheel'            # for Python wheel
 # Generic build template commands and related parameters
 ########################################################
 
-[project.dir]
-scripts = 'scripts'
-
 [template]
 clone-repo = 'git clone --single-branch --branch {BRANCH} {URL} {OUT_PATH}'
 build-obj = '{COMPILER} {OPTIONS} -c {PATH} -I {INCLUDE}'
@@ -72,8 +72,51 @@ run-benchmarks.base = 'pytest {PATH} --color=yes --benchmark-only --benchmark-st
 run-benchmarks.master-branch = '--benchmark-autosave'
 run-benchmarks.non-master-branch = '--benchmark-compare --benchmark-compare-fail=median:25%'
 
+######################
+# Build configurations
+######################
+
+[[build-configs]]
+platforms = ['macos', 'linux', 'windows']
+compilers = ['gfortran']
+obj-ext = 'o'
+build-shared = '{COMPILER} -shared CFML_Wraps.{OBJ_EXT} Wraps_*.{OBJ_EXT} {PATH}.{OBJ_EXT} -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {PYTHON_LIB}'
+build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} -L{CFML_LIB_DIR} -l{CFML_LIB_NAME}'
+modes.base = '-cpp -fdec-math -fPIC -fno-stack-arrays -ffree-line-length-none'
+modes.debug = ''
+modes.release = ''
+
+[[build-configs]]
+platforms = ['macos']
+compilers = ['nagfor']
+obj-ext = 'o'
+build-shared = '{COMPILER} -Wl,-shared CFML_Wraps.{OBJ_EXT} Wraps_*.{OBJ_EXT} {PATH}.{OBJ_EXT} -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {PYTHON_LIB}'
+build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} -L{CFML_LIB_DIR} -l{CFML_LIB_NAME}'
+modes.base = '-f2008 -fpp -PIC -quiet -w=all -colour'
+modes.debug = ''
+modes.release = ''
+
+[[build-configs]]
+platforms = ['linux', 'macos']
+compilers = ['ifort', 'ifx']
+obj-ext = 'o'
+build-shared = "{COMPILER} -shared CFML_Wraps.{OBJ_EXT} Wraps_*.{OBJ_EXT} {PATH}.{OBJ_EXT} -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {IFPORT_LIB} {PYTHON_LIB}"
+build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} -L{CFML_LIB_DIR} -l{CFML_LIB_NAME}'
+modes.base = '-w -fpp -fPIC -heap-arrays -nologo'
+modes.debug = ''  # -g3
+modes.release = ''  # -O3
+
+[[build-configs]]
+platforms = ['windows']
+compilers = ['ifort', 'ifx']
+obj-ext = 'obj'
+build-shared = 'link CFML_Wraps.{OBJ_EXT} Wraps_*.{OBJ_EXT} {PATH}.{OBJ_EXT} /out:"{PATH}.{EXT}" /libpath:{CFML_LIB_PATH} /dll {CFML_LIB_NAME}.lib {PYTHON_LIB}'
+build-exe = '{COMPILER} {OPTIONS} /exe:{EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} {CFML_LIB_DIR}\{CFML_LIB_NAME}.{LIB_EXT}'
+modes.base = '/w /fpp /heap-arrays /nologo -DWIN32=ON'
+modes.debug = ''
+modes.release = ''
+
 [build]
-#src-ext = { cfml = 'f90', pycfml = 'F90' }
 src-ext = 'f90'
 static-lib-prefix = { macos = 'lib', linux = 'lib', windows = '' }
 static-lib-ext = { macos = 'a', linux = 'a', windows = 'lib' }
@@ -191,50 +234,6 @@ dependent-libs.macos.arm.gfortran = [
 #site-packages.macos = '/Users/runner/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages'
 #site-packages.linux = '/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages'
 #site-packages.windows = 'c:\hostedtoolcache\windows\Python\3.11.9\x64\lib\site-packages'
-
-######################
-# Build configurations
-######################
-
-[[build-objs]]
-platforms = ['macos', 'linux', 'windows']
-compilers = ['gfortran']
-obj-ext = 'o'
-build-shared = '{COMPILER} -shared CFML_Wraps.{OBJ_EXT} Wraps_*.{OBJ_EXT} {PATH}.{OBJ_EXT} -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {PYTHON_LIB}'
-build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} -L{CFML_LIB_DIR} -l{CFML_LIB_NAME}'
-modes.base = '-cpp -fdec-math -fPIC -fno-stack-arrays -ffree-line-length-none'
-modes.debug = ''
-modes.release = ''
-
-[[build-objs]]
-platforms = ['macos']
-compilers = ['nagfor']
-obj-ext = 'o'
-build-shared = '{COMPILER} -Wl,-shared CFML_Wraps.{OBJ_EXT} Wraps_*.{OBJ_EXT} {PATH}.{OBJ_EXT} -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {PYTHON_LIB}'
-build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} -L{CFML_LIB_DIR} -l{CFML_LIB_NAME}'
-modes.base = '-f2008 -fpp -PIC -quiet -w=all -colour'
-modes.debug = ''
-modes.release = ''
-
-[[build-objs]]
-platforms = ['linux', 'macos']
-compilers = ['ifort', 'ifx']
-obj-ext = 'o'
-build-shared = "{COMPILER} -shared CFML_Wraps.{OBJ_EXT} Wraps_*.{OBJ_EXT} {PATH}.{OBJ_EXT} -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {IFPORT_LIB} {PYTHON_LIB}"
-build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} -L{CFML_LIB_DIR} -l{CFML_LIB_NAME}'
-modes.base = '-w -fpp -fPIC -heap-arrays -nologo'
-modes.debug = ''  # -g3
-modes.release = ''  # -O3
-
-[[build-objs]]
-platforms = ['windows']
-compilers = ['ifort', 'ifx']
-obj-ext = 'obj'
-build-shared = 'link CFML_Wraps.{OBJ_EXT} Wraps_*.{OBJ_EXT} {PATH}.{OBJ_EXT} /out:"{PATH}.{EXT}" /libpath:{CFML_LIB_PATH} /dll {CFML_LIB_NAME}.lib {PYTHON_LIB}'
-build-exe = '{COMPILER} {OPTIONS} /exe:{EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} {CFML_LIB_DIR}\{CFML_LIB_NAME}.{LIB_EXT}'
-modes.base = '/w /fpp /heap-arrays /nologo -DWIN32=ON'
-modes.debug = ''
-modes.release = ''
 
 ##############################
 # CrysFML fortran source files

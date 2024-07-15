@@ -37,7 +37,7 @@ def _scripts_path():
     return path
 
 def _main_script_path():
-    name = 'main_script.sh'
+    name = 'main.sh'
     path = os.path.join(_scripts_path(), name)
     return path
 
@@ -151,7 +151,7 @@ def _compiler_options():
     compiler = _compiler_name()
     mode = _compiling_mode()
     options = ''
-    for build in CONFIG['build-objs']:
+    for build in CONFIG['build-configs']:
         if _platform() in build['platforms'] and compiler in build['compilers']:
             options = f"{build['modes']['base']}"
             if build['modes'][mode]:
@@ -162,7 +162,7 @@ def _compiler_options():
 def _obj_ext():
     compiler = _compiler_name()
     ext = ''
-    for build in CONFIG['build-objs']:
+    for build in CONFIG['build-configs']:
         if _platform() in build['platforms'] and compiler in build['compilers']:
             ext = build['obj-ext']
             break
@@ -171,7 +171,7 @@ def _obj_ext():
 def _compiler_build_shared_template():
     compiler = _compiler_name()
     template = ''
-    for build in CONFIG['build-objs']:
+    for build in CONFIG['build-configs']:
         if _platform() in build['platforms'] and compiler in build['compilers']:
             template = build['build-shared']
             break
@@ -180,7 +180,7 @@ def _compiler_build_shared_template():
 def _compiler_build_exe_template():
     compiler = _compiler_name()
     template = ''
-    for build in CONFIG['build-objs']:
+    for build in CONFIG['build-configs']:
         if _platform() in build['platforms'] and compiler in build['compilers']:
             template = build['build-exe']
             break
@@ -189,7 +189,7 @@ def _compiler_build_exe_template():
 def _compiler_obj_ext():
     compiler = _compiler_name()
     obj_ext = ''
-    for build in CONFIG['build-objs']:
+    for build in CONFIG['build-configs']:
         if _platform() in build['platforms'] and compiler in build['compilers']:
             obj_ext = build['obj-ext']
             break
@@ -386,16 +386,19 @@ def loaded_config(name: str):
     with open(path, 'rb') as f:
         config = tomllib.load(f)
     if _bash_syntax():
-        for idx, build in enumerate(config['build-objs']):
-            config['build-objs'][idx]['build-shared'] = build['build-shared'].replace('/', '-')
-            config['build-objs'][idx]['build-exe'] = build['build-exe'].replace('/', '-')
-            config['build-objs'][idx]['modes']['base'] = build['modes']['base'].replace('/', '-')
-            config['build-objs'][idx]['modes']['debug'] = build['modes']['debug'].replace('/', '-')
-            config['build-objs'][idx]['modes']['release'] = build['modes']['release'].replace('/', '-')
+        for idx, build in enumerate(config['build-configs']):
+            config['build-configs'][idx]['build-shared'] = build['build-shared'].replace('/', '-')
+            config['build-configs'][idx]['build-exe'] = build['build-exe'].replace('/', '-')
+            config['build-configs'][idx]['modes']['base'] = build['modes']['base'].replace('/', '-')
+            config['build-configs'][idx]['modes']['debug'] = build['modes']['debug'].replace('/', '-')
+            config['build-configs'][idx]['modes']['release'] = build['modes']['release'].replace('/', '-')
     return config
 
 def clear_main_script():
     path = _main_script_path()
+    if not os.path.isfile(path):
+        file = Path(path)
+        file.parent.mkdir(exist_ok=True, parents=True)
     with open(path, 'w') as file:
         pass
 
@@ -1218,7 +1221,7 @@ if __name__ == '__main__':
     append_header_to_main_script(f"Print some build-specific variables")
     print_build_variables()
 
-    append_header_to_main_script(f"Create {cfml_project_name} and {pycfml_project_name} directories")
+    append_header_to_main_script(f"Create scripts, {cfml_project_name} and {pycfml_project_name} directories")
     create_cfml_repo_dir()
     create_cfml_build_dir()
     create_cfml_dist_dir()
@@ -1257,7 +1260,7 @@ if __name__ == '__main__':
 
     append_header_to_main_script(f"Make {pycfml_project_name} distribution")
     copy_built_to_pycfml_dist()
-    #change_runpath_for_built_pycfml()
+    change_runpath_for_built_pycfml()
     copy_extra_libs_to_pycfml_dist()
     copy_py_api_files_to_pycfml_dist()
     copy_init_file_to_pycfml_dist()

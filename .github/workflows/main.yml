@@ -70,30 +70,34 @@ jobs:
         shell: bash
         run: scripts/print_build_variables.sh  # bash -x scripts/print_build_variables.sh for printing commands
 
-      - name: Create CFML and PYCFML directories
+      - name: Create CFML and pyCFML directories
         shell: bash
         run: |
           scripts/create_cfml_repo_dir.sh
           scripts/create_cfml_build_dir.sh
           scripts/create_cfml_dist_dir.sh
-          scripts/create_pycfml_repo_dir.sh
+          scripts/create_pycfml_src_dir.sh
           scripts/create_pycfml_build_dir.sh
           scripts/create_pycfml_dist_dir.sh
 
-      - name: Download CFML and PYCFML repositories
+      - name: Download CFML repository
         shell: bash
-        run: |
-          scripts/download_cfml_repo.sh
-          scripts/download_pycfml_repo.sh
+        run: scripts/download_cfml_repo.sh
 
-      - name: Build CFML static library
+      - name: Build CFML modules
         shell: bash
         run: |
           scripts/rename_global_deps_file.sh
-          scripts/build_cfml_objs.sh
+          scripts/build_cfml_modules_obj.sh
           scripts/delete_renamed_global_deps_file.sh
-          scripts/build_cfml_static_lib.sh
-          scripts/copy_built_to_cfml_dist.sh
+
+      - name: Build CFML static library
+        shell: bash
+        run: scripts/build_cfml_static_lib.sh
+
+      - name: Make CFML distribution
+        shell: bash
+        run: scripts/move_built_to_cfml_dist.sh
 
       #- name: Build und run CFML functional test programs (incl. benchmarks)
       #  # 1st combination: this always fails with 'Undefined symbols...' error
@@ -115,40 +119,45 @@ jobs:
       #    message: 'Auto push benchmark results by GitHub Action for ${{ runner.os }} + ${{ matrix.toolchain.exe }}'
       #    pull: '--rebase --autostash'
 
-      #- name: Copy powder_mod from CFML to PYCFML
+      #- name: Copy powder_mod from CFML to pyCFML
       #  shell: bash
       #  run: scripts/copy_powder_mod_to_pycfml_repo.sh
 
-      - name: Build CFML wraps and PYCFML shared obj or dynamic library
+      - name: Create pyCFML source code
+        shell: bash
+        run: scripts/create_pycfml_src.sh
+
+      - name: Build pyCFML modules
+        shell: bash
+        run: scripts/build_pycfml_modules_obj.sh
+
+      - name: Build pyCFML shared obj / dynamic library
         shell: bash
         run: |
-          scripts/create_pycfml_wraps_src.sh
-          scripts/build_pycfml_wraps_objs.sh
           scripts/build_pycfml_lib_obj.sh
           scripts/build_pycfml_shared_obj_or_dynamic_lib.sh
-          scripts/copy_built_to_pycfml_dist.sh
-          scripts/change_runpath_for_built_pycfml.sh
 
-      - name: Copy extra files to PYCFML dist
+      - name: Make pyCFML distribution
         shell: bash
         run: |
+          scripts/copy_built_to_pycfml_dist.sh  # scripts/change_runpath_for_built_pycfml.sh
           scripts/copy_extra_libs_to_pycfml_dist.sh
           scripts/copy_py_api_files_to_pycfml_dist.sh
           scripts/copy_init_file_to_pycfml_dist.sh
           scripts/copy_cfml_databases_to_pycfml_dist.sh
 
-      - name: Create Python package wheel of PYCFML
+      - name: Create Python package wheel of pyCFML
         shell: bash
         run: |
           scripts/validate_pyproject_toml.sh
           scripts/create_pycfml_python_wheel.sh
           scripts/rename_pycfml_python_wheel.sh
 
-      - name: Prepare for uploading Python package wheel of PYCFML
+      - name: Prepare for uploading Python package wheel of pyCFML
         shell: bash
         run: echo "WHEEL_DIR=$(python3 scripts.py --print-wheel-dir)" >> $GITHUB_ENV
 
-      - name: Upload zipped Python package wheel of PYCFML for next job
+      - name: Upload zipped Python package wheel of pyCFML for next job
         uses: actions/upload-artifact@v4
         with:  # if name or path modified, remember to UPDATE those in the download step of the next job
           name: pycfml-wheel_${{ matrix.os }}_${{ matrix.toolchain.exe }} # name (without .zip) of the zip file to be uploaded
@@ -196,32 +205,32 @@ jobs:
           --mode debug
           --bash-syntax
 
-      - name: Prepare for downloading Python package wheel of PYCFML
+      - name: Prepare for downloading Python package wheel of pyCFML
         shell: bash
         run: echo "WHEEL_DIR=$(python3 scripts.py --print-wheel-dir)" >> $GITHUB_ENV
 
-      - name: Download zipped PYCFML wheel from previous job
+      - name: Download zipped pyCFML wheel from previous job
         uses: actions/download-artifact@v4
         with:  # name or path are taken from the upload step of the previous job
           name: pycfml-wheel_${{ matrix.os }}_${{ matrix.toolchain.exe }}  # name (without .zip) of the zipped artifact uploaded on the previous jobs
           path: ${{ env.WHEEL_DIR }}  # directory to extract downloaded zipped artifacts
 
-      - name: Install PYCFML from downloaded Python package wheel (with dev extras)
+      - name: Install pyCFML from downloaded Python package wheel (with dev extras)
         shell: bash
         run: scripts/install_pycfml_from_wheel.sh
 
-      - name: Debug PYCFML import
+      - name: Debug pyCFML import
         shell: bash
         run: python3 tests/unit_tests/pycfml/test__cfml_metrics__debug.py
 
-      #- name: Run PYCFML unit tests
+      #- name: Run pyCFML unit tests
       #  shell: bash
       #  run: scripts/run_pycfml_unit_tests.sh
 
-      #- name: Run PYCFML powder_mod tests
+      #- name: Run pyCFML powder_mod tests
       #  shell: bash
       #  run: scripts/run_powder_mod_tests.sh
 
-      #- name: Run PYCFML powder_mod main
+      #- name: Run pyCFML powder_mod main
       #  shell: bash
       #  run: scripts/run_powder_mod_main.sh

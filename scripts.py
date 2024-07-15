@@ -5,6 +5,7 @@ import tomllib
 import argparse
 import sysconfig
 import platform
+from pathlib import Path
 from pygit2 import Repository
 
 global ARGS
@@ -46,7 +47,7 @@ def _echo_msg(msg: str):
 def _echo_progress_msg(current: int, total: int, msg: str):
     progress = _compiling_progress(current, total)
     msg = f"[{progress:>3}%] {msg}"
-    return f'echo "{msg}"'
+    return _echo_msg(msg)
 
 def _echo_header(msg: str):
     msg = f':::::: {msg} ::::::'
@@ -137,7 +138,7 @@ def _bash_syntax():
     return bash_syntax
 
 def _print_pcfml_wheel_dir():
-    wheel_dir = CONFIG['pycfml']['dir']['wheel']
+    wheel_dir = CONFIG['pycfml']['dir']['dist-wheel']
     print(wheel_dir)
 
 def _compiler_name():
@@ -185,6 +186,15 @@ def _compiler_build_exe_template():
             break
     return template
 
+def _compiler_obj_ext():
+    compiler = _compiler_name()
+    obj_ext = ''
+    for build in CONFIG['build-objs']:
+        if _platform() in build['platforms'] and compiler in build['compilers']:
+            obj_ext = build['obj-ext']
+            break
+    return obj_ext
+
 def _compiling_mode():
     mode = 'debug'  # default
     if ARGS.mode:
@@ -212,17 +222,16 @@ def _compile_obj_script_line(src_path: str,
 
 def _compile_pycfml_shared_obj_or_dynamic_lib_script_line():
     src_name = CONFIG['pycfml']['src-name']
-    obj_ext = CONFIG['build']['obj-ext'][_platform()]
     shared_lib_ext = CONFIG['build']['shared-lib-ext'][_platform()]
     cfml_lib_name = CONFIG['cfml']['static-lib-name']
     cfml_dist_dir = CONFIG['cfml']['dir']['dist']
     cfml_dist_path = os.path.join(_project_path(), cfml_dist_dir)
     cfml_lib_dist_dir = CONFIG['cfml']['dir']['dist-lib']
-    cfml_lib_dist_path = os.path.join(cfml_dist_path, cfml_lib_dist_dir)
+    cfml_lib_dist_path = os.path.join(_project_path(), cfml_lib_dist_dir)
     cmd = _compiler_build_shared_template()
     cmd = cmd.replace('{COMPILER}', _compiler_name())
     cmd = cmd.replace('{PATH}', src_name)
-    cmd = cmd.replace('{OBJ_EXT}', obj_ext)
+    cmd = cmd.replace('{OBJ_EXT}', _compiler_obj_ext())
     #cmd = cmd.replace('{PATH}.{OBJ_EXT}', f'*.{obj_ext}')  # CFML_Wraps.o Wraps_*.o crysfml08lib.o
     cmd = cmd.replace('{EXT}', shared_lib_ext)
     cmd = cmd.replace('{CFML_LIB_PATH}', cfml_lib_dist_path)
@@ -249,7 +258,7 @@ def _compile_objs_script_lines(modules: str,
         if 'main-file' in module:
             current += 1
             name = f'{module["main-file"]}.{src_ext}'
-            msg = _echo_progress_msg(current, total, f"{name}")
+            msg = _echo_progress_msg(current, total, f'{name}')
             lines.append(msg)
             path = os.path.join(src_path, name)
             cmd = template_cmd
@@ -263,7 +272,7 @@ def _compile_objs_script_lines(modules: str,
                 current += 1
                 name = f'{component_file}.{src_ext}'
                 path = os.path.join(components_dir, name)
-                msg = _echo_progress_msg(current, total, f"{name}")
+                msg = _echo_progress_msg(current, total, f'{components_dir}/{name}')
                 lines.append(msg)
                 path = os.path.join(src_path, path)
                 cmd = template_cmd
@@ -278,13 +287,12 @@ def _compile_objs_script_lines(modules: str,
     return lines
 
 def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):
-    obj_ext = CONFIG['build']['obj-ext'][_platform()]
     shared_lib_ext = CONFIG['build']['shared-lib-ext'][_platform()]
     cfml_lib_name = CONFIG['cfml']['static-lib-name']
     cfml_dist_dir = CONFIG['cfml']['dir']['dist']
     cfml_dist_path = os.path.join(_project_path(), cfml_dist_dir)
     cfml_lib_dist_dir = CONFIG['cfml']['dir']['dist-lib']
-    cfml_lib_dist_path = os.path.join(cfml_dist_path, cfml_lib_dist_dir)
+    cfml_lib_dist_path = os.path.join(_project_path(), cfml_lib_dist_dir)
     template_cmd = _compiler_build_shared_template()
     total = _total_src_file_count(modules)
     current = 0
@@ -298,7 +306,7 @@ def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):
             cmd = template_cmd
             cmd = cmd.replace('{COMPILER}', _compiler_name())
             cmd = cmd.replace('{PATH}', name)
-            cmd = cmd.replace('{OBJ_EXT}', obj_ext)
+            cmd = cmd.replace('{OBJ_EXT}', _compiler_obj_ext())
             cmd = cmd.replace('{EXT}', shared_lib_ext)
             cmd = cmd.replace('{CFML_LIB_PATH}', cfml_lib_dist_path)
             cmd = cmd.replace('{CFML_LIB_NAME}', cfml_lib_name)
@@ -308,21 +316,20 @@ def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):
             lines.append(cmd)
     return lines
 
-def _compile_executables_script_lines(section_prefix: str,
+def _compile_executables_script_lines(modules: str,
                                       src_path: str,
                                       include_path: str,
                                       lib_dir: str,
                                       lib_name: str):
     src_ext = CONFIG['build']['src-ext']
     lib_ext = CONFIG['build']['static-lib-ext'][_platform()]
-    tests = f'{section_prefix}-tests'
     template_cmd = _compiler_build_exe_template()
     compiler = _compiler_name()
     options = _compiler_options()
-    total = _total_src_file_count(tests)
+    total = _total_src_file_count(modules)
     current = 0
     lines = []
-    for test in CONFIG[tests]:
+    for test in CONFIG[modules]:
         current += 1
         dir = test["main-dir"]
         main_name = test["main-file"]
@@ -405,6 +412,10 @@ def append_to_main_script(obj: str | list):
             file.write(line + '\n')
     _fix_file_permissions(path)
 
+def append_header_to_main_script(txt: str):
+    header = _echo_header(txt)
+    append_to_main_script(header)
+
 def print_build_variables():
     lines = []
     msg = _echo_msg(f"Platform: {_platform()}")
@@ -452,7 +463,7 @@ def download_cfml_repo():
     out_dir = CONFIG['cfml']['dir']['repo']
     out_path = os.path.abspath(out_dir)
     lines = []
-    msg = _echo_msg(f"Downloading {project_name} branch '{branch}' to '{out_dir}' from '{url}'")
+    msg = _echo_msg(f"Downloading {project_name} ('{branch}' branch) to '{out_dir}' from {url}")
     lines.append(msg)
     cmd = CONFIG['template']['clone-repo']
     cmd = cmd.replace('{BRANCH}', branch)
@@ -464,7 +475,7 @@ def download_cfml_repo():
     append_to_main_script(lines)
 
 def create_cfml_build_dir():
-    build_dir = CONFIG['cfml']['dir']['build']
+    build_dir = CONFIG['cfml']['dir']['build-obj']
     build_path = os.path.join(_project_path(), build_dir)
     lines = []
     msg = _echo_msg(f"Deleting build dir '{build_dir}'")
@@ -480,7 +491,6 @@ def create_cfml_build_dir():
     append_to_main_script(lines)
 
 def rename_global_deps_file():
-    repo_dir = CONFIG['cfml']['dir']['repo']
     src_ext = CONFIG['build']['src-ext']
     src_dir = CONFIG['cfml']['dir']['repo-src']
     if _platform() == 'macos':
@@ -495,10 +505,10 @@ def rename_global_deps_file():
     elif compiler in ['ifort', 'ifx']:
         compiler_suffix = 'IFOR'
     from_name = f'CFML_GlobalDeps_{platform_suffix}_{compiler_suffix}.{src_ext}'
-    from_relpath = os.path.join(repo_dir, src_dir, from_name)
+    from_relpath = os.path.join(src_dir, from_name)
     from_abspath = os.path.join(_project_path(), from_relpath)
     to_name = f'CFML_GlobalDeps.{src_ext}'
-    to_relpath = os.path.join(repo_dir, src_dir, to_name)
+    to_relpath = os.path.join(src_dir, to_name)
     to_abspath = os.path.join(_project_path(), to_relpath)
     lines = []
     msg = _echo_msg(f"Copying '{from_relpath}' to '{to_relpath}'")
@@ -509,21 +519,20 @@ def rename_global_deps_file():
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
 
-def build_cfml_objs():
+def build_cfml_modules_obj():
     project_name = CONFIG['cfml']['log-name']
-    repo_dir = CONFIG['cfml']['dir']['repo']
     src_dir = CONFIG['cfml']['dir']['repo-src']
-    src_path = os.path.join(_project_path(), repo_dir, src_dir)
-    build_dir = CONFIG['cfml']['dir']['build']
+    src_path = os.path.join(_project_path(), src_dir)
+    build_dir = CONFIG['cfml']['dir']['build-obj']
     build_path = os.path.join(_project_path(), build_dir)
     lines = []
     msg = _echo_msg(f"Entering build dir '{build_dir}'")
     lines.append(msg)
     cmd = f'cd {build_path}'
     lines.append(cmd)
-    msg = _echo_msg(f"Building fortran objects for {project_name}:")
+    msg = _echo_msg(f"Building fortran objects for {project_name} modules")
     lines.append(msg)
-    compile_lines = _compile_objs_script_lines('cfml-modules', src_path)
+    compile_lines = _compile_objs_script_lines('src-cfml-modules', src_path)
     lines.extend(compile_lines)
     msg = _echo_msg(f"Exiting build dir '{build_dir}'")
     lines.append(msg)
@@ -534,11 +543,10 @@ def build_cfml_objs():
     append_to_main_script(lines)
 
 def delete_renamed_global_deps_file():
-    repo_dir = CONFIG['cfml']['dir']['repo']
     src_ext = CONFIG['build']['src-ext']
     src_dir = CONFIG['cfml']['dir']['repo-src']
     name = f'CFML_GlobalDeps.{src_ext}'
-    relpath = os.path.join(repo_dir, src_dir, name)
+    relpath = os.path.join(src_dir, name)
     abspath = os.path.join(_project_path(), relpath)
     lines = []
     msg = _echo_msg(f"Deleting previously created '{relpath}'")
@@ -554,7 +562,7 @@ def build_cfml_static_lib():
     static_lib_prefix = CONFIG['build']['static-lib-prefix'][_platform()]
     lib_name = CONFIG['cfml']['static-lib-name']
     lib_name = f'{static_lib_prefix}{lib_name}'
-    build_dir = CONFIG['cfml']['dir']['build']
+    build_dir = CONFIG['cfml']['dir']['build-obj']
     build_path = os.path.join(_project_path(), build_dir)
     lines = []
     msg = _echo_msg(f"Entering build dir '{build_dir}'")
@@ -579,9 +587,9 @@ def create_cfml_dist_dir():
     dist_dir = CONFIG['cfml']['dir']['dist']
     dist_path = os.path.join(_project_path(), dist_dir)
     lib_dist_dir = CONFIG['cfml']['dir']['dist-lib']
+    lib_dist_path = os.path.join(_project_path(), lib_dist_dir)
     include_dist_dir = CONFIG['cfml']['dir']['dist-include']
-    lib_dist_path = os.path.join(dist_path, lib_dist_dir)
-    include_dist_path = os.path.join(dist_path, include_dist_dir)
+    include_dist_path = os.path.join(_project_path(), include_dist_dir)
     lines = []
     msg = _echo_msg(f"Deleting dist dir '{dist_dir}'")
     lines.append(msg)
@@ -591,11 +599,11 @@ def create_cfml_dist_dir():
     lines.append(msg)
     cmd = f'mkdir -p {dist_path}'
     lines.append(cmd)
-    msg = _echo_msg(f"Creating dist dir '{dist_dir}/{lib_dist_dir}'")
+    msg = _echo_msg(f"Creating dist dir '{lib_dist_dir}'")
     lines.append(msg)
     cmd = f'mkdir -p {lib_dist_path}'
     lines.append(cmd)
-    msg = _echo_msg(f"Creating dist dir '{dist_dir}/{include_dist_dir}'")
+    msg = _echo_msg(f"Creating dist dir '{include_dist_dir}'")
     lines.append(msg)
     cmd = f'mkdir -p {include_dist_path}'
     lines.append(cmd)
@@ -603,29 +611,27 @@ def create_cfml_dist_dir():
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
 
-def copy_built_to_cfml_dist():
+def move_built_to_cfml_dist():
     lib_ext = CONFIG['build']['static-lib-ext'][_platform()]
     static_lib_prefix = CONFIG['build']['static-lib-prefix'][_platform()]
     lib_name = CONFIG['cfml']['static-lib-name']
     lib_name = f'{static_lib_prefix}{lib_name}'
-    build_dir = CONFIG['cfml']['dir']['build']
+    build_dir = CONFIG['cfml']['dir']['build-obj']
     build_path = os.path.join(_project_path(), build_dir)
-    dist_dir = CONFIG['cfml']['dir']['dist']
-    dist_path = os.path.join(_project_path(), dist_dir)
     lib_dist_dir = CONFIG['cfml']['dir']['dist-lib']
+    lib_dist_path = os.path.join(_project_path(), lib_dist_dir)
     include_dist_dir = CONFIG['cfml']['dir']['dist-include']
-    lib_dist_path = os.path.join(dist_path, lib_dist_dir)
-    include_dist_path = os.path.join(dist_path, include_dist_dir)
+    include_dist_path = os.path.join(_project_path(), include_dist_dir)
     lines = []
-    msg = _echo_msg(f"Copying built lib '{lib_name}.{lib_ext}' to dist dir '{dist_dir}/{lib_dist_dir}'")
+    msg = _echo_msg(f"Moving built lib '{lib_name}.{lib_ext}' to dist dir '{lib_dist_dir}'")
     lines.append(msg)
     from_path = os.path.join(build_path, f'{lib_name}.{lib_ext}')
-    cmd = f'cp {from_path} {lib_dist_path}'
+    cmd = f'mv {from_path} {lib_dist_path}'
     lines.append(cmd)
-    msg = _echo_msg(f"Copying built modules to dist dir '{dist_dir}/{include_dist_dir}'")
+    msg = _echo_msg(f"Moving built modules '*.*mod' to dist dir '{include_dist_dir}'")
     lines.append(msg)
     from_path = os.path.join(build_path, '*.*mod')
-    cmd = f'cp {from_path} {include_dist_path}'
+    cmd = f'mv {from_path} {include_dist_path}'
     lines.append(cmd)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
@@ -640,9 +646,9 @@ def build_cfml_test_programs():
     build_path = os.path.join(_project_path(), build_dir)
     dist_dir = CONFIG['cfml']['dir']['dist']
     include_dir = CONFIG['cfml']['dir']['dist-include']
-    include_path = os.path.join(_project_path(), dist_dir, include_dir)
+    include_path = os.path.join(_project_path(), include_dir)
     lib_dir = CONFIG['cfml']['dir']['dist-lib']
-    lib_path = os.path.join(_project_path(), dist_dir, lib_dir)
+    lib_path = os.path.join(_project_path(), lib_dir)
     lib_name = CONFIG['cfml']['static-lib-name']
     lines = []
     msg = _echo_msg(f"Entering build dir '{build_dir}'")
@@ -651,7 +657,10 @@ def build_cfml_test_programs():
     lines.append(cmd)
     msg = _echo_msg(f"Building test programs for {project_name}:")
     lines.append(msg)
-    compile_lines = _compile_executables_script_lines('cfml', src_path, include_path, lib_path, lib_name)
+    compile_lines = _compile_executables_script_lines('src-cfml-tests',
+                                                      src_path, include_path,
+                                                      lib_path,
+                                                      lib_name)
     lines.extend(compile_lines)
     msg = _echo_msg(f"Exiting build dir '{build_dir}'")
     lines.append(msg)
@@ -697,47 +706,14 @@ def run_cfml_functional_tests_with_benchmarks():
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
 
-def create_pycfml_repo_dir():
-    repo_dir = CONFIG['pycfml']['dir']['repo']
-    repo_path = os.path.join(_project_path(), repo_dir)
-    lines = []
-    msg = _echo_msg(f"Deleting build dir '{repo_dir}'")
-    lines.append(msg)
-    cmd = f'rm -rf {repo_path}'
-    lines.append(cmd)
-    msg = _echo_msg(f"Creating build dir '{repo_dir}'")
-    lines.append(msg)
-    cmd = f'mkdir -p {repo_path}'
-    lines.append(cmd)
-    script_name = f'{sys._getframe().f_code.co_name}.sh'
-    _write_lines_to_file(lines, script_name)
-    append_to_main_script(lines)
-
-def download_pycfml_repo():
-    project_name = CONFIG['pycfml']['log-name']
-    url = CONFIG['pycfml']['git']['url']
-    branch = CONFIG['pycfml']['git']['branch']
-    out_dir = CONFIG['pycfml']['dir']['repo']
-    out_path = os.path.abspath(out_dir)
-    lines = []
-    msg = _echo_msg(f"Downloading {project_name} branch '{branch}' to '{out_dir}' from '{url}'")
-    lines.append(msg)
-    cmd = CONFIG['template']['clone-repo']
-    cmd = cmd.replace('{BRANCH}', branch)
-    cmd = cmd.replace('{URL}', url)
-    cmd = cmd.replace('{OUT_PATH}', out_path)
-    lines.append(cmd)
-    script_name = f'{sys._getframe().f_code.co_name}.sh'
-    _write_lines_to_file(lines, script_name)
-    append_to_main_script(lines)
 
 def copy_powder_mod_to_pycfml_repo():
     cfml_project_name = CONFIG['cfml']['log-name']
     cfml_repo_dir = CONFIG['cfml']['dir']['repo']
     cfml_repo_path = os.path.join(_project_path(), cfml_repo_dir)
     pycfml_project_name = CONFIG['pycfml']['log-name']
-    pycfml_repo_dir = CONFIG['pycfml']['dir']['repo']
-    pycfml_src_dir = CONFIG['pycfml']['dir']['repo-src']
+    pycfml_repo_dir = CONFIG['pycfml']['dir2']['repo']
+    pycfml_src_dir = CONFIG['pycfml']['dir2']['repo-src']
     pycfml_src_path = os.path.join(_project_path(), pycfml_repo_dir, pycfml_src_dir)
     src_ext = CONFIG['build']['src-ext']
     lines = []
@@ -757,40 +733,55 @@ def copy_powder_mod_to_pycfml_repo():
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
 
-def create_pycfml_build_dir():
-    build_dir = CONFIG['pycfml']['dir']['build']
-    build_path = os.path.join(_project_path(), build_dir)
+def create_pycfml_src_dir():
+    src_dir = CONFIG['pycfml']['dir']['build-src']
     lines = []
-    msg = _echo_msg(f"Deleting build dir '{build_dir}'")
+    msg = _echo_msg(f"Deleting src dir '{src_dir}'")
     lines.append(msg)
-    cmd = f'rm -rf {build_path}'
+    cmd = f'rm -rf {src_dir}'
     lines.append(cmd)
-    msg = _echo_msg(f"Creating build dir '{build_dir}'")
+    msg = _echo_msg(f"Creating src dir '{src_dir}'")
     lines.append(msg)
-    cmd = f'mkdir -p {build_path}'
+    cmd = f'mkdir -p {src_dir}'
     lines.append(cmd)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
 
-def create_pycfml_wraps_src():
-    project_name = CONFIG['cfml']['log-name']
-    repo_dir = CONFIG['cfml']['dir']['repo']
-    apigen_dir = CONFIG['cfml']['apigen-dir']
-    apigen_dir = os.path.join(repo_dir, *apigen_dir.split('/'))
-    apigen_path = os.path.join(_project_path(), apigen_dir)
-    apigen_file = CONFIG['cfml']['apigen-file']
+def create_pycfml_build_dir():
+    build_dir = CONFIG['pycfml']['dir']['build-obj']
     lines = []
-    msg = _echo_msg(f"Entering apigen dir '{apigen_dir}'")
+    msg = _echo_msg(f"Deleting build dir '{build_dir}'")
     lines.append(msg)
-    cmd = f'cd {apigen_path}'
+    cmd = f'rm -rf {build_dir}'
     lines.append(cmd)
-    msg = _echo_msg(f"Creating {project_name} wraps")
+    msg = _echo_msg(f"Creating build dir '{build_dir}'")
+    lines.append(msg)
+    cmd = f'mkdir -p {build_dir}'
+    lines.append(cmd)
+    script_name = f'{sys._getframe().f_code.co_name}.sh'
+    _write_lines_to_file(lines, script_name)
+    append_to_main_script(lines)
+
+def create_pycfml_src():
+    project_name = CONFIG['pycfml']['log-name']
+    apigen_relpath = CONFIG['cfml']['scripts']['pyapigen']
+    apigen_parent_relpath = Path(apigen_relpath).parent.as_posix()
+    apigen_file = Path(apigen_relpath).name
+    build_relpath = CONFIG['pycfml']['dir']['build-src']
+    build_abspath = os.path.join(_project_path(), build_relpath)
+    lines = []
+    msg = _echo_msg(f"Entering Python API gen dir '{apigen_parent_relpath}'")
+    lines.append(msg)
+    cmd = f'cd {apigen_parent_relpath}'
+    lines.append(cmd)
+    msg = _echo_msg(f"Creating {project_name} source code with '{apigen_file}'")
     lines.append(msg)
     cmd = CONFIG['template']['run-python']
     cmd = cmd.replace('{PATH}', apigen_file)
+    cmd = cmd.replace('{OPTIONS}', f'--build {build_abspath}')
     lines.append(cmd)
-    msg = _echo_msg(f"Exiting build dir '{apigen_dir}'")
+    msg = _echo_msg(f"Exiting build dir '{apigen_parent_relpath}'")
     lines.append(msg)
     cmd = f'cd {_project_path()}'
     lines.append(cmd)
@@ -798,26 +789,25 @@ def create_pycfml_wraps_src():
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
 
-def build_pycfml_wraps_objs():
+def build_pycfml_modules_obj():
     project_name = CONFIG['cfml']['log-name']
-    repo_dir = CONFIG['cfml']['dir']['repo']
-    wraps_dir = CONFIG['cfml']['dir']['repo-wraps']
-    src_path = os.path.join(_project_path(), repo_dir, *wraps_dir.split('/'))
-    build_dir = CONFIG['pycfml']['dir']['build']
-    build_path = os.path.join(_project_path(), build_dir)
-    dist_dir = CONFIG['cfml']['dir']['dist']
-    include_dist_dir = CONFIG['cfml']['dir']['dist-include']
-    include_dist_path = os.path.join(_project_path(), dist_dir, include_dist_dir)
+    src_relpath = CONFIG['pycfml']['dir']['build-src-fortran']
+    src_abspath = os.path.join(_project_path(), src_relpath)
+    build_relpath = CONFIG['pycfml']['dir']['build-obj']
+    include_relpath = CONFIG['cfml']['dir']['dist-include']
+    include_abspath = os.path.join(_project_path(), include_relpath)
     lines = []
-    msg = _echo_msg(f"Entering build dir '{build_dir}'")
+    msg = _echo_msg(f"Entering build dir '{build_relpath}'")
     lines.append(msg)
-    cmd = f'cd {build_path}'
+    cmd = f'cd {build_relpath}'
     lines.append(cmd)
-    msg = _echo_msg(f"Building fortran objects for {project_name} wraps")
+    msg = _echo_msg(f"Building fortran objects for {project_name} modules")
     lines.append(msg)
-    compile_lines = _compile_objs_script_lines('cfml-wraps', src_path, include_dist_path)
+    compile_lines = _compile_objs_script_lines('src-cfml-wraps',
+                                               src_abspath,
+                                               include_abspath)
     lines.extend(compile_lines)
-    msg = _echo_msg(f"Exiting build dir '{build_dir}'")
+    msg = _echo_msg(f"Exiting build dir '{build_relpath}'")
     lines.append(msg)
     cmd = f'cd {_project_path()}'
     lines.append(cmd)
@@ -827,132 +817,104 @@ def build_pycfml_wraps_objs():
 
 def build_pycfml_lib_obj():
     project_name = CONFIG['pycfml']['log-name']
-    repo_dir = CONFIG['cfml']['dir']['repo']
-    wraps_dir = CONFIG['cfml']['dir']['repo-wraps']
     src_ext = CONFIG['build']['src-ext']
     pycfml_src_name = CONFIG['pycfml']['src-name']
     pycfml_src_file = f'{pycfml_src_name}.{src_ext}'
-    src_path = os.path.join(_project_path(), repo_dir, *wraps_dir.split('/'), pycfml_src_file)
-    build_dir = CONFIG['pycfml']['dir']['build']
-    build_path = os.path.join(_project_path(), build_dir)
-    dist_dir = CONFIG['cfml']['dir']['dist']
-    include_dist_dir = CONFIG['cfml']['dir']['dist-include']
-    include_dist_path = os.path.join(_project_path(), dist_dir, include_dist_dir)
+    src_relpath = CONFIG['pycfml']['dir']['build-src-fortran']
+    src_abspath = os.path.join(_project_path(), src_relpath, pycfml_src_file)
+    build_relpath = CONFIG['pycfml']['dir']['build-obj']
+    include_relpath = CONFIG['cfml']['dir']['dist-include']
+    include_abspath = os.path.join(_project_path(), include_relpath)
     lines = []
-    msg = _echo_msg(f"Entering build dir '{build_dir}'")
+    msg = _echo_msg(f"Entering build dir '{build_relpath}'")
     lines.append(msg)
-    cmd = f'cd {build_path}'
+    cmd = f'cd {build_relpath}'
     lines.append(cmd)
-    msg = _echo_msg(f"Building fortran object of {project_name} lib")
+    msg = _echo_msg(f"Building fortran object for {project_name} library")
     lines.append(msg)
-    compile_line = _compile_obj_script_line(src_path, include_dist_path)
+    compile_line = _compile_obj_script_line(src_abspath, include_abspath)
     lines.append(compile_line)
-    msg = _echo_msg(f"Exiting build dir '{build_dir}'")
+    msg = _echo_msg(f"Exiting build dir '{build_relpath}'")
     lines.append(msg)
     cmd = f'cd {_project_path()}'
     lines.append(cmd)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
-
-def build_pycfml_shared_objs_or_dynamic_libs():
-    project_name = CONFIG['pycfml']['log-name']
-    build_dir = CONFIG['pycfml']['dir']['build']
-    build_path = os.path.join(_project_path(), build_dir)
-    lines = []
-    msg = _echo_msg(f"Entering build dir '{build_dir}'")
-    lines.append(msg)
-    cmd = f'cd {build_path}'
-    lines.append(cmd)
-    msg = _echo_msg(f"Building fortran shared objs or dynamic libs for {project_name}:")
-    lines.append(msg)
-    compile_lines = _compile_shared_objs_or_dynamic_libs_script_lines('pycfml-modules')
-    lines.extend(compile_lines)
-    msg = _echo_msg(f"Exiting build dir '{build_dir}'")
-    lines.append(msg)
-    cmd = f'cd {_project_path()}'
-    lines.append(cmd)
-    script_name = f'{sys._getframe().f_code.co_name}.sh'
-    _write_lines_to_file(lines, script_name)
-    append_to_main_script(lines)
-
-
-
-
 
 
 def build_pycfml_shared_obj_or_dynamic_lib():
-    project_name = CONFIG['pycfml']['log-name']
-    build_dir = CONFIG['pycfml']['dir']['build']
-    build_path = os.path.join(_project_path(), build_dir)
-    lib_name = CONFIG['pycfml']['src-name']  # NED FIX: use CONFIG['pycfml']['dynamic-lib-name']
+    build_relpath = CONFIG['pycfml']['dir']['build-obj']
+    lib_name = CONFIG['pycfml']['src-name']  # NEED FIX: use CONFIG['pycfml']['dynamic-lib-name']
     lib_ext = CONFIG['build']['shared-lib-ext'][_platform()]
-
     lines = []
-    msg = _echo_msg(f"Entering build dir '{build_dir}'")
+    msg = _echo_msg(f"Entering build dir '{build_relpath}'")
     lines.append(msg)
-
-    #lines.append(f'ls -l {build_path}')
-
-    cmd = f'cd {build_path}'
+    cmd = f'cd {build_relpath}'
     lines.append(cmd)
     msg = _echo_msg(f"Building fortran shared obj or dynamic lib '{lib_name}.{lib_ext}'")
-
     lines.append(msg)
     compile_line = _compile_pycfml_shared_obj_or_dynamic_lib_script_line()
     lines.append(compile_line)
-    msg = _echo_msg(f"Exiting build dir '{build_dir}'")
+    msg = _echo_msg(f"Exiting build dir '{build_relpath}'")
     lines.append(msg)
     cmd = f'cd {_project_path()}'
     lines.append(cmd)
-
-    #lines.append(f'ls -l {build_path}')
-
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
-
-
 
 
 
 def create_pycfml_dist_dir():
     dist_dir = CONFIG['pycfml']['dir']['dist']
-    dist_abspath = os.path.join(_project_path(), dist_dir)
-    package_dir = CONFIG['pycfml']['dir']['dist-package']
-    package_relpath = os.path.join(dist_dir, package_dir)
-    package_abspath = os.path.join(dist_abspath, package_dir)
+    lib_dist_dir = CONFIG['pycfml']['dir']['dist-lib']
+    include_dist_dir = CONFIG['pycfml']['dir']['dist-include']
+    package_dist_dir = CONFIG['pycfml']['dir']['dist-package']
+    wheel_dist_dir = CONFIG['pycfml']['dir']['dist-wheel']
     lines = []
     msg = _echo_msg(f"Deleting dist dir '{dist_dir}'")
     lines.append(msg)
-    cmd = f'rm -rf {dist_abspath}'
+    cmd = f'rm -rf {dist_dir}'
     lines.append(cmd)
-    msg = _echo_msg(f"Creating dist dir '{package_relpath}'")
+    msg = _echo_msg(f"Creating dist dir '{dist_dir}'")
     lines.append(msg)
-    cmd = f'mkdir -p {package_abspath}'
+    cmd = f'mkdir -p {dist_dir}'
+    lines.append(cmd)
+    msg = _echo_msg(f"Creating dist dir '{lib_dist_dir}'")
+    lines.append(msg)
+    cmd = f'mkdir -p {lib_dist_dir}'
+    lines.append(cmd)
+    msg = _echo_msg(f"Creating dist dir '{include_dist_dir}'")
+    lines.append(msg)
+    cmd = f'mkdir -p {include_dist_dir}'
+    lines.append(cmd)
+    msg = _echo_msg(f"Creating dist dir '{package_dist_dir}'")
+    lines.append(msg)
+    cmd = f'mkdir -p {package_dist_dir}'
+    lines.append(cmd)
+    msg = _echo_msg(f"Creating dist dir '{wheel_dist_dir}'")
+    lines.append(msg)
+    cmd = f'mkdir -p {wheel_dist_dir}'
     lines.append(cmd)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
 
 def copy_built_to_pycfml_dist():
-    shared_lib_ext = CONFIG['build']['shared-lib-ext'][_platform()]
     project_name = CONFIG['pycfml']['log-name']
-    build_dir = CONFIG['pycfml']['dir']['build']
-    build_path = os.path.join(_project_path(), build_dir)
-    dist_dir = CONFIG['pycfml']['dir']['dist']
-    package_dir = CONFIG['pycfml']['dir']['dist-package']
-    package_relpath = os.path.join(dist_dir, package_dir)
-    package_abspath = os.path.join(_project_path(), dist_dir, package_dir)
+    shared_lib_ext = CONFIG['build']['shared-lib-ext'][_platform()]
+    build_relpath = CONFIG['pycfml']['dir']['build-obj']
+    build_abspath = os.path.join(_project_path(), build_relpath)
+    package_relpath = CONFIG['pycfml']['dir']['dist-package']
+    package_abspath = os.path.join(_project_path(), package_relpath)
     lines = []
-    msg = _echo_msg(f"Copying built {project_name} shared objects or dynamic libs to '{package_relpath}'")
+    msg = _echo_msg(f"Copying built {project_name} shared objects / dynamic libs to '{package_relpath}'")
     lines.append(msg)
-    from_path = os.path.join(build_path, f'*.{shared_lib_ext}')
-    cmd = f'cp {from_path} {package_abspath}'
+    from_path = os.path.join(build_abspath, f'*.{shared_lib_ext}')
+    to_path = package_abspath
+    cmd = f'cp {from_path} {to_path}'
     lines.append(cmd)
-
-    #lines.append(f"ls -l {os.path.join(_project_path(), CONFIG['pycfml']['dir']['dist']), CONFIG['pycfml']['dir']['dist-package'])}")
-
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
@@ -989,10 +951,12 @@ def change_runpath_for_built_pycfml():
         return
     project_name = CONFIG['pycfml']['log-name']
     shared_lib_ext = CONFIG['build']['shared-lib-ext'][_platform()]
-    dist_dir = CONFIG['pycfml']['dir']['dist']
-    package_dir = CONFIG['pycfml']['dir']['dist-package']
-    package_relpath = os.path.join(dist_dir, package_dir)
-    package_abspath = os.path.join(_project_path(), dist_dir, package_dir)
+    #dist_dir = CONFIG['pycfml']['dir2']['dist']
+    #package_dir = CONFIG['pycfml']['dir2']['dist-package']
+    #package_relpath = os.path.join(dist_dir, package_dir)
+    #package_abspath = os.path.join(_project_path(), dist_dir, package_dir)
+    package_relpath = CONFIG['pycfml']['dir']['dist-package']
+    package_abspath = os.path.join(_project_path(), package_relpath)
     #total = 1
     #current = 0
     lines = []
@@ -1073,9 +1037,7 @@ def copy_extra_libs_to_pycfml_dist():
         _write_lines_to_file(lines, script_name)
         append_to_main_script(lines)
         return
-    dist_dir = CONFIG['pycfml']['dir']['dist']
-    package_dir = CONFIG['pycfml']['dir']['dist-package']
-    package_relpath = os.path.join(dist_dir, package_dir)
+    package_relpath = CONFIG['pycfml']['dir']['dist-package']
     package_abspath = os.path.join(_project_path(), package_relpath)
     lines = []
     for lib_path in extra_libs:
@@ -1083,26 +1045,22 @@ def copy_extra_libs_to_pycfml_dist():
         lines.append(msg)
         cmd = f'cp {lib_path} {package_abspath}'
         lines.append(cmd)
-
-    #lines.append(f"ls -l {os.path.join(_project_path(), CONFIG['pycfml']['dir']['dist']), CONFIG['pycfml']['dir']['dist-package'])}")
-
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
 
 def copy_py_api_files_to_pycfml_dist():
     project_name = CONFIG['pycfml']['log-name']
-    repo_dir = CONFIG['cfml']['dir']['repo']
-    dist_dir = CONFIG['pycfml']['dir']['dist']
-    from_dir = os.path.join(repo_dir, 'build', 'Python_API', '*.py')
-    from_path = os.path.join(_project_path(), from_dir)
-    package_dir = CONFIG['pycfml']['dir']['dist-package']
-    package_relpath = os.path.join(dist_dir, package_dir)
+    py_api_relpath = CONFIG['pycfml']['dir']['build-src-python']
+    py_api_abspath = os.path.join(_project_path(), py_api_relpath)
+    from_path = os.path.join(py_api_abspath, '*.py')
+    package_relpath = CONFIG['pycfml']['dir']['dist-package']
     package_abspath = os.path.join(_project_path(), package_relpath)
+    to_path = package_abspath
     lines = []
-    msg = _echo_msg(f"Copying {project_name} python api files from '{from_dir}' to dist dir '{package_relpath}'")
+    msg = _echo_msg(f"Copying {project_name} python api files from '{py_api_relpath}' to dist dir '{package_relpath}'")
     lines.append(msg)
-    cmd = f'cp {from_path} {package_abspath}'
+    cmd = f'cp {from_path} {to_path}'
     lines.append(cmd)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
@@ -1110,50 +1068,36 @@ def copy_py_api_files_to_pycfml_dist():
 
 def copy_init_file_to_pycfml_dist():
     project_name = CONFIG['pycfml']['log-name']
-    repo_dir = CONFIG['pycfml']['dir']['repo']
-    repo_path = os.path.join(_project_path(), repo_dir)
-    dist_dir = CONFIG['pycfml']['dir']['dist']
-    package_dir = CONFIG['pycfml']['dir']['dist-package']
-    package_relpath = os.path.join(dist_dir, package_dir)
+    from_path = os.path.join(_project_path(), '__init__.py')
+    package_relpath = CONFIG['pycfml']['dir']['dist-package']
     package_abspath = os.path.join(_project_path(), package_relpath)
+    to_path = package_abspath
     lines = []
     msg = _echo_msg(f"Copying {project_name} '__init__.py' to dist dir '{package_relpath}'")
     lines.append(msg)
-    from_path = os.path.join(repo_path, 'pycrysfml08', '__init__.py')
-    cmd = f'cp {from_path} {package_abspath}'
+    cmd = f'cp {from_path} {to_path}'
     lines.append(cmd)
-
-    #lines.append(f"ls -l {os.path.join(_project_path(), CONFIG['pycfml']['dir']['dist']), CONFIG['pycfml']['dir']['dist-package'])}")
-
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
 
 def copy_cfml_databases_to_pycfml_dist():
-    cfml_repo_dir = CONFIG['cfml']['dir']['repo']
-    cfml_src_dir = CONFIG['cfml']['dir']['repo-src']
-    cfml_src_relpath = os.path.join(cfml_repo_dir, cfml_src_dir)
-    pycfml_dist_dir = CONFIG['pycfml']['dir']['dist']
-    pycfml_package_dir = CONFIG['pycfml']['dir']['dist-package']
-    pycfml_package_relpath = os.path.join(pycfml_dist_dir, pycfml_package_dir)
-    database_name = 'magnetic_data.txt'
-    databases_dir = 'Databases'
-    cfml_databases_relpath = os.path.join(cfml_src_relpath, databases_dir, database_name)
-    cfml_databases_abspath = os.path.join(_project_path(), cfml_databases_relpath)
-    pycfml_databases_relpath = os.path.join(pycfml_package_relpath, databases_dir)
-    pycfml_databases_abspath = os.path.join(_project_path(), pycfml_databases_relpath)
+    cfml_db_relpath = CONFIG['cfml']['dir']['repo-database']
+    cfml_db_abspath = os.path.join(_project_path(), cfml_db_relpath)
+    from_path = cfml_db_abspath
+    package_relpath = CONFIG['pycfml']['dir']['dist-package']
+    pycfml_db_relpath = os.path.join(package_relpath, 'Databases')
+    pycfml_db_abspath = os.path.join(_project_path(), pycfml_db_relpath)
+    to_path = pycfml_db_abspath
     lines = []
-    msg = _echo_msg(f"Creating dir '{pycfml_databases_relpath}'")
+    msg = _echo_msg(f"Creating dir '{pycfml_db_relpath}'")
     lines.append(msg)
-    cmd = f'mkdir -p {pycfml_databases_abspath}'
+    cmd = f'mkdir -p {pycfml_db_relpath}'
     lines.append(cmd)
-    msg = _echo_msg(f"Copying '{cfml_databases_relpath}' database to dist dir '{pycfml_databases_relpath}'")
+    msg = _echo_msg(f"Copying '{cfml_db_relpath}' database to dist dir '{pycfml_db_relpath}'")
     lines.append(msg)
-    cmd = f'cp {cfml_databases_abspath} {pycfml_databases_abspath}'
+    cmd = f'cp {from_path} {to_path}'
     lines.append(cmd)
-
-    #lines.append(f"ls -l {os.path.join(_project_path(), CONFIG['pycfml']['dir']['dist']), CONFIG['pycfml']['dir']['dist-package'])}")
-
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
@@ -1170,14 +1114,11 @@ def validate_pyproject_toml():
 
 def create_pycfml_python_wheel():
     project_name = CONFIG['pycfml']['log-name']
-    wheel_dir = CONFIG['pycfml']['dir']['wheel']
+    wheel_dir = CONFIG['pycfml']['dir']['dist-wheel']
     wheel_path = os.path.join(_project_path(), wheel_dir)
     lines = []
-    msg = _echo_msg(f"Creating '{project_name}' python wheel in '{wheel_dir}'")
+    msg = _echo_msg(f"Creating {project_name} python wheel in '{wheel_dir}'")
     lines.append(msg)
-
-    #lines.append(f"ls -l {os.path.join(_project_path(), CONFIG['pycfml']['dir']['dist']), CONFIG['pycfml']['dir']['dist-package'])}")
-
     cmd = CONFIG['template']['build-wheel']
     cmd = cmd.replace('{PATH}', wheel_path)
     lines.append(cmd)
@@ -1187,14 +1128,14 @@ def create_pycfml_python_wheel():
 
 def rename_pycfml_python_wheel():
     project_name = CONFIG['pycfml']['log-name']
-    pycfml_package_dir = CONFIG['pycfml']['dir']['dist-package']
+    pycfml_package_name = CONFIG['pycfml']['package-name']
     dist_package_version = PYPROJECT['project']['version']
-    initial_wheel_name = f'{pycfml_package_dir}-{dist_package_version}-py3-none-any.whl'
-    wheel_dir = CONFIG['pycfml']['dir']['wheel']
+    initial_wheel_name = f'{pycfml_package_name}-{dist_package_version}-py3-none-any.whl'
+    wheel_dir = CONFIG['pycfml']['dir']['dist-wheel']
     wheel_relpath = os.path.join(wheel_dir, initial_wheel_name)
     wheel_abspath = os.path.join(_project_path(), wheel_relpath)
     lines = []
-    msg = _echo_msg(f"Renaming '{project_name}' python wheel from '{wheel_relpath}'")
+    msg = _echo_msg(f"Renaming {project_name} python wheel from '{wheel_relpath}'")
     lines.append(msg)
     cmd = CONFIG['template']['rename-wheel']
     cmd = cmd.replace('{PYTHON_TAG}', _python_tag())  # https://packaging.python.org/en/latest/specifications/platform-compatibility-tags/
@@ -1207,11 +1148,11 @@ def rename_pycfml_python_wheel():
 
 def install_pycfml_from_wheel():
     project_name = CONFIG['pycfml']['log-name']
-    package_name = CONFIG['pycfml']['dir']['dist-package']
-    wheel_dir = CONFIG['pycfml']['dir']['wheel']
+    package_name = CONFIG['pycfml']['package-name']
+    wheel_dir = CONFIG['pycfml']['dir']['dist-wheel']
     wheel_path = os.path.join(_project_path(), wheel_dir)
     lines = []
-    msg = _echo_msg(f"Installing '{project_name}' python wheel from '{wheel_dir}'")
+    msg = _echo_msg(f"Installing {project_name} python wheel from '{wheel_dir}'")
     lines.append(msg)
     cmd = CONFIG['template']['install-wheel']
     cmd = cmd.replace('{PACKAGE}', package_name)
@@ -1255,6 +1196,7 @@ def run_powder_mod_main():
     lines.append(msg)
     cmd = CONFIG['template']['run-python']
     cmd = cmd.replace('{PATH}', abspath)
+    cmd = cmd.replace('{OPTIONS}', '')
     lines.append(cmd)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
@@ -1274,63 +1216,63 @@ if __name__ == '__main__':
 
     clear_main_script()
 
-    headers = _echo_header(f"Info")
-    append_to_main_script(headers)
+    append_header_to_main_script(f"Print some build-specific variables")
     print_build_variables()
 
-    headers = _echo_header(f"Creating directories")
-    append_to_main_script(headers)
+    append_header_to_main_script(f"Create {cfml_project_name} and {pycfml_project_name} directories")
     create_cfml_repo_dir()
     create_cfml_build_dir()
     create_cfml_dist_dir()
-    create_pycfml_repo_dir()
+    create_pycfml_src_dir()
     create_pycfml_build_dir()
     create_pycfml_dist_dir()
 
-    headers = _echo_header(f"Downloading repositories")
-    append_to_main_script(headers)
+    append_header_to_main_script(f"Download {cfml_project_name} repository")
     download_cfml_repo()
-    download_pycfml_repo()
 
-    headers = _echo_header(f"Creating {cfml_project_name} static library")
-    append_to_main_script(headers)
+    append_header_to_main_script(f"Build {cfml_project_name} modules")
     rename_global_deps_file()
-    build_cfml_objs()
+    build_cfml_modules_obj()
     delete_renamed_global_deps_file()
-    build_cfml_static_lib()
-    copy_built_to_cfml_dist()
 
-    headers = _echo_header(f"Creating and running {cfml_project_name} test programs")
-    append_to_main_script(headers)
-    build_cfml_test_programs()
-    run_cfml_functional_tests_no_benchmarks()
+    append_header_to_main_script(f"Build {cfml_project_name} static library")
+    build_cfml_static_lib()
+
+    append_header_to_main_script(f"Make {cfml_project_name} distribution")
+    move_built_to_cfml_dist()
+
+    #append_header_to_main_script(f"Creating and running {cfml_project_name} test programs")
+    #build_cfml_test_programs()
+    #run_cfml_functional_tests_no_benchmarks()
     #run_cfml_functional_tests_with_benchmarks()
 
-    headers = _echo_header(f"Creating {pycfml_project_name} shared object / dynamic library")
-    append_to_main_script(headers)
-    create_pycfml_wraps_src()
-    build_pycfml_wraps_objs()
+    append_header_to_main_script(f"Create {pycfml_project_name} source code")
+    create_pycfml_src()
+
+    append_header_to_main_script(f"Build {pycfml_project_name} modules")
+    build_pycfml_modules_obj()
+
+    append_header_to_main_script(f"Build {pycfml_project_name} shared obj / dynamic library")
     build_pycfml_lib_obj()
     build_pycfml_shared_obj_or_dynamic_lib()
-    copy_built_to_pycfml_dist()
-    change_runpath_for_built_pycfml()
 
-    headers = _echo_header(f"Creating {pycfml_project_name} python package wheel")
-    append_to_main_script(headers)
+    append_header_to_main_script(f"Make {pycfml_project_name} distribution")
+    copy_built_to_pycfml_dist()
+    #change_runpath_for_built_pycfml()
     copy_extra_libs_to_pycfml_dist()
     copy_py_api_files_to_pycfml_dist()
     copy_init_file_to_pycfml_dist()
     copy_cfml_databases_to_pycfml_dist()
+
+    append_header_to_main_script(f"Create Python package wheel of {pycfml_project_name}")
     validate_pyproject_toml()
     create_pycfml_python_wheel()
     rename_pycfml_python_wheel()
 
-    headers = _echo_header(f"Installing {pycfml_project_name} from python wheel")
-    append_to_main_script(headers)
+    append_header_to_main_script(f"Install {pycfml_project_name} from Python package wheel")
     install_pycfml_from_wheel()
 
-    headers = _echo_header(f"Running {pycfml_project_name} tests")
-    append_to_main_script(headers)
-    run_pycfml_unit_tests()
-    run_powder_mod_tests()
-    run_powder_mod_main()
+    #append_header_to_main_script(f"Running {pycfml_project_name} tests")
+    #run_pycfml_unit_tests()
+    #run_powder_mod_tests()
+    #run_powder_mod_main()

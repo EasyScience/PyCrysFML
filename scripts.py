@@ -680,14 +680,38 @@ def build_cfml_test_programs():
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
 
-def run_cfml_functional_tests_no_benchmarks():
-    relpath = os.path.join('tests', 'functional_tests', 'CFML')
-    abspath = os.path.join(_project_path(), relpath)
+def copy_cfml_test_programs_to_tests_dir():
+    progs_relpath = CONFIG['cfml']['dir']['dist-progs']
+    progs_abspath = os.path.join(_project_path(), progs_relpath)
+    from_path = os.path.join(progs_abspath, '*')
+    tests_relpath = os.path.join('tests', 'functional_tests', 'CFML')
+    tests_abspath = os.path.join(_project_path(), tests_relpath)
+    to_path = tests_abspath
     lines = []
-    msg = _echo_msg(f"Running functional tests from '{relpath}'")
+    msg = _echo_msg(f"Copying all files from '{progs_relpath}' to '{tests_relpath}'")
+    lines.append(msg)
+    cmd = f'cp {from_path} {to_path}'
+    lines.append(cmd)
+    script_name = f'{sys._getframe().f_code.co_name}.sh'
+    _write_lines_to_file(lines, script_name)
+    append_to_main_script(lines)
+
+def run_cfml_functional_tests_no_benchmarks():
+    tests_relpath = os.path.join('tests', 'functional_tests', 'CFML')
+    tests_abspath = os.path.join(_project_path(), tests_relpath)
+    lines = []
+    msg = _echo_msg(f"Entering tests dir '{tests_relpath}'")
+    lines.append(msg)
+    cmd = f'cd {tests_relpath}'
+    lines.append(cmd)
+    msg = _echo_msg(f"Running functional tests from '{tests_relpath}'")
     lines.append(msg)
     cmd = CONFIG['template']['run-tests']
-    cmd = cmd.replace('{PATH}', abspath)
+    cmd = cmd.replace('{PATH}', tests_abspath)
+    lines.append(cmd)
+    msg = _echo_msg(f"Exiting tests dir '{tests_relpath}'")
+    lines.append(msg)
+    cmd = f'cd {_project_path()}'
     lines.append(cmd)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
@@ -1251,6 +1275,7 @@ if __name__ == '__main__':
 
     append_header_to_main_script(f"Creating and running {cfml_project_name} test programs")
     build_cfml_test_programs()
+    copy_cfml_test_programs_to_tests_dir()
     run_cfml_functional_tests_no_benchmarks()
     #run_cfml_functional_tests_with_benchmarks()
 

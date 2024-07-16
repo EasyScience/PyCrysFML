@@ -29,7 +29,6 @@ def set_crysfml_db_path():
     db_dir_abspath = os.path.abspath(db_dir_relpath)
     os.environ['CRYSFML_DB'] = db_dir_abspath
 
-
 def set_crysfml_db_path():
     """Sets the env variable 'CRYSFML_DB' as the path to the 'Databases' directory containing the file 'magnetic_data.txt'."""
     default = os.path.join(os.getcwd(), '..', '..', '..')
@@ -68,10 +67,10 @@ def dat_to_ndarray(file_name:str, skip_begin:int=3, skip_end:int=4):
 # Tests
 #######
 
-def test__hkl_gen__test_d19():
-    run_exe_with_args('hkl_gen', args='test_d19.cfl')
-    desired = dat_to_ndarray('test_d19_desired.hkl', skip_begin=1, skip_end=1)
-    actual = dat_to_ndarray('test_d19.hkl', skip_begin=1, skip_end=1)
+def test__hkl_gen__d19():
+    run_exe_with_args('hkl_gen', args='d19.cfl')
+    desired = dat_to_ndarray('d19_desired.hkl', skip_begin=1, skip_end=1)
+    actual = dat_to_ndarray('d19.hkl', skip_begin=1, skip_end=1)
     assert_allclose(desired, actual, rtol=1e-03, verbose=True)
 
 #######
@@ -79,4 +78,4 @@ def test__hkl_gen__test_d19():
 #######
 
 if __name__ == '__main__':
-    test__hkl_gen__test_d19()
+    test__hkl_gen__d19()

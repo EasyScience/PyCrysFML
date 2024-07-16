@@ -80,6 +80,22 @@ jobs:
           scripts/create_pycfml_build_dir.sh
           scripts/create_pycfml_dist_dir.sh
 
+      - name: Debug 1
+        shell: bash
+        run: pwd
+
+      - name: Debug 2
+        shell: bash
+        run: ls -l
+
+      - name: Debug 3
+        shell: bash
+        run: ls -l tests
+
+      - name: Debug 4
+        shell: bash
+        run: ls -l tests/functional_tests
+
       - name: Download CFML repository
         shell: bash
         run: scripts/download_cfml_repo.sh

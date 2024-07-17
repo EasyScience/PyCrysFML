@@ -68,14 +68,11 @@ jobs:
 
       - name: Print some build-specific variables
         shell: bash
-        run: |
-          export TERM=xterm-color
-          scripts/print_build_variables.sh  # bash -x scripts/print_build_variables.sh for printing commands
+        run: scripts/print_build_variables.sh  # bash -x scripts/print_build_variables.sh for printing commands
 
       - name: Create scripts, CFML and pyCFML directories
         shell: bash
         run: |
-          export TERM=xterm-color
           scripts/create_cfml_repo_dir.sh
           scripts/create_cfml_build_dir.sh
           scripts/create_cfml_dist_dir.sh
@@ -90,7 +87,6 @@ jobs:
       - name: Build CFML modules
         shell: bash
         run: |
-          export TERM=xterm-color
           scripts/rename_global_deps_file.sh
           scripts/build_cfml_modules_obj.sh
           scripts/delete_renamed_global_deps_file.sh
@@ -112,7 +108,6 @@ jobs:
           (runner.os != 'Windows' || matrix.toolchain.exe != 'ifx')
         shell: bash
         run: |
-          export TERM=xterm-color
           scripts/build_cfml_test_programs.sh
           scripts/copy_cfml_test_programs_to_tests_dir.sh
           scripts/run_cfml_functional_tests_no_benchmarks.sh

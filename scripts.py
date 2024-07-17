@@ -11,8 +11,8 @@ from pygit2 import Repository
 global ARGS
 global CONFIG
 
-BLUE = '\\033[0;34m'
-BOLD_GREEN = '\\033[1;32m'
+MSG_COLOR = '\\033[0;32m' # green
+HEAD_COLOR = '\\033[1;34m' # bold blue
 COLOR_OFF = '\\033[0m'
 
 
@@ -46,7 +46,7 @@ def _main_script_path():
     return path
 
 def _echo_msg(msg: str):
-    return f'echo -e "{BLUE}:::::: {msg}{COLOR_OFF}"'
+    return f'echo -e "{MSG_COLOR}:::::: {msg}{COLOR_OFF}"'
 
 def _echo_progress_msg(current: int, total: int, msg: str):
     progress = _compiling_progress(current, total)
@@ -54,13 +54,13 @@ def _echo_progress_msg(current: int, total: int, msg: str):
     return _echo_msg(msg)
 
 def _echo_header(msg: str):
-    msg = f'{BOLD_GREEN}:::::: {msg} ::::::{COLOR_OFF}'
-    sep = ':' * (len(msg) - len(f'{BOLD_GREEN}') - len(f'{COLOR_OFF}'))
+    msg = f'{HEAD_COLOR}:::::: {msg} ::::::{COLOR_OFF}'
+    sep = ':' * (len(msg) - len(f'{HEAD_COLOR}') - len(f'{COLOR_OFF}'))
     lines = []
     lines.append(f'echo ""')
-    lines.append(f'echo -e "{BOLD_GREEN}{sep}{COLOR_OFF}"')
-    lines.append(f'echo -e "{BOLD_GREEN}{msg}{COLOR_OFF}"')
-    lines.append(f'echo -e "{BOLD_GREEN}{sep}{COLOR_OFF}"')
+    lines.append(f'echo -e "{HEAD_COLOR}{sep}{COLOR_OFF}"')
+    lines.append(f'echo -e "{HEAD_COLOR}{msg}{COLOR_OFF}"')
+    lines.append(f'echo -e "{HEAD_COLOR}{sep}{COLOR_OFF}"')
     return lines
 
 def _processor():
@@ -121,8 +121,8 @@ def _write_lines_to_file(lines: list, name: str):
     with open(path, 'w') as file:
         for line in lines:
             if _bash_syntax():
-                line = line.replace('\\', '/')
-                line = line.replace('/033', '\\033')
+                line = line.replace('\\', '/')  # change path separators
+                line = line.replace('/033', '\\033')  # fix colors
             file.write(line + '\n')
     _fix_file_permissions(path)
 

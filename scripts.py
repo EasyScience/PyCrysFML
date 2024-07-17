@@ -813,7 +813,7 @@ def create_pycfml_src():
     lines.append(msg)
     cmd = CONFIG['template']['run-python']
     cmd = cmd.replace('{PATH}', apigen_file)
-    cmd = cmd.replace('{OPTIONS}', f'--build {build_abspath}')
+    cmd = cmd.replace('{OPTIONS}', f'--verbose False --scripts False --build {build_abspath}')
     lines.append(cmd)
     msg = _echo_msg(f"Exiting build dir '{apigen_parent_relpath}'")
     lines.append(msg)

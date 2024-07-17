@@ -46,11 +46,13 @@ jobs:
 
       - name: Upgrade package installer for Python
         shell: bash
-        run: python3 -m pip install --upgrade pip
+        run: pip install --upgrade pip
 
       - name: Install Python dependences
         shell: bash
-        run: python3 -m pip install '.[ci,test]'  # ci extras from pyproject.toml
+        run: |
+          pip install uv
+          uv pip install '.[ci,test]'  # ci extras from pyproject.toml
 
       - name: Fix reinstalling gcc [macOS]  # needed because of `brew reinstall gcc`
         if: runner.os == 'macOS'

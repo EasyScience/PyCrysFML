@@ -11,6 +11,10 @@ from pygit2 import Repository
 global ARGS
 global CONFIG
 
+BLUE = '\\033[0;34m'
+BOLD_GREEN = '\\033[1;32m'
+COLOR_OFF = '\\033[0m'
+
 
 def _github_actions():
     if 'GITHUB_ACTIONS' in os.environ:
@@ -42,7 +46,7 @@ def _main_script_path():
     return path
 
 def _echo_msg(msg: str):
-    return f'echo ":::::: {msg}"'
+    return f'echo "{BLUE}:::::: {msg}{COLOR_OFF}"'
 
 def _echo_progress_msg(current: int, total: int, msg: str):
     progress = _compiling_progress(current, total)
@@ -50,13 +54,13 @@ def _echo_progress_msg(current: int, total: int, msg: str):
     return _echo_msg(msg)
 
 def _echo_header(msg: str):
-    msg = f':::::: {msg} ::::::'
-    sep = ':' * len(msg)
+    msg = f'{BOLD_GREEN}:::::: {msg} ::::::{COLOR_OFF}'
+    sep = ':' * (len(msg) - len(f'{BOLD_GREEN}') - len(f'{COLOR_OFF}'))
     lines = []
     lines.append(f'echo ""')
-    lines.append(f'echo "{sep}"')
-    lines.append(f'echo "{msg}"')
-    lines.append(f'echo "{sep}"')
+    lines.append(f'echo "{BOLD_GREEN}{sep}{COLOR_OFF}"')
+    lines.append(f'echo "{BOLD_GREEN}{msg}{COLOR_OFF}"')
+    lines.append(f'echo "{BOLD_GREEN}{sep}{COLOR_OFF}"')
     return lines
 
 def _processor():

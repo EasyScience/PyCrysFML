@@ -50,9 +50,7 @@ jobs:
 
       - name: Install Python dependences
         shell: bash
-        run: |
-          pip install uv
-          uv pip install '.[ci,test]'  # ci extras from pyproject.toml
+        run: pip install '.[ci,test]'  # ci extras from pyproject.toml
 
       - name: Fix reinstalling gcc [macOS]  # needed because of `brew reinstall gcc`
         if: runner.os == 'macOS'

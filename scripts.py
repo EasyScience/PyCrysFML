@@ -46,7 +46,7 @@ def _main_script_path():
     return path
 
 def _echo_msg(msg: str):
-    return f'echo "{BLUE}:::::: {msg}{COLOR_OFF}"'
+    return f'echo -e "{BLUE}:::::: {msg}{COLOR_OFF}"'
 
 def _echo_progress_msg(current: int, total: int, msg: str):
     progress = _compiling_progress(current, total)
@@ -58,9 +58,9 @@ def _echo_header(msg: str):
     sep = ':' * (len(msg) - len(f'{BOLD_GREEN}') - len(f'{COLOR_OFF}'))
     lines = []
     lines.append(f'echo ""')
-    lines.append(f'echo "{BOLD_GREEN}{sep}{COLOR_OFF}"')
-    lines.append(f'echo "{BOLD_GREEN}{msg}{COLOR_OFF}"')
-    lines.append(f'echo "{BOLD_GREEN}{sep}{COLOR_OFF}"')
+    lines.append(f'echo -e "{BOLD_GREEN}{sep}{COLOR_OFF}"')
+    lines.append(f'echo -e "{BOLD_GREEN}{msg}{COLOR_OFF}"')
+    lines.append(f'echo -e "{BOLD_GREEN}{sep}{COLOR_OFF}"')
     return lines
 
 def _processor():
@@ -122,6 +122,7 @@ def _write_lines_to_file(lines: list, name: str):
         for line in lines:
             if _bash_syntax():
                 line = line.replace('\\', '/')
+                line = line.replace('/033', '\\033')
             file.write(line + '\n')
     _fix_file_permissions(path)
 

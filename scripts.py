@@ -125,10 +125,7 @@ def _write_lines_to_file(lines: list, name: str):
     path = os.path.join(_scripts_path(), name)
     with open(path, 'w') as file:
         for line in lines:
-            if _bash_syntax():
-                #pass
-                line = line.replace('\\', '/')  # change path separators
-                line = line.replace('/033', r'\033')  # fix colors
+            line = _apply_bash_syntax_if_needed(line)
             file.write(line + '\n')
     _fix_file_permissions(path)
 
@@ -147,6 +144,12 @@ def _bash_syntax():
     if ARGS.bash_syntax:
         bash_syntax = ARGS.bash_syntax
     return bash_syntax
+
+def _apply_bash_syntax_if_needed(line: str):
+    if _bash_syntax():
+        line = line.replace('\\', '/')  # change path separators
+        line = line.replace('/033', r'\033')  # fix colors after previous step
+    return line
 
 def _enable_backslash_escapes():
     enable_backslash_escapes = False  # if '--enable-backslash-escapes' is undefined
@@ -430,8 +433,7 @@ def append_to_main_script(obj: str | list):
         lines = obj
     with open(path, 'a') as file:
         for line in lines:
-            if _bash_syntax():
-                line = line.replace('\\', '/')
+            line = _apply_bash_syntax_if_needed(line)
             file.write(line + '\n')
     _fix_file_permissions(path)
 

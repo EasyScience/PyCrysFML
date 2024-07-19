@@ -11,9 +11,9 @@ from pygit2 import Repository
 global ARGS
 global CONFIG
 
-MSG_COLOR = r'\033[0;32m'  #'\\033[0;32m' # green
-HEAD_COLOR = '\\033[1;34m'  # bold blue
-COLOR_OFF = r'\033[0m'  #'\\033[0m'
+MSG_COLOR = r'\033[0;32m'  # green
+HEAD_COLOR = r'\033[1;34m'  # bold blue
+COLOR_OFF = r'\033[0m'
 
 
 def _github_actions():
@@ -47,7 +47,7 @@ def _main_script_path():
 
 def _echo_cmd():
     if _enable_backslash_escapes():
-        return 'echo' #'echo -e'
+        return 'echo -e'
     return 'echo'
 
 def _echo_msg(msg: str):
@@ -126,9 +126,9 @@ def _write_lines_to_file(lines: list, name: str):
     with open(path, 'w') as file:
         for line in lines:
             if _bash_syntax():
-                pass
-                #line = line.replace('\\', '/')  # change path separators
-                #line = line.replace('/033', r'\\033')  # fix colors
+                #pass
+                line = line.replace('\\', '/')  # change path separators
+                line = line.replace('/033', r'\033')  # fix colors
             file.write(line + '\n')
     _fix_file_permissions(path)
 

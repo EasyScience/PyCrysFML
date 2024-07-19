@@ -11,9 +11,9 @@ from pygit2 import Repository
 global ARGS
 global CONFIG
 
-MSG_COLOR = '\\033[0;32m' # green
-HEAD_COLOR = '\\033[1;34m' # bold blue
-COLOR_OFF = '\\033[0m'
+MSG_COLOR = r'\033[0;32m'  #'\\033[0;32m' # green
+HEAD_COLOR = '\\033[1;34m'  # bold blue
+COLOR_OFF = r'\033[0m'  #'\\033[0m'
 
 
 def _github_actions():
@@ -45,8 +45,13 @@ def _main_script_path():
     path = os.path.join(_scripts_path(), name)
     return path
 
+def _echo_cmd():
+    if _enable_backslash_escapes():
+        return 'echo' #'echo -e'
+    return 'echo'
+
 def _echo_msg(msg: str):
-    return f'echo -e "{MSG_COLOR}:::::: {msg}{COLOR_OFF}"'
+    return f'{_echo_cmd()} "{MSG_COLOR}:::::: {msg}{COLOR_OFF}"'
 
 def _echo_progress_msg(current: int, total: int, msg: str):
     progress = _compiling_progress(current, total)
@@ -57,10 +62,10 @@ def _echo_header(msg: str):
     msg = f'{HEAD_COLOR}:::::: {msg} ::::::{COLOR_OFF}'
     sep = ':' * (len(msg) - len(f'{HEAD_COLOR}') - len(f'{COLOR_OFF}'))
     lines = []
-    lines.append(f'echo ""')
-    lines.append(f'echo -e "{HEAD_COLOR}{sep}{COLOR_OFF}"')
-    lines.append(f'echo -e "{HEAD_COLOR}{msg}{COLOR_OFF}"')
-    lines.append(f'echo -e "{HEAD_COLOR}{sep}{COLOR_OFF}"')
+    lines.append(f'{_echo_cmd()} ""')
+    lines.append(f'{_echo_cmd()} "{HEAD_COLOR}{sep}{COLOR_OFF}"')
+    lines.append(f'{_echo_cmd()} "{HEAD_COLOR}{msg}{COLOR_OFF}"')
+    lines.append(f'{_echo_cmd()} "{HEAD_COLOR}{sep}{COLOR_OFF}"')
     return lines
 
 def _processor():
@@ -121,8 +126,9 @@ def _write_lines_to_file(lines: list, name: str):
     with open(path, 'w') as file:
         for line in lines:
             if _bash_syntax():
-                line = line.replace('\\', '/')  # change path separators
-                line = line.replace('/033', '\\033')  # fix colors
+                pass
+                #line = line.replace('\\', '/')  # change path separators
+                #line = line.replace('/033', r'\\033')  # fix colors
             file.write(line + '\n')
     _fix_file_permissions(path)
 
@@ -137,10 +143,16 @@ def _total_src_file_count(modules: str):
     return count
 
 def _bash_syntax():
-    bash_syntax = False  # default
+    bash_syntax = False  # if '--bash-syntax' is undefined
     if ARGS.bash_syntax:
         bash_syntax = ARGS.bash_syntax
     return bash_syntax
+
+def _enable_backslash_escapes():
+    enable_backslash_escapes = False  # if '--enable-backslash-escapes' is undefined
+    if ARGS.enable_backslash_escapes:
+        enable_backslash_escapes = ARGS.enable_backslash_escapes
+    return enable_backslash_escapes
 
 def _print_pcfml_wheel_dir():
     wheel_dir = CONFIG['pycfml']['dir']['dist-wheel']
@@ -375,6 +387,9 @@ def parsed_args():
     parser.add_argument("--bash-syntax",
                         action='store_true',
                         help="force bash shell syntax")
+    parser.add_argument("--enable-backslash-escapes",
+                        action='store_true',
+                        help="enable interpret backslash escapes (needed for GitHub CI)")
     parser.add_argument("--print-wheel-dir",
                         action='store_true',
                         help="print pycfml wheel directory name")

@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04]
+        os: [ubuntu-22.04, windows-2022, macos-12, macos-14]
         toolchain:
           - { exe: gfortran, compiler: gcc, version: 13 }
           - { exe: ifort, compiler: intel-classic, version: "2021.10" }
@@ -181,7 +181,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04]
+        os: [ubuntu-22.04, windows-2022, macos-12, macos-14]
         toolchain:
           - { exe: gfortran, compiler: gcc, version: 13 }
           - { exe: ifort, compiler: intel-classic, version: "2021.10" }

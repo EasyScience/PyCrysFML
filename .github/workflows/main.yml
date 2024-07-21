@@ -262,7 +262,11 @@ jobs:
 
       - name: Debug pyCFML import
         shell: bash
-        run: python3 tests/unit_tests/pycfml/test__cfml_metrics__debug.py
+        run: python3 tests/functional_tests/pyCFML/cfml_utilities/powder_pattern_from_json/test__powder_pattern_from_json.py
+
+      #- name: Debug pyCFML import
+      #  shell: bash
+      #  run: python3 tests/unit_tests/pycfml/test__cfml_metrics__debug.py
 
       #- name: Run pyCFML unit tests
       #  shell: bash

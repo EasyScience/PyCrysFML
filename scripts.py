@@ -437,7 +437,7 @@ def append_to_main_script(obj: str | list):
             file.write(line + '\n')
     _fix_file_permissions(path)
 
-def append_header_to_main_script(txt: str):
+def add_main_script_header(txt: str):
     header = _echo_header(txt)
     append_to_main_script(header)
 
@@ -764,10 +764,10 @@ def run_cfml_functional_tests_with_benchmarks():
 
 
 def copy_powder_mod_to_pycfml_repo():
-    cfml_project_name = CONFIG['cfml']['log-name']
+    CFML = CONFIG['cfml']['log-name']
     cfml_repo_dir = CONFIG['cfml']['dir']['repo']
     cfml_repo_path = os.path.join(_project_path(), cfml_repo_dir)
-    pycfml_project_name = CONFIG['pycfml']['log-name']
+    pyCFML = CONFIG['pycfml']['log-name']
     pycfml_repo_dir = CONFIG['pycfml']['dir2']['repo']
     pycfml_src_dir = CONFIG['pycfml']['dir2']['repo-src']
     pycfml_src_path = os.path.join(_project_path(), pycfml_repo_dir, pycfml_src_dir)
@@ -897,7 +897,6 @@ def build_pycfml_lib_obj():
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
-
 
 def build_pycfml_shared_obj_or_dynamic_lib():
     build_relpath = CONFIG['pycfml']['dir']['build-obj']
@@ -1047,33 +1046,32 @@ def change_runpath_for_built_pycfml():
         change_rpath_template_cmd = CONFIG['template']['rpath']['change'][_platform()]
         msg = _echo_msg(f"Changing runpath(s) for built {project_name} shared objects")
         lines.append(msg)
-        for module in [CONFIG['pycfml']['src-name']]:
-            if 'main-file' in module:
-                current += 1
-                name = f'{module["main-file"]}'
-                path = os.path.join(package_abspath, name)
-                msg = _echo_progress_msg(current, total, f'{name}.{shared_lib_ext}')
-                lines.append(msg)
-                for rpath in rpaths:
-                    if rpath['new'] == '':  # delete this rpath
-                        cmd = delete_rpath_template_cmd
-                        cmd = cmd.replace('{OLD}', rpath['old'])
-                        cmd = cmd.replace('{PATH}', path)
-                        cmd = cmd.replace('{EXT}', shared_lib_ext)
-                    else:  # change this rpath
-                        cmd = change_rpath_template_cmd
-                        cmd = cmd.replace('{OLD}', rpath['old'])
-                        cmd = cmd.replace('{NEW}', rpath['new'])
-                        cmd = cmd.replace('{PATH}', path)
-                        cmd = cmd.replace('{EXT}', shared_lib_ext)
-                    lines.append(cmd)
-                for lib in dependent_libs:
-                    cmd = change_lib_template_cmd
-                    cmd = cmd.replace('{OLD}', lib['old'])
-                    cmd = cmd.replace('{NEW}', lib['new'])
-                    cmd = cmd.replace('{PATH}', path)
-                    cmd = cmd.replace('{EXT}', shared_lib_ext)
-                    lines.append(cmd)
+        name = CONFIG['pycfml']['src-name']
+        path = os.path.join(package_abspath, name)
+        for rpath in rpaths:
+            msg = _echo_msg(f"Changing runpath for {name}.{shared_lib_ext} from {rpath['old']} to {rpath['new']}")
+            lines.append(msg)
+            if rpath['new'] == '':  # delete this rpath
+                cmd = delete_rpath_template_cmd
+                cmd = cmd.replace('{OLD}', rpath['old'])
+                cmd = cmd.replace('{PATH}', path)
+                cmd = cmd.replace('{EXT}', shared_lib_ext)
+            else:  # change this rpath
+                cmd = change_rpath_template_cmd
+                cmd = cmd.replace('{OLD}', rpath['old'])
+                cmd = cmd.replace('{NEW}', rpath['new'])
+                cmd = cmd.replace('{PATH}', path)
+                cmd = cmd.replace('{EXT}', shared_lib_ext)
+            lines.append(cmd)
+        for lib in dependent_libs:
+            msg = _echo_msg(f"Changing the dependent shared library install name for {name}.{shared_lib_ext} from {lib['old']} to {lib['new']}")
+            lines.append(msg)
+            cmd = change_lib_template_cmd
+            cmd = cmd.replace('{OLD}', lib['old'])
+            cmd = cmd.replace('{NEW}', lib['new'])
+            cmd = cmd.replace('{PATH}', path)
+            cmd = cmd.replace('{EXT}', shared_lib_ext)
+            lines.append(cmd)
     else:
         msg = _echo_msg(f"Changing runpath is not needed for platform '{_platform()}'")
         lines.append(msg)
@@ -1265,15 +1263,19 @@ if __name__ == '__main__':
         _print_pcfml_wheel_dir()
         exit(0)
 
-    cfml_project_name = CONFIG['cfml']['log-name']
-    pycfml_project_name = CONFIG['pycfml']['log-name']
+    CFML = CONFIG['cfml']['log-name']
+    pyCFML = CONFIG['pycfml']['log-name']
+
+    #############
+    # Preparation
+    #############
 
     clear_main_script()
 
-    append_header_to_main_script(f"Print some build-specific variables")
+    add_main_script_header(f"Print some build-specific variables")
     print_build_variables()
 
-    append_header_to_main_script(f"Create scripts, {cfml_project_name} and {pycfml_project_name} directories")
+    add_main_script_header(f"Create scripts, {CFML} and {pyCFML} directories")
     create_cfml_repo_dir()
     create_cfml_build_dir()
     create_cfml_dist_dir()
@@ -1281,37 +1283,45 @@ if __name__ == '__main__':
     create_pycfml_build_dir()
     create_pycfml_dist_dir()
 
-    append_header_to_main_script(f"Download {cfml_project_name} repository")
+    ############
+    # Build CFML
+    ############
+
+    add_main_script_header(f"Download {CFML} repository")
     download_cfml_repo()
 
-    append_header_to_main_script(f"Build {cfml_project_name} modules")
+    add_main_script_header(f"Build {CFML} modules")
     rename_global_deps_file()
     build_cfml_modules_obj()
     delete_renamed_global_deps_file()
 
-    append_header_to_main_script(f"Build {cfml_project_name} static library")
+    add_main_script_header(f"Build {CFML} static library")
     build_cfml_static_lib()
 
-    append_header_to_main_script(f"Make {cfml_project_name} distribution")
+    add_main_script_header(f"Make {CFML} distribution")
     move_built_to_cfml_dist()
 
-    append_header_to_main_script(f"Creating and running {cfml_project_name} test programs")
+    add_main_script_header(f"Creating and running {CFML} test programs")
     build_cfml_test_programs()
     copy_cfml_test_programs_to_tests_dir()
     run_cfml_functional_tests_no_benchmarks()
     #run_cfml_functional_tests_with_benchmarks()
 
-    append_header_to_main_script(f"Create {pycfml_project_name} source code")
+    ##############
+    # Build pyCFML
+    ##############
+
+    add_main_script_header(f"Create {pyCFML} source code")
     create_pycfml_src()
 
-    append_header_to_main_script(f"Build {pycfml_project_name} modules")
+    add_main_script_header(f"Build {pyCFML} modules")
     build_pycfml_modules_obj()
 
-    append_header_to_main_script(f"Build {pycfml_project_name} shared obj / dynamic library")
+    add_main_script_header(f"Build {pyCFML} shared obj / dynamic library")
     build_pycfml_lib_obj()
     build_pycfml_shared_obj_or_dynamic_lib()
 
-    append_header_to_main_script(f"Make {pycfml_project_name} distribution")
+    add_main_script_header(f"Make {pyCFML} distribution")
     copy_built_to_pycfml_dist()
     change_runpath_for_built_pycfml()
     copy_extra_libs_to_pycfml_dist()
@@ -1319,15 +1329,15 @@ if __name__ == '__main__':
     copy_init_file_to_pycfml_dist()
     copy_cfml_databases_to_pycfml_dist()
 
-    append_header_to_main_script(f"Create Python package wheel of {pycfml_project_name}")
+    add_main_script_header(f"Create Python package wheel of {pyCFML}")
     validate_pyproject_toml()
     create_pycfml_python_wheel()
     rename_pycfml_python_wheel()
 
-    append_header_to_main_script(f"Install {pycfml_project_name} from Python package wheel")
+    add_main_script_header(f"Install {pyCFML} from Python package wheel")
     install_pycfml_from_wheel()
 
-    #append_header_to_main_script(f"Running {pycfml_project_name} tests")
+    #add_main_script_header(f"Running {pyCFML} tests")
     #run_pycfml_unit_tests()
     #run_powder_mod_tests()
     #run_powder_mod_main()

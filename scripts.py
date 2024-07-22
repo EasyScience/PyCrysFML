@@ -1063,6 +1063,7 @@ def change_runpath_for_built_pycfml():
                 cmd = cmd.replace('{NEW}', new_rpath)
                 cmd = cmd.replace('{PATH}', path)
                 cmd = cmd.replace('{EXT}', shared_lib_ext)
+            cmd = cmd + ' || true'  # allows to suppress the error message if no files are found
             lines.append(cmd)
         for lib in dependent_libs:
             old_lib = lib['old']
@@ -1074,6 +1075,7 @@ def change_runpath_for_built_pycfml():
             cmd = cmd.replace('{NEW}', new_lib)
             cmd = cmd.replace('{PATH}', path)
             cmd = cmd.replace('{EXT}', shared_lib_ext)
+            cmd = cmd + ' || true'  # allows to suppress the error message if no files are found
             lines.append(cmd)
     else:
         msg = _echo_msg(f"Changing runpath is not needed for platform '{_platform()}'")
@@ -1257,6 +1259,20 @@ def run_powder_mod_main():
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
 
+def run_pycfml_functional_tests_no_benchmarks():
+    relpath = os.path.join('tests', 'functional_tests', 'pyCFML')
+    abspath = os.path.join(_project_path(), relpath)
+    lines = []
+    msg = _echo_msg(f"Running unit tests from '{relpath}'")
+    lines.append(msg)
+    cmd = CONFIG['template']['run-tests']
+    cmd = cmd.replace('{PATH}', abspath)
+    lines.append(cmd)
+    script_name = f'{sys._getframe().f_code.co_name}.sh'
+    _write_lines_to_file(lines, script_name)
+    append_to_main_script(lines)
+
+
 if __name__ == '__main__':
     ARGS = parsed_args()
     PYPROJECT = loaded_pyproject()
@@ -1304,7 +1320,7 @@ if __name__ == '__main__':
     add_main_script_header(f"Make {CFML} distribution")
     move_built_to_cfml_dist()
 
-    add_main_script_header(f"Creating and running {CFML} test programs")
+    add_main_script_header(f"Create and run {CFML} test programs")
     build_cfml_test_programs()
     copy_cfml_test_programs_to_tests_dir()
     run_cfml_functional_tests_no_benchmarks()
@@ -1340,7 +1356,6 @@ if __name__ == '__main__':
     add_main_script_header(f"Install {pyCFML} from Python package wheel")
     install_pycfml_from_wheel()
 
-    #add_main_script_header(f"Running {pyCFML} tests")
-    #run_pycfml_unit_tests()
-    #run_powder_mod_tests()
-    #run_powder_mod_main()
+    add_main_script_header(f"Run {pyCFML} tests")
+    run_pycfml_unit_tests()
+    run_pycfml_functional_tests_no_benchmarks()

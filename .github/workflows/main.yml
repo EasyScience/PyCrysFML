@@ -240,26 +240,10 @@ jobs:
         shell: bash
         run: scripts/install_pycfml_from_wheel.sh
 
-      - name: Debug pyCFML import
+      - name: Run pyCFML unit tests
         shell: bash
-        run: python3 tests/unit_tests/pyCFML/test__import_pycrysfml.py
+        run: scripts/run_pycfml_unit_tests.sh
 
-      - name: Debug pyCFML calc diffraction pattern
+      - name: Run pyCFML functional tests
         shell: bash
-        run: python3 tests/functional_tests/pyCFML/cfml_utilities/powder_pattern_from_json/test__powder_pattern_from_json.py
-
-      #- name: Debug pyCFML import
-      #  shell: bash
-      #  run: python3 tests/unit_tests/pycfml/test__cfml_metrics__debug.py
-
-      #- name: Run pyCFML unit tests
-      #  shell: bash
-      #  run: scripts/run_pycfml_unit_tests.sh
-
-      #- name: Run pyCFML powder_mod tests
-      #  shell: bash
-      #  run: scripts/run_powder_mod_tests.sh
-
-      #- name: Run pyCFML powder_mod main
-      #  shell: bash
-      #  run: scripts/run_powder_mod_main.sh
+        run: scripts/run_pycfml_functional_tests_no_benchmarks.sh

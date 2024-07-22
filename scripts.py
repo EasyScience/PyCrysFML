@@ -81,6 +81,23 @@ def _platform():
 
 def _platform_tag():
     tag = sysconfig.get_platform()
+    if _platform() == 'macos':  # replaces, e.g., 'macosx-14-arm64' with 'macosx-14_0-arm64'
+        tag = tag.split('-')    # 'macosx-14-arm64' => ['macosx', '14', 'arm64']
+        tag[1] = f'{tag[1]}_0'  # ['macosx', '14', 'arm64'] => ['macosx', '14_0', 'arm64']
+        tag = '-'.join(tag)     # ['macosx', '14_0', 'arm64'] => 'macosx-14_0-arm64'
+    tag = tag.replace('-', '_')
+    tag = tag.replace('.', '_')
+    return tag
+
+def _platform_tag_github_ci():  # sysconf always returns 'macosx_10_9_universal2' on GH macOS...
+    tag = sysconfig.get_platform()
+    if _platform() == 'macos':
+        version = platform.mac_ver()[0]  # e.g., '14.5'
+        version = version.split('.')  # '14.5' => ['14', '5']
+        version[1] = '0'  # ['14', '5'] => ['14', '0']
+        version = '.'.join(version)  # ['14', '0'] => '14.0'
+        machine = platform.mac_ver()[2]  # e.g., 'arm64'
+        tag = f'macosx-{version}-{machine}'
     tag = tag.replace('-', '_')
     tag = tag.replace('.', '_')
     return tag
@@ -1188,20 +1205,21 @@ def rename_pycfml_python_wheel():
     dist_package_name = PYPROJECT['project']['name']
     dist_package_version = PYPROJECT['project']['version']
     initial_wheel_name = f'{dist_package_name}-{dist_package_version}-py3-none-any.whl'
+    new_wheel_name = initial_wheel_name.replace('py3-none-any', f'{_python_tag()}-none-{_platform_tag_github_ci()}')
     wheel_dir = CONFIG['pycfml']['dir']['dist-wheel']
     wheel_relpath = os.path.join(wheel_dir, initial_wheel_name)
     wheel_abspath = os.path.join(_project_path(), wheel_relpath)
     lines = []
-    msg = _echo_msg(f"Renaming {project_name} python wheel from '{wheel_relpath}'")
+    msg = _echo_msg(f"Renaming {project_name} python wheel from '{initial_wheel_name}' to '{new_wheel_name}' in '{wheel_dir}'")
     lines.append(msg)
     cmd = CONFIG['template']['rename-wheel']
     cmd = cmd.replace('{PYTHON_TAG}', _python_tag())  # https://packaging.python.org/en/latest/specifications/platform-compatibility-tags/
-    cmd = cmd.replace('{PLATFORM_TAG}', _platform_tag())
+    cmd = cmd.replace('{PLATFORM_TAG}', _platform_tag_github_ci())
     cmd = cmd.replace('{PATH}', wheel_abspath)
     lines.append(cmd)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
-    #append_to_main_script(lines)
+    append_to_main_script(lines)
 
 def install_pycfml_from_wheel():
     project_name = CONFIG['pycfml']['log-name']

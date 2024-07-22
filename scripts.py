@@ -11,7 +11,7 @@ from pygit2 import Repository
 global ARGS
 global CONFIG
 
-MSG_COLOR = r'\033[0;32m'  # green
+MSG_COLOR = r'\033[0;33m'  # orange
 HEAD_COLOR = r'\033[1;34m'  # bold blue
 COLOR_OFF = r'\033[0m'
 
@@ -299,11 +299,11 @@ def _compile_objs_script_lines(modules: str,
                 cmd = cmd.replace('{COMPILER}', compiler)
                 cmd = cmd.replace('{OPTIONS}', options)
                 cmd = cmd.replace('{PATH}', path)
-                #cmd = f'{cmd}&'  # start this bash command in background for parallel compilation
+                cmd = f'{cmd}&'  # start this bash command in background for parallel compilation
                 lines.append(cmd)
-                #if current % 11 == 0:  # do not parallelise for more than 10 compilations
-                #    lines.append('wait')  # wait for all parallel bash commands to finish
-            #lines.append('wait')  # wait for all parallel bash commands to finish
+                if current % 11 == 0:  # do not parallelise for more than 10 compilations
+                    lines.append('wait')  # wait for all parallel bash commands to finish
+            lines.append('wait')  # wait for all parallel bash commands to finish
     return lines
 
 def _compile_shared_objs_or_dynamic_libs_script_lines(modules: str):

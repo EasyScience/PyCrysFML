@@ -964,7 +964,7 @@ def copy_built_to_pycfml_dist():
     lines = []
     msg = _echo_msg(f"Copying built {project_name} shared objects / dynamic libs to '{package_relpath}'")
     lines.append(msg)
-    from_path = os.path.join(build_abspath, f'*.{shared_lib_ext}')
+    from_path = os.path.join(build_abspath, f'*.{shared_lib_ext} || :')  # allows to suppress the error message if no files are found
     to_path = package_abspath
     cmd = f'cp {from_path} {to_path}'
     lines.append(cmd)

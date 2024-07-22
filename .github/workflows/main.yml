@@ -11,9 +11,28 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-12]
+        os: [ubuntu-22.04, windows-2022, macos-12, macos-14]
         toolchain:
+          - { exe: gfortran, compiler: gcc, version: 13 }
           - { exe: ifort, compiler: intel-classic, version: "2021.10" }
+          - { exe: ifx, compiler: intel, version: "2023.2" }
+        exclude:
+          - os: macos-12
+            toolchain: { exe: ifx, compiler: intel, version: "2023.2" } # no support for macOS
+          - os: macos-12
+            toolchain: { exe: ifort, compiler: intel-classic, version: "2021.10" } # temporary disable due to error when building pycfml shared object:
+            # Undefined symbols for architecture x86_64:
+            #"_cfml_kvec_symmetry_mp_inlat_", referenced from:
+            #_cfml_kvec_symmetry_mp_latsym_ in libCrysFML08.a(ksym_auxsub.o)
+            #"_cfml_kvec_symmetry_mp_ltr_", referenced from:
+            #_cfml_kvec_symmetry_mp_latsym_ in libCrysFML08.a(ksym_auxsub.o)
+            #"_cfml_kvec_symmetry_mp_nlat_", referenced from:
+            #_cfml_kvec_symmetry_mp_latsym_ in libCrysFML08.a(ksym_auxsub.o)
+            #ld: symbol(s) not found for architecture x86_64
+          - os: macos-14
+            toolchain: { exe: ifx, compiler: intel, version: "2023.2" } # no support for macOS on arm64
+          - os: macos-14
+            toolchain: { exe: ifort, compiler: intel-classic, version: "2021.10" } # no support for macOS on arm64
 
     runs-on: ${{ matrix.os }}
 
@@ -172,9 +191,28 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-12]
+        os: [ubuntu-22.04, windows-2022, macos-12, macos-14]
         toolchain:
+          - { exe: gfortran, compiler: gcc, version: 13 }
           - { exe: ifort, compiler: intel-classic, version: "2021.10" }
+          - { exe: ifx, compiler: intel, version: "2023.2" }
+        exclude:
+          - os: macos-12
+            toolchain: { exe: ifx, compiler: intel, version: "2023.2" } # no support for macOS
+          - os: macos-12
+            toolchain: { exe: ifort, compiler: intel-classic, version: "2021.10" } # temporary disable due to error when building pycfml shared object:
+            # Undefined symbols for architecture x86_64:
+            #"_cfml_kvec_symmetry_mp_inlat_", referenced from:
+            #_cfml_kvec_symmetry_mp_latsym_ in libCrysFML08.a(ksym_auxsub.o)
+            #"_cfml_kvec_symmetry_mp_ltr_", referenced from:
+            #_cfml_kvec_symmetry_mp_latsym_ in libCrysFML08.a(ksym_auxsub.o)
+            #"_cfml_kvec_symmetry_mp_nlat_", referenced from:
+            #_cfml_kvec_symmetry_mp_latsym_ in libCrysFML08.a(ksym_auxsub.o)
+            #ld: symbol(s) not found for architecture x86_64
+          - os: macos-14
+            toolchain: { exe: ifx, compiler: intel, version: "2023.2" } # no support for macOS on arm64
+          - os: macos-14
+            toolchain: { exe: ifort, compiler: intel-classic, version: "2021.10" } # no support for macOS on arm64
 
     runs-on: ${{ matrix.os }}
 

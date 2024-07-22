@@ -11,7 +11,6 @@ def test__from_pycrysfml_import_crysfml08lib():
         assert True
     except Exception as e:
         print(f"::::: Failed to '{msg}': {e}")
-        print('::::: ERROR:', e)
         #assert False
 
 def test__from_pycrysfml_import_cfml_utilities():

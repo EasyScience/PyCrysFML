@@ -1016,19 +1016,17 @@ def change_runpath_for_built_pycfml():
     if _platform() == 'linux':
         set_rpath_template_cmd = CONFIG['template']['rpath']['set'][_platform()]
         no_default_lib_template_cmd = CONFIG['template']['no-default-lib'][_platform()]
-        msg = _echo_msg(f"Changing runpath(s) for built {project_name} shared objects")
+        msg = _echo_msg(f"Changing runpath(s) for built {project_name} shared object")
         lines.append(msg)
         name = CONFIG['pycfml']['src-name']
         path = os.path.join(package_abspath, name)
         for rpath in rpaths:
-            #current += 1
-            #name = f'{module["main-file"]}'
-            #path = os.path.join(package_abspath, name)
-            #msg = _echo_progress_msg(current, total, f'{name}.{shared_lib_ext}')
-            msg = _echo_msg(f"Changing runpath for {name}.{shared_lib_ext} from {rpath['old']} to {rpath['new']}")
+            old_rpath = rpath['old']
+            new_rpath = rpath['new']
+            msg = _echo_msg(f"Changing runpath for {name}.{shared_lib_ext} from '{old_rpath}' to '{new_rpath}'")
             lines.append(msg)
             cmd = set_rpath_template_cmd
-            cmd = cmd.replace('{NEW}', rpath['new'])
+            cmd = cmd.replace('{NEW}', new_rpath)
             cmd = cmd.replace('{PATH}', path)
             cmd = cmd.replace('{EXT}', shared_lib_ext)
             lines.append(cmd)
@@ -1049,26 +1047,30 @@ def change_runpath_for_built_pycfml():
         name = CONFIG['pycfml']['src-name']
         path = os.path.join(package_abspath, name)
         for rpath in rpaths:
-            msg = _echo_msg(f"Changing runpath for {name}.{shared_lib_ext} from {rpath['old']} to {rpath['new']}")
+            old_rpath = rpath['old']
+            new_rpath = rpath['new']
+            msg = _echo_msg(f"Changing runpath for {name}.{shared_lib_ext} from '{old_rpath}' to '{new_rpath}'")
             lines.append(msg)
             if rpath['new'] == '':  # delete this rpath
                 cmd = delete_rpath_template_cmd
-                cmd = cmd.replace('{OLD}', rpath['old'])
+                cmd = cmd.replace('{OLD}', old_rpath)
                 cmd = cmd.replace('{PATH}', path)
                 cmd = cmd.replace('{EXT}', shared_lib_ext)
             else:  # change this rpath
                 cmd = change_rpath_template_cmd
-                cmd = cmd.replace('{OLD}', rpath['old'])
-                cmd = cmd.replace('{NEW}', rpath['new'])
+                cmd = cmd.replace('{OLD}', old_rpath)
+                cmd = cmd.replace('{NEW}', new_rpath)
                 cmd = cmd.replace('{PATH}', path)
                 cmd = cmd.replace('{EXT}', shared_lib_ext)
             lines.append(cmd)
         for lib in dependent_libs:
-            msg = _echo_msg(f"Changing the dependent shared library install name for {name}.{shared_lib_ext} from {lib['old']} to {lib['new']}")
+            old_lib = lib['old']
+            new_lib = lib['new']
+            msg = _echo_msg(f"Changing the dependent shared library install name for {name}.{shared_lib_ext} from '{old_lib}' to '{new_lib}'")
             lines.append(msg)
             cmd = change_lib_template_cmd
-            cmd = cmd.replace('{OLD}', lib['old'])
-            cmd = cmd.replace('{NEW}', lib['new'])
+            cmd = cmd.replace('{OLD}', old_lib)
+            cmd = cmd.replace('{NEW}', new_lib)
             cmd = cmd.replace('{PATH}', path)
             cmd = cmd.replace('{EXT}', shared_lib_ext)
             lines.append(cmd)

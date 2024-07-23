@@ -95,7 +95,7 @@ def _platform_tag_github_ci():  # sysconf always returns 'macosx_10_9_universal2
         version = platform.mac_ver()[0]  # e.g., '14.5'
         version = version.split('.')  # '14.5' => ['14', '5']
         version[1] = '0'  # ['14', '5'] => ['14', '0']
-        version = '.'.join(version)  # ['14', '0'] => '14.0'
+        version = '.'.join(version[:2])  # ['14', '0'] => '14.0'; ['12', '0', '5'] => '12.0'
         machine = platform.mac_ver()[2]  # e.g., 'arm64'
         tag = f'macosx-{version}-{machine}'
     tag = tag.replace('-', '_')

@@ -6,17 +6,20 @@ __pycache__
 build
 *.spec
 
+# PyCharm
+.idea
+
 # macOS
 .DS_Store
 
 # Build
+.venv
+crysfml*
+pycrysfml*
 build
 dist
 repo
 scripts
 
 # Misc
-.venv
 .benchmarks/local
-crysfml*
-pycrysfml*

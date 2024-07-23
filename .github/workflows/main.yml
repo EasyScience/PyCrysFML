@@ -6,7 +6,14 @@ on:
   #  - cron: '*/120 8-18 * * *'  # every 2 hours from 8:00 to 18:00 every day
 
 jobs:
-  wheel: # the first job
+
+  ##############################################################################
+  # JOB
+  ##############################################################################
+  build: # the first job
+
+    timeout-minutes: 30
+
     # current job matrix. if modified, remember to UPDATE the strategy in the next job
     strategy:
       fail-fast: false
@@ -26,21 +33,9 @@ jobs:
 
     runs-on: ${{ matrix.os }}
 
-    timeout-minutes: 30
-
     steps: # job steps
       - name: Check-out repository
         uses: actions/checkout@v4
-
-      - name: Declare env variables on push only
-        if: github.event_name == 'push'
-        shell: bash
-        run: echo "BRANCH_NAME=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-
-      - name: Declare env variables on pull_request only
-        if: github.event_name == 'pull_request'
-        shell: bash
-        run: echo "BRANCH_NAME=$GITHUB_HEAD_REF" >> $GITHUB_ENV
 
       - name: Set up Fortran compiler (FC) [all except Windows + gfortran] # except: use pre-installed gfortran
         if: runner.os != 'Windows' || matrix.toolchain.exe != 'gfortran'
@@ -54,14 +49,10 @@ jobs:
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1
 
-      #- name: debug
-      #  shell: bash
-      #  run: ifort -help
-
       - name: Set up Python environment
         uses: actions/setup-python@v5
         with:
-          python-version: 3.11
+          python-version: '3.11'
 
       - name: Upgrade package installer for Python
         shell: bash
@@ -187,21 +178,15 @@ jobs:
           if-no-files-found: "error"
           compression-level: 0
 
-      - name: Upload Python package wheel to releases (non-master branch)
-        if: github.event_name == 'push' && env.BRANCH_NAME != 'master'
-        uses: ncipollo/release-action@v1
-        with:
-          draft: true
-          prerelease: true
-          allowUpdates: true
-          replacesArtifacts: true
-          token: ${{ secrets.GITHUB_TOKEN }}
-          artifacts: "${{ env.WHEEL_DIR }}/*.whl"
-          tag: ${{ env.BRANCH_NAME }}
-          name: ${{ env.BRANCH_NAME }}
-          bodyFile: "RELEASE.md"
-
+  ##############################################################################
+  # JOB
+  ##############################################################################
   tests: # the second job
+
+    needs: build  # previous job 'build' need to be finished first
+
+    timeout-minutes: 30
+
     strategy:
       fail-fast: false
       matrix:
@@ -220,10 +205,6 @@ jobs:
 
     runs-on: ${{ matrix.os }}
 
-    timeout-minutes: 30
-
-    needs: wheel  # previous job need to be finished first
-
     steps:  # job steps
       - name: Check-out repository
         uses: actions/checkout@v4
@@ -231,7 +212,7 @@ jobs:
       - name: Set up python environment
         uses: actions/setup-python@v5
         with:
-          python-version: 3.11
+          python-version: '3.11'
 
       - name: Upgrade package installer for Python
         shell: bash
@@ -271,3 +252,176 @@ jobs:
       - name: Run pyCFML functional tests
         shell: bash
         run: scripts/run_pycfml_functional_tests_no_benchmarks.sh
+
+  ##############################################################################
+  # JOB
+  ##############################################################################
+  publish:  # the third job
+
+    needs: tests  # previous job 'tests' need to be finished first
+
+    if: always()  # start this job even if the previous job failed
+
+    timeout-minutes: 30
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, windows-2022, macos-12, macos-14]
+        python-version: ['3.9', '3.10', '3.11', '3.12']
+        toolchain:
+          - { exe: gfortran, compiler: gcc, version: 13 }
+
+    runs-on: ${{ matrix.os }}
+
+    steps: # job steps
+      - name: Check-out repository
+        uses: actions/checkout@v4
+
+      - name: Declare env variables on push only
+        if: github.event_name == 'push'
+        shell: bash
+        run: echo "BRANCH_NAME=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: Declare env variables on pull_request only
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: echo "BRANCH_NAME=$GITHUB_HEAD_REF" >> $GITHUB_ENV
+
+      - name: Set up Fortran compiler (FC) [all except Windows + gfortran] # except: use pre-installed gfortran
+        if: runner.os != 'Windows' || matrix.toolchain.exe != 'gfortran'
+        uses: fortran-lang/setup-fortran@v1
+        id: setup-fortran
+        with:
+          compiler: ${{ matrix.toolchain.compiler }}
+          version: ${{ matrix.toolchain.version }}
+
+      - name: Set up NMake build tool [Windows]
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Set up Python environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Upgrade package installer for Python
+        shell: bash
+        run: pip install --upgrade pip
+
+      - name: Install Python dependences
+        shell: bash
+        run: pip install '.[ci,test]'  # ci extras from pyproject.toml
+
+      - name: Fix reinstalling gcc [macOS]  # needed because of `brew reinstall gcc`
+        if: runner.os == 'macOS'
+        shell: bash
+        run: echo "MACOSX_DEPLOYMENT_TARGET=$(sw_vers -productVersion)" >> $GITHUB_ENV
+
+      - name: Create build scripts in scripts/scripts
+        shell: bash
+        run: >
+          python3 scripts.py
+          --platform ${{ runner.os }}
+          --compiler ${{ matrix.toolchain.exe }}
+          --mode debug
+          --bash-syntax
+          --enable-backslash-escapes
+
+      - name: Print some build-specific variables
+        shell: bash
+        run: scripts/print_build_variables.sh  # bash -x scripts/print_build_variables.sh for printing commands
+
+      - name: Create scripts, CFML and pyCFML directories
+        shell: bash
+        run: |
+          scripts/create_cfml_repo_dir.sh
+          scripts/create_cfml_build_dir.sh
+          scripts/create_cfml_dist_dir.sh
+          scripts/create_pycfml_src_dir.sh
+          scripts/create_pycfml_build_dir.sh
+          scripts/create_pycfml_dist_dir.sh
+
+      - name: Download CFML repository
+        shell: bash
+        run: scripts/download_cfml_repo.sh
+
+      - name: Build CFML modules
+        shell: bash
+        run: |
+          scripts/rename_global_deps_file.sh
+          scripts/build_cfml_modules_obj.sh
+          scripts/delete_renamed_global_deps_file.sh
+
+      - name: Build CFML static library
+        shell: bash
+        run: scripts/build_cfml_static_lib.sh
+
+      - name: Make CFML distribution
+        shell: bash
+        run: scripts/move_built_to_cfml_dist.sh
+
+      - name: Create pyCFML source code
+        shell: bash
+        run: scripts/create_pycfml_src.sh
+
+      - name: Build pyCFML modules
+        shell: bash
+        run: scripts/build_pycfml_modules_obj.sh
+
+      - name: Build pyCFML shared obj / dynamic library
+        shell: bash
+        run: |
+          scripts/build_pycfml_lib_obj.sh
+          scripts/build_pycfml_shared_obj_or_dynamic_lib.sh
+
+      - name: Make pyCFML distribution
+        shell: bash
+        run: |
+          scripts/copy_built_to_pycfml_dist.sh
+          scripts/change_runpath_for_built_pycfml.sh
+          scripts/copy_extra_libs_to_pycfml_dist.sh
+          scripts/copy_py_api_files_to_pycfml_dist.sh
+          scripts/copy_init_file_to_pycfml_dist.sh
+          scripts/copy_cfml_databases_to_pycfml_dist.sh
+
+      - name: Create Python package wheel of pyCFML
+        shell: bash
+        run: |
+          scripts/validate_pyproject_toml.sh
+          scripts/create_pycfml_python_wheel.sh
+          scripts/rename_pycfml_python_wheel.sh
+
+      - name: Prepare for uploading Python package wheel of pyCFML
+        shell: bash
+        run: |
+          echo "WHEEL_DIR=$(python3 scripts.py --print-wheel-dir)" >> $GITHUB_ENV
+          echo "RELEASE_VERSION=$(python3 scripts.py --print-release-version)" >> $GITHUB_ENV
+
+      - name: Upload Python package wheel to releases (non-master branch)
+        if: github.event_name == 'push' && env.BRANCH_NAME != 'master'
+        uses: ncipollo/release-action@v1
+        with:
+          draft: true
+          prerelease: true
+          allowUpdates: true
+          replacesArtifacts: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: "${{ env.WHEEL_DIR }}/*.whl"
+          tag: ${{ env.BRANCH_NAME }}
+          name: ${{ env.BRANCH_NAME }}
+          bodyFile: "RELEASE.md"
+
+      - name: Upload Python package wheel to releases (master branch)
+        if: github.event_name == 'push' && env.BRANCH_NAME == 'master'
+        uses: ncipollo/release-action@v1
+        with:
+          draft: true
+          prerelease: true
+          allowUpdates: true
+          replacesArtifacts: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: "${{ env.WHEEL_DIR }}/*.whl"
+          tag: ${{ env.RELEASE_VERSION }}
+          name: ${{ env.RELEASE_VERSION }}
+          bodyFile: "RELEASE.md"

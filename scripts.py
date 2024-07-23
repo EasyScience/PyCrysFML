@@ -174,9 +174,13 @@ def _enable_backslash_escapes():
         enable_backslash_escapes = ARGS.enable_backslash_escapes
     return enable_backslash_escapes
 
-def _print_pcfml_wheel_dir():
+def _print_wheel_dir():
     wheel_dir = CONFIG['pycfml']['dir']['dist-wheel']
     print(wheel_dir)
+
+def _print_release_version():
+    release_version = PYPROJECT['project']['version']
+    print(release_version)
 
 def _compiler_name():
     compiler = 'gfortran'  # default
@@ -413,6 +417,9 @@ def parsed_args():
     parser.add_argument("--print-wheel-dir",
                         action='store_true',
                         help="print pycfml wheel directory name")
+    parser.add_argument("--print-release-version",
+                        action='store_true',
+                        help="print pycfml package version")
     return parser.parse_args()
 
 def loaded_pyproject():
@@ -1297,7 +1304,11 @@ if __name__ == '__main__':
     CONFIG = loaded_config('scripts.toml')
 
     if ARGS.print_wheel_dir:  # NEED FIX. Maybe save extras to toml as in EDA?
-        _print_pcfml_wheel_dir()
+        _print_wheel_dir()
+        exit(0)
+
+    if ARGS.print_release_version:  # NEED FIX. Maybe save extras to toml as in EDA?
+        _print_release_version()
         exit(0)
 
     CFML = CONFIG['cfml']['log-name']

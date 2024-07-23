@@ -1017,22 +1017,22 @@ def change_runpath_for_built_pycfml():
     # shared objects step (CONFIG['build-shared']), but it didn't help :(
     # Ubuntu usage examples:
     # sudo find / -iname "libif*"
-    # ls -l pycrysfml08_dist/pycrysfml08
-    # patchelf --print-rpath pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-    # patchelf --set-rpath '$ORIGIN' pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-    # patchelf --print-rpath pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-    # patchelf --no-default-lib pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-    # ldd pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
+    # ls -l dist/pyCFML/pycrysfml
+    # patchelf --print-rpath dist/pyCFML/pycrysfml/crysfml08lib.so
+    # patchelf --set-rpath '$ORIGIN' dist/pyCFML/pycrysfml/crysfml08lib.so
+    # patchelf --print-rpath dist/pyCFML/pycrysfml/crysfml08lib.so
+    # patchelf --no-default-lib dist/pyCFML/pycrysfml/crysfml08lib.so
+    # ldd dist/pyCFML/pycrysfml/crysfml08lib.so
     # ls -l /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08
     # ldd /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pycrysfml08/py_cfml_metrics.so
     # macOS usage example:
     # sudo find / -iname "libif*"
-    # ls -l pycrysfml08_dist/pycrysfml08
-    # install_name_tool -rpath /opt/intel/oneapi/compiler/2023.2.0/mac/bin/intel64/../../compiler/lib @loader_path pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-    # install_name_tool -delete_rpath /usr/local/Cellar/gcc/13.2.0/lib/gcc/current pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-    # install_name_tool -change /usr/local/opt/gcc/lib/gcc/current/libgfortran.5.dylib @rpath/libgfortran.5.dylib pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-    # otool -L pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so
-    # otool -l pycrysfml08_dist/pycrysfml08/py_cfml_metrics.so | grep RPATH -A2
+    # ls -l dist/pyCFML/pycrysfml
+    # install_name_tool -rpath /opt/intel/oneapi/compiler/2023.2.0/mac/bin/intel64/../../compiler/lib @loader_path dist/pyCFML/pycrysfml/crysfml08lib.so
+    # install_name_tool -delete_rpath /usr/local/Cellar/gcc/13.2.0/lib/gcc/current dist/pyCFML/pycrysfml/crysfml08lib.so
+    # install_name_tool -change /usr/local/opt/gcc/lib/gcc/current/libgfortran.5.dylib @rpath/libgfortran.5.dylib dist/pyCFML/pycrysfml/crysfml08lib.so
+    # otool -l dist/pyCFML/pycrysfml/crysfml08lib.so | grep RPATH -A2
+    # otool -L dist/pyCFML/pycrysfml/crysfml08lib.so
     try:
         rpaths = CONFIG['build']['rpaths'][_platform()][_processor()][_compiler_name()]
     except KeyError:

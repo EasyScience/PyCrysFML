@@ -204,14 +204,20 @@ rpaths.linux.x86_64.ifx = [
     { old = '', new = "'$ORIGIN'" },
 ] # set rpath to point to '$ORIGIN'
 rpaths.macos.i386.gfortran = [
-    { old = '/usr/local/Cellar/gcc/13.2.0/lib/gcc/current/gcc/x86_64-apple-darwin21/13', new = '' }, # delete all rpaths besides @loader_path
-    { old = '/usr/local/Cellar/gcc/13.2.0/lib/gcc/current/gcc',                          new = '' }, # delete all rpaths besides @loader_path
-    { old = '/usr/local/Cellar/gcc/13.2.0/lib/gcc/current',                              new = '' }, # delete all rpaths besides @loader_path
+    #{ old = '/usr/local/Cellar/gcc/13.2.0/lib/gcc/current/gcc/x86_64-apple-darwin21/13', new = '' }, # delete all rpaths besides @loader_path
+    #{ old = '/usr/local/Cellar/gcc/13.2.0/lib/gcc/current/gcc',                          new = '' }, # delete all rpaths besides @loader_path
+    #{ old = '/usr/local/Cellar/gcc/13.2.0/lib/gcc/current',                              new = '' }, # delete all rpaths besides @loader_path
+    { old = '/usr/local/Cellar/gcc@13/13.3.0/lib/gcc/13/gcc/x86_64-apple-darwin21/13', new = '' }, # delete all rpaths besides @loader_path
+    { old = '/usr/local/Cellar/gcc@13/13.3.0/lib/gcc/13/gcc',                          new = '' }, # delete all rpaths besides @loader_path
+    { old = '/usr/local/Cellar/gcc@13/13.3.0/lib/gcc/13',                              new = '' }, # delete all rpaths besides @loader_path
 ]
 rpaths.macos.arm.gfortran = [
-    { old = '/opt/homebrew/Cellar/gcc/13.2.0/lib/gcc/current/gcc/aarch64-apple-darwin23/13', new = '' }, # delete all rpaths besides @loader_path
-    { old = '/opt/homebrew/Cellar/gcc/13.2.0/lib/gcc/current/gcc',                           new = '' }, # delete all rpaths besides @loader_path
-    { old = '/opt/homebrew/Cellar/gcc/13.2.0/lib/gcc/current',                               new = '' }, # delete all rpaths besides @loader_path
+    #{ old = '/opt/homebrew/Cellar/gcc/13.2.0/lib/gcc/current/gcc/aarch64-apple-darwin23/13', new = '' }, # delete all rpaths besides @loader_path
+    #{ old = '/opt/homebrew/Cellar/gcc/13.2.0/lib/gcc/current/gcc',                           new = '' }, # delete all rpaths besides @loader_path
+    #{ old = '/opt/homebrew/Cellar/gcc/13.2.0/lib/gcc/current',                               new = '' }, # delete all rpaths besides @loader_path
+    { old = '/opt/homebrew/Cellar/gcc@13/13.3.0/lib/gcc/13/gcc/aarch64-apple-darwin23/13', new = '' }, # delete all rpaths besides @loader_path
+    { old = '/opt/homebrew/Cellar/gcc@13/13.3.0/lib/gcc/13/gcc',                           new = '' }, # delete all rpaths besides @loader_path
+    { old = '/opt/homebrew/Cellar/gcc@13/13.3.0/lib/gcc/13',                               new = '' }, # delete all rpaths besides @loader_path
 ]
 rpaths.macos.i386.ifort = [
     { old = '/opt/intel/oneapi/compiler/2023.2.0/mac/bin/intel64/../../compiler/lib', new = '@loader_path' },

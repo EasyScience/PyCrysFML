@@ -31,7 +31,8 @@ dependencies = [
 ci = [
   'validate-pyproject[all]',
   'build',
-  'wheel'
+  'wheel',
+  'toml'  # need this, as tomllib is only available for python >=3.11
 ]
 test = [
   'deepdiff',

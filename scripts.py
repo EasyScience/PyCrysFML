@@ -1,7 +1,8 @@
 import os
 import sys
 import site
-import tomllib
+#import tomllib
+import toml
 import argparse
 import sysconfig
 import platform
@@ -424,14 +425,16 @@ def parsed_args():
 
 def loaded_pyproject():
     path = os.path.join(_project_dir(), 'pyproject.toml')
-    with open(path, 'rb') as f:
-        pyproject = tomllib.load(f)
+    #with open(path, 'rb') as f:
+        #pyproject = tomllib.load(f)
+    pyproject = toml.load(path)
     return pyproject
 
 def loaded_config(name: str):
     path = _config_path(name)
-    with open(path, 'rb') as f:
-        config = tomllib.load(f)
+    #with open(path, 'rb') as f:
+        #config = tomllib.load(f)
+    config = toml.load(path)
     if _bash_syntax():
         for idx, build in enumerate(config['build-configs']):
             config['build-configs'][idx]['build-shared'] = build['build-shared'].replace('/', '-')

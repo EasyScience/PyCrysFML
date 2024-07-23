@@ -5,10 +5,11 @@ build-backend = 'hatchling.build'
 [project]
 name = 'pycrysfml'
 version = '0.1.0'
-description = 'Testing packaging PyCrysFML08 from https://code.ill.fr/scientific-software/PyCrysFML08'
+description = 'Testing packaging for Python API to CrysFML08 from https://code.ill.fr/scientific-software/CrysFML2008'
 authors = [
   {name = 'Juan Rodríguez-Carvajal', email = 'jrc@ill.fr'},
-  {name = 'Nebil Ayape Katcho', email = 'katcho@ill.fr'}
+  {name = 'Nebil Ayape Katcho', email = 'katcho@ill.fr'},
+  {name = 'Javier Gonzalez-Platas', email = 'jplatas@ull.edu.es'  }
 ]
 maintainers = [
   {name = 'Elisa Rebolini', email = 'rebolini@ill.fr'},
@@ -18,7 +19,7 @@ readme = 'README.md'
 license = {file = 'LICENSE'}
 classifiers = [
   'Programming Language :: Python :: 3',
-  'License :: OSI Approved :: MIT License',
+  'License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)',
   'Operating System :: OS Independent'
 ]
 requires-python = '>=3.11'

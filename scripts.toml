@@ -204,17 +204,21 @@ rpaths.linux.x86_64.ifx = [
     { old = '', new = "'$ORIGIN'" },
 ] # set rpath to point to '$ORIGIN'
 rpaths.macos.i386.gfortran = [
+    # gcc 13.2.0
     #{ old = '/usr/local/Cellar/gcc/13.2.0/lib/gcc/current/gcc/x86_64-apple-darwin21/13', new = '' }, # delete all rpaths besides @loader_path
     #{ old = '/usr/local/Cellar/gcc/13.2.0/lib/gcc/current/gcc',                          new = '' }, # delete all rpaths besides @loader_path
     #{ old = '/usr/local/Cellar/gcc/13.2.0/lib/gcc/current',                              new = '' }, # delete all rpaths besides @loader_path
+    # gcc 13.3.0
     { old = '/usr/local/Cellar/gcc@13/13.3.0/lib/gcc/13/gcc/x86_64-apple-darwin21/13', new = '' }, # delete all rpaths besides @loader_path
     { old = '/usr/local/Cellar/gcc@13/13.3.0/lib/gcc/13/gcc',                          new = '' }, # delete all rpaths besides @loader_path
     { old = '/usr/local/Cellar/gcc@13/13.3.0/lib/gcc/13',                              new = '' }, # delete all rpaths besides @loader_path
 ]
 rpaths.macos.arm.gfortran = [
+    # gcc 13.2.0
     #{ old = '/opt/homebrew/Cellar/gcc/13.2.0/lib/gcc/current/gcc/aarch64-apple-darwin23/13', new = '' }, # delete all rpaths besides @loader_path
     #{ old = '/opt/homebrew/Cellar/gcc/13.2.0/lib/gcc/current/gcc',                           new = '' }, # delete all rpaths besides @loader_path
     #{ old = '/opt/homebrew/Cellar/gcc/13.2.0/lib/gcc/current',                               new = '' }, # delete all rpaths besides @loader_path
+    # gcc 13.3.0
     { old = '/opt/homebrew/Cellar/gcc@13/13.3.0/lib/gcc/13/gcc/aarch64-apple-darwin23/13', new = '' }, # delete all rpaths besides @loader_path
     { old = '/opt/homebrew/Cellar/gcc@13/13.3.0/lib/gcc/13/gcc',                           new = '' }, # delete all rpaths besides @loader_path
     { old = '/opt/homebrew/Cellar/gcc@13/13.3.0/lib/gcc/13',                               new = '' }, # delete all rpaths besides @loader_path
@@ -909,7 +913,7 @@ components-files = [
     'Wraps_Rational',
     'Wraps_gSpaceGroups',
     'Wraps_kvec_Symmetry',
-    'Wraps_Utilities'    
+    'Wraps_Utilities'
 ]
 
 ##################

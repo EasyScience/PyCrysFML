@@ -4,12 +4,12 @@ This is a repository for testing the build process of both the fortran crystallo
 
 ### Build matrix
 
-| Platform / Compiler       | gfortran | ifx        | ifort         | nagfor     |
-| ------------------------- | -------- | ---------- | ------------- | ---------- |
-| Windows 10                | ✅   | ✅    | ✅         |            |
-| Ubuntu 22.04              | ✅       | ✅    | ✅           |            |
-| macOS 12 (Intel)          | ✅       | Unsupported | ✅          |            |
-| macOS 14 (Apple Silicone) | ✅       | Unsupported | Unsupported | ✅ Local  |
+| Platform / Compiler       | gfortran | ifx         | ifort         | nagfor     |
+| ------------------------- | -------- | ----------- | ------------- | ---------- |
+| Windows 10                | ✅       | ✅          | ✅           |            |
+| Ubuntu 22.04              | ✅       | ✅          | ✅           |            |
+| macOS 12 (Intel)          | ✅       | Unsupported | ✅           |            |
+| macOS 14 (Apple Silicone) | ✅       | Unsupported | Unsupported  | ✅ Local   |
 
 ### Main steps
 

@@ -32,6 +32,16 @@ jobs:
       - name: Check-out repository
         uses: actions/checkout@v4
 
+      - name: Declare env variables on push only
+        if: github.event_name == 'push'
+        shell: bash
+        run: echo "BRANCH_NAME=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: Declare env variables on pull_request only
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: echo "BRANCH_NAME=$GITHUB_HEAD_REF" >> $GITHUB_ENV
+
       - name: Set up Fortran compiler (FC) [all except Windows + gfortran] # except: use pre-installed gfortran
         if: runner.os != 'Windows' || matrix.toolchain.exe != 'gfortran'
         uses: fortran-lang/setup-fortran@v1
@@ -176,6 +186,20 @@ jobs:
           path: ${{ env.WHEEL_DIR }}  # all files from this directory are zipped
           if-no-files-found: "error"
           compression-level: 0
+
+      - name: Upload Python package wheel to releases (non-master branch)
+        if: github.event_name == 'push' && env.BRANCH_NAME != 'master'
+        uses: ncipollo/release-action@v1
+        with:
+          draft: true
+          prerelease: true
+          allowUpdates: true
+          replacesArtifacts: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: "${{ env.WHEEL_DIR }}/*.whl"
+          tag: ${{ env.BRANCH_NAME }}
+          name: ${{ env.BRANCH_NAME }}
+          bodyFile: "RELEASE.md"
 
   tests: # the second job
     strategy:

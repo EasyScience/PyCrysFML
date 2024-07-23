@@ -1006,7 +1006,7 @@ def copy_built_to_pycfml_dist():
     from_path = os.path.join(build_abspath, f'*.{shared_lib_ext}')
     to_path = package_abspath
     cmd = f'cp {from_path} {to_path}'
-    cmd = cmd + ' || true'  # allows to suppress the error message if no files are found
+    #cmd = cmd + ' || true'  # allows to suppress the error message if no files are found
     lines.append(cmd)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
@@ -1102,7 +1102,7 @@ def change_runpath_for_built_pycfml():
                 cmd = cmd.replace('{NEW}', new_rpath)
                 cmd = cmd.replace('{PATH}', path)
                 cmd = cmd.replace('{EXT}', shared_lib_ext)
-            cmd = cmd + ' || true'  # allows to suppress the error message if no files are found
+            #cmd = cmd + ' || true'  # allows to suppress the error message if no files are found
             lines.append(cmd)
         for lib in dependent_libs:
             old_lib = lib['old']
@@ -1114,7 +1114,7 @@ def change_runpath_for_built_pycfml():
             cmd = cmd.replace('{NEW}', new_lib)
             cmd = cmd.replace('{PATH}', path)
             cmd = cmd.replace('{EXT}', shared_lib_ext)
-            cmd = cmd + ' || true'  # allows to suppress the error message if no files are found
+            #cmd = cmd + ' || true'  # allows to suppress the error message if no files are found
             lines.append(cmd)
     else:
         msg = _echo_msg(f"Changing runpath is not needed for platform '{_platform()}'")

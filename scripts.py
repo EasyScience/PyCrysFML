@@ -1,11 +1,12 @@
-import os
-import sys
-import site
-#import tomllib
-import toml
 import argparse
-import sysconfig
+import datetime
+import os
 import platform
+import site
+import sys
+import sysconfig
+import toml
+#import tomllib
 from pathlib import Path
 from pygit2 import Repository
 
@@ -181,7 +182,15 @@ def _print_wheel_dir():
 
 def _print_release_version():
     release_version = PYPROJECT['project']['version']
+    release_version = f'v{release_version}'
     print(release_version)
+
+def _print_release_title():
+    release_version = PYPROJECT['project']['version']
+    dt = datetime.datetime.now()
+    build_date = f'{dt.day} {dt:%b} {dt.year}'  # e.g. 3 Jun 2021
+    release_title = f'Version {release_version} ({build_date})'
+    print(release_title)
 
 def _compiler_name():
     compiler = 'gfortran'  # default
@@ -420,7 +429,10 @@ def parsed_args():
                         help="print pycfml wheel directory name")
     parser.add_argument("--print-release-version",
                         action='store_true',
-                        help="print pycfml package version")
+                        help="print pycfml package release version")
+    parser.add_argument("--print-release-title",
+                        action='store_true',
+                        help="print pycfml package release title")
     return parser.parse_args()
 
 def loaded_pyproject():
@@ -1312,6 +1324,10 @@ if __name__ == '__main__':
 
     if ARGS.print_release_version:  # NEED FIX. Maybe save extras to toml as in EDA?
         _print_release_version()
+        exit(0)
+
+    if ARGS.print_release_title:  # NEED FIX. Maybe save extras to toml as in EDA?
+        _print_release_title()
         exit(0)
 
     CFML = CONFIG['cfml']['log-name']

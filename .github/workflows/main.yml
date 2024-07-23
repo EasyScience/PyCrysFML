@@ -9,9 +9,9 @@ on:
 jobs:
 
   ##############################################################################
-  # JOB
+  # JOB 1
   ##############################################################################
-  build: # the first job
+  build:  # current job name
 
     timeout-minutes: 30
 
@@ -180,11 +180,13 @@ jobs:
           compression-level: 0
 
   ##############################################################################
-  # JOB
+  # JOB 2
   ##############################################################################
-  tests: # the second job
+  tests:  # current job name
 
     needs: build  # previous job 'build' need to be finished first
+
+    if: always()  # start this job even if the previous job failed
 
     timeout-minutes: 30
 
@@ -231,6 +233,7 @@ jobs:
           --compiler ${{ matrix.toolchain.exe }}
           --mode debug
           --bash-syntax
+          --enable-backslash-escapes
 
       - name: Prepare for downloading Python package wheel of pyCFML
         shell: bash
@@ -255,9 +258,9 @@ jobs:
         run: scripts/run_pycfml_functional_tests_no_benchmarks.sh
 
   ##############################################################################
-  # JOB
+  # JOB 3
   ##############################################################################
-  publish:  # the third job
+  publish:  # current job name
 
     needs: tests  # previous job 'tests' need to be finished first
 
@@ -398,6 +401,7 @@ jobs:
         run: |
           echo "WHEEL_DIR=$(python3 scripts.py --print-wheel-dir)" >> $GITHUB_ENV
           echo "RELEASE_VERSION=$(python3 scripts.py --print-release-version)" >> $GITHUB_ENV
+          echo "RELEASE_TITLE=$(python3 scripts.py --print-release-title)" >> $GITHUB_ENV
 
       - name: Upload Python package wheel to releases (non-master branch)
         if: github.event_name == 'push' && env.BRANCH_NAME != 'master'
@@ -424,5 +428,5 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           artifacts: "${{ env.WHEEL_DIR }}/*.whl"
           tag: ${{ env.RELEASE_VERSION }}
-          name: ${{ env.RELEASE_VERSION }}
+          name: ${{ env.RELEASE_TITLE }}
           bodyFile: "RELEASE.md"

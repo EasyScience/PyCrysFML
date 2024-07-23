@@ -4,9 +4,8 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
-#import cfml_utilities
-#from pycrysfml import cfml_utilities
-from pycrysfml import crysfml08lib
+from pycrysfml import cfml_utilities
+#from pycrysfml import crysfml08lib
 
 
 STUDY_DICT_PM3M = {
@@ -102,8 +101,8 @@ def generated_x_array(study_dict:dict):
     return x
 
 def compute_pattern(study_dict:dict):
-    #_, y = cfml_utilities.powder_pattern_from_json(study_dict)  # returns x and y arrays
-    _, y = crysfml08lib.f_powder_pattern_from_json(study_dict)  # returns x and y arrays
+    _, y = cfml_utilities.powder_pattern_from_json(study_dict)  # returns x and y arrays
+    #_, y = crysfml08lib.f_powder_pattern_from_json(study_dict)  # returns x and y arrays
     y = y.astype(np.float64)
     return y
 

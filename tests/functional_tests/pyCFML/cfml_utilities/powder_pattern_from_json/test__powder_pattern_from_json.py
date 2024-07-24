@@ -88,7 +88,6 @@ def path_to_desired(file_name:str):
 def compute_pattern(study_dict:dict):
     #_, y = crysfml08lib.f_powder_pattern_from_json(study_dict)  # returns x and y arrays
     _, y = cfml_utilities.powder_pattern_from_json(study_dict)  # returns x and y arrays
-    y = y.astype(np.float64)
     return y
 
 # Tests

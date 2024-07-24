@@ -7,6 +7,7 @@ import sys
 import sysconfig
 import toml
 #import tomllib
+from colorama import Fore, Back, Style
 from pathlib import Path
 from pygit2 import Repository
 
@@ -14,6 +15,7 @@ global ARGS
 global CONFIG
 
 MSG_COLOR = r'\033[0;33m'  # orange
+ERROR_COLOR = r'\033[0;31m'  # red
 HEAD_COLOR = r'\033[1;34m'  # bold blue
 COLOR_OFF = r'\033[0m'
 
@@ -52,7 +54,7 @@ def _echo_cmd():
         return 'echo -e'
     return 'echo'
 
-def _echo_msg(msg: str):
+def _echo_msg(msg:str):
     return f'{_echo_cmd()} "{MSG_COLOR}:::::: {msg}{COLOR_OFF}"'
 
 def _echo_progress_msg(current: int, total: int, msg: str):
@@ -60,7 +62,7 @@ def _echo_progress_msg(current: int, total: int, msg: str):
     msg = f"[{progress:>3}%] {msg}"
     return _echo_msg(msg)
 
-def _echo_header(msg: str):
+def _echo_header(msg:str):
     msg = f'{HEAD_COLOR}:::::: {msg} ::::::{COLOR_OFF}'
     sep = ':' * (len(msg) - len(f'{HEAD_COLOR}') - len(f'{COLOR_OFF}'))
     lines = []
@@ -69,6 +71,12 @@ def _echo_header(msg: str):
     lines.append(f'{_echo_cmd()} "{HEAD_COLOR}{msg}{COLOR_OFF}"')
     lines.append(f'{_echo_cmd()} "{HEAD_COLOR}{sep}{COLOR_OFF}"')
     return lines
+
+def _print_msg(msg:str):
+    print(Fore.GREEN + f':::::: {msg}' + Style.RESET_ALL)
+
+def _print_error_msg(msg:str):
+    print(Fore.RED + f':::::: ERROR: {msg}' + Style.RESET_ALL)
 
 def _processor():
     processor = platform.processor()
@@ -403,6 +411,9 @@ def _compile_executables_script_lines(modules: str,
 
 def parsed_args():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument("--create-scripts",
+                        action='store_true',
+                        help="create scripts for building and testing")
     parser.add_argument("--platform",
                         default="macos",
                         choices=['macos', 'linux', 'windows'],
@@ -1031,8 +1042,8 @@ def change_runpath_for_built_pycfml():
     # install_name_tool -rpath /opt/intel/oneapi/compiler/2023.2.0/mac/bin/intel64/../../compiler/lib @loader_path dist/pyCFML/pycrysfml/crysfml08lib.so
     # install_name_tool -delete_rpath /usr/local/Cellar/gcc/13.2.0/lib/gcc/current dist/pyCFML/pycrysfml/crysfml08lib.so
     # install_name_tool -change /usr/local/opt/gcc/lib/gcc/current/libgfortran.5.dylib @rpath/libgfortran.5.dylib dist/pyCFML/pycrysfml/crysfml08lib.so
-    # otool -l dist/pyCFML/pycrysfml/crysfml08lib.so | grep RPATH -A2  # build.rpaths in in scripts.toml
-    # otool -L dist/pyCFML/pycrysfml/crysfml08lib.so                   # build.dependent-libs in scripts.toml
+    # otool -l dist/pyCFML/pycrysfml/crysfml08lib.so | grep RPATH -A2  # build.rpaths in in build.toml
+    # otool -L dist/pyCFML/pycrysfml/crysfml08lib.so                   # build.dependent-libs in build.toml
     try:
         rpaths = CONFIG['build']['rpaths'][_platform()][_processor()][_compiler_name()]
     except KeyError:
@@ -1316,7 +1327,7 @@ def run_pycfml_functional_tests_no_benchmarks():
 if __name__ == '__main__':
     ARGS = parsed_args()
     PYPROJECT = loaded_pyproject()
-    CONFIG = loaded_config('scripts.toml')
+    CONFIG = loaded_config('build.toml')
 
     if ARGS.print_wheel_dir:  # NEED FIX. Maybe save extras to toml as in EDA?
         _print_wheel_dir()
@@ -1329,6 +1340,10 @@ if __name__ == '__main__':
     if ARGS.print_release_title:  # NEED FIX. Maybe save extras to toml as in EDA?
         _print_release_title()
         exit(0)
+
+    if not ARGS.create_scripts:  # NEED FIX. Need proper check if create scripts or print flags are given
+        _print_error_msg('Incorrect set of command line arguments')
+        exit(1)
 
     CFML = CONFIG['cfml']['log-name']
     pyCFML = CONFIG['pycfml']['log-name']
@@ -1407,3 +1422,5 @@ if __name__ == '__main__':
     add_main_script_header(f"Run {pyCFML} tests")
     run_pycfml_unit_tests()
     run_pycfml_functional_tests_no_benchmarks()
+
+    _print_msg(f'All scripts were successfully created in {_scripts_path()}')

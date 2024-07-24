@@ -71,7 +71,8 @@ jobs:
       - name: Create build scripts in scripts/scripts
         shell: bash
         run: >
-          python3 scripts.py
+          python3 build.py
+          --create-scripts
           --platform ${{ runner.os }}
           --compiler ${{ matrix.toolchain.exe }}
           --mode debug
@@ -169,7 +170,7 @@ jobs:
 
       - name: Prepare for uploading Python package wheel of pyCFML
         shell: bash
-        run: echo "WHEEL_DIR=$(python3 scripts.py --print-wheel-dir)" >> $GITHUB_ENV
+        run: echo "WHEEL_DIR=$(python3 build.py --print-wheel-dir)" >> $GITHUB_ENV
 
       - name: Upload zipped Python package wheel of pyCFML for next job
         uses: actions/upload-artifact@v4
@@ -228,7 +229,8 @@ jobs:
       - name: Create job step scripts
         shell: bash
         run: >
-          python3 scripts.py
+          python3 build.py
+          --create-scripts
           --platform ${{ runner.os }}
           --compiler ${{ matrix.toolchain.exe }}
           --mode debug
@@ -237,7 +239,7 @@ jobs:
 
       - name: Prepare for downloading Python package wheel of pyCFML
         shell: bash
-        run: echo "WHEEL_DIR=$(python3 scripts.py --print-wheel-dir)" >> $GITHUB_ENV
+        run: echo "WHEEL_DIR=$(python3 build.py --print-wheel-dir)" >> $GITHUB_ENV
 
       - name: Download zipped pyCFML wheel from previous job
         uses: actions/download-artifact@v4
@@ -325,7 +327,8 @@ jobs:
       - name: Create build scripts in scripts/scripts
         shell: bash
         run: >
-          python3 scripts.py
+          python3 build.py
+          --create-scripts
           --platform ${{ runner.os }}
           --compiler ${{ matrix.toolchain.exe }}
           --mode debug
@@ -399,9 +402,9 @@ jobs:
       - name: Prepare for uploading Python package wheel of pyCFML
         shell: bash
         run: |
-          echo "WHEEL_DIR=$(python3 scripts.py --print-wheel-dir)" >> $GITHUB_ENV
-          echo "RELEASE_VERSION=$(python3 scripts.py --print-release-version)" >> $GITHUB_ENV
-          echo "RELEASE_TITLE=$(python3 scripts.py --print-release-title)" >> $GITHUB_ENV
+          echo "WHEEL_DIR=$(python3 build.py --print-wheel-dir)" >> $GITHUB_ENV
+          echo "RELEASE_VERSION=$(python3 build.py --print-release-version)" >> $GITHUB_ENV
+          echo "RELEASE_TITLE=$(python3 build.py --print-release-title)" >> $GITHUB_ENV
 
       - name: Upload Python package wheel to releases (non-master branch)
         if: github.event_name == 'push' && env.BRANCH_NAME != 'master'

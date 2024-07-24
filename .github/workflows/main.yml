@@ -82,7 +82,7 @@ jobs:
         shell: bash
         run: scripts/print_build_variables.sh  # bash -x scripts/print_build_variables.sh for printing commands
 
-      - name: Create scripts, CFML and pyCFML directories
+      - name: Create CFML and pyCFML directories
         shell: bash
         run: |
           scripts/create_cfml_repo_dir.sh

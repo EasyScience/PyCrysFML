@@ -1164,12 +1164,12 @@ def copy_py_api_files_to_pycfml_dist():
 
 def copy_init_file_to_pycfml_dist():
     project_name = CONFIG['pycfml']['log-name']
-    from_path = os.path.join(_project_path(), '__init__.py')
+    from_path = os.path.join(_project_path(), 'src', '__init__.py')
     package_relpath = CONFIG['pycfml']['dir']['dist-package'].replace('{PACKAGE_NAME}', PYPROJECT['project']['name'])
     package_abspath = os.path.join(_project_path(), package_relpath)
     to_path = package_abspath
     lines = []
-    msg = _echo_msg(f"Copying {project_name} '__init__.py' to dist dir '{package_relpath}'")
+    msg = _echo_msg(f"Copying {project_name} 'src/__init__.py' to dist dir '{package_relpath}'")
     lines.append(msg)
     cmd = f'cp {from_path} {to_path}'
     lines.append(cmd)

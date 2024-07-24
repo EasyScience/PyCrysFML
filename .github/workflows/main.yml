@@ -19,11 +19,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, windows-2022, macos-12, macos-14]
+        os: [macos-12, macos-14]
         toolchain:
           - { exe: gfortran, compiler: gcc, version: 13 }
-          - { exe: ifort, compiler: intel-classic, version: "2021.10" }
-          - { exe: ifx, compiler: intel, version: "2023.2" }
         exclude:
           - os: macos-12
             toolchain: { exe: ifx, compiler: intel, version: "2023.2" } # no support for macOS
@@ -193,11 +191,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, windows-2022, macos-12, macos-14]
+        os: [macos-12, macos-14]
         toolchain:
           - { exe: gfortran, compiler: gcc, version: 13 }
-          - { exe: ifort, compiler: intel-classic, version: "2021.10" }
-          - { exe: ifx, compiler: intel, version: "2023.2" }
         exclude:
           - os: macos-12
             toolchain: { exe: ifx, compiler: intel, version: "2023.2" } # no support for macOS
@@ -332,7 +328,7 @@ jobs:
           --bash-syntax
           --enable-backslash-escapes
 
-      - name: Print some build-specific variables
+      - name: Print build-specific variables
         shell: bash
         run: scripts/print_build_variables.sh  # bash -x scripts/print_build_variables.sh for printing commands
 

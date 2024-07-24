@@ -1042,8 +1042,8 @@ def change_runpath_for_built_pycfml():
     # install_name_tool -rpath /opt/intel/oneapi/compiler/2023.2.0/mac/bin/intel64/../../compiler/lib @loader_path dist/pyCFML/pycrysfml/crysfml08lib.so
     # install_name_tool -delete_rpath /usr/local/Cellar/gcc/13.2.0/lib/gcc/current dist/pyCFML/pycrysfml/crysfml08lib.so
     # install_name_tool -change /usr/local/opt/gcc/lib/gcc/current/libgfortran.5.dylib @rpath/libgfortran.5.dylib dist/pyCFML/pycrysfml/crysfml08lib.so
-    # otool -l dist/pyCFML/pycrysfml/crysfml08lib.so | grep RPATH -A2  # build.rpaths in in build.toml
-    # otool -L dist/pyCFML/pycrysfml/crysfml08lib.so                   # build.dependent-libs in build.toml
+    # otool -l dist/pyCFML/pycrysfml/crysfml08lib.so | grep RPATH -A2  # build.rpaths in in pybuild.toml
+    # otool -L dist/pyCFML/pycrysfml/crysfml08lib.so                   # build.dependent-libs in pybuild.toml
     try:
         rpaths = CONFIG['build']['rpaths'][_platform()][_processor()][_compiler_name()]
     except KeyError:
@@ -1327,7 +1327,7 @@ def run_pycfml_functional_tests_no_benchmarks():
 if __name__ == '__main__':
     ARGS = parsed_args()
     PYPROJECT = loaded_pyproject()
-    CONFIG = loaded_config('build.toml')
+    CONFIG = loaded_config('pybuild.toml')
 
     if ARGS.print_wheel_dir:  # NEED FIX. Maybe save extras to toml as in EDA?
         _print_wheel_dir()

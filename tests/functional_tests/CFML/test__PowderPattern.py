@@ -20,7 +20,7 @@ def set_crysfml_db_path():
     """Sets the env variable 'CRYSFML_DB' as the path to the 'Databases' directory containing the file 'magnetic_data.txt'."""
     default = os.path.join(os.getcwd(), '..', '..', '..')
     project_dir = os.getenv('GITHUB_WORKSPACE', default=default)  # locally do: export GITHUB_WORKSPACE=`pwd`
-    config_path = os.path.join(project_dir, 'scripts.toml')
+    config_path = os.path.join(project_dir, 'pybuild.toml')
     with open(config_path, 'rb') as f:
         CONFIG = tomllib.load(f)
     db_relpath = CONFIG['cfml']['dir']['repo-database']

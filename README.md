@@ -9,7 +9,7 @@ This is a repository for creating a python library **pycrysfml** based on the ne
 | Platform / Compiler       | gfortran | ifx         | ifort         | nagfor     |
 | ------------------------- | -------- | ----------- | ------------- | ---------- |
 | Windows 10                | ✅       | ❌1        | ✅           | ⚙️ Testing |
-| Ubuntu 22.04              | ✅       | ✅          | ✅           | ⚙️ Testing | 
+| Ubuntu 22.04              | ✅       | ✅          | ✅           | ⚙️ Testing |
 | macOS 12 (Intel)          | ✅       | Unsupported | ❌2         | ⚙️ Testing |
 | macOS 14 (Apple Silicone) | ✅       | Unsupported | Unsupported   | ⚙️ Testing |
 
@@ -23,7 +23,7 @@ Current thread 0x0000068c (most recent call first):
 
 ...
 
-scripts/run_pycfml_functional_tests_no_benchmarks.sh: 
+scripts/run_pycfml_functional_tests_no_benchmarks.sh:
 line 2:  1359 Segmentation fault
 ```
 * ❌2 Failed at the **Build pyCFML shared obj / dynamic library** step (**'build'** job):
@@ -108,13 +108,13 @@ If the standard installation doesn't work for you, try building pycrysfml locall
 * Print possible options for creating job scripts (_optional_)
 
   ```
-  python scripts.py --help
+  python pybuild.py --help
   ```
 
 * Create job scripts with default options
 
   ```
-  python scripts.py
+  python pybuild.py --create-scripts
   ```
 
 * Print some build-specific variables (_optional_)
@@ -133,13 +133,13 @@ If the standard installation doesn't work for you, try building pycrysfml locall
   scripts/create_pycfml_build_dir.sh
   scripts/create_pycfml_dist_dir.sh
   ```
-  
+
 * Download CFML repository
 
   ```
   scripts/download_cfml_repo.sh
   ```
-  
+
 * Build CFML modules
 
   ```
@@ -147,7 +147,7 @@ If the standard installation doesn't work for you, try building pycrysfml locall
   scripts/build_cfml_modules_obj.sh
   scripts/delete_renamed_global_deps_file.sh
   ```
-  
+
 * Build CFML static library
 
   ```

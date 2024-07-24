@@ -1,6 +1,10 @@
+## About
+
 This is a repository for creating a python library **pycrysfml** based on the new automatically generated Python API for the crystallographic library CrysFML2008 (Fortran 2008) from https://code.ill.fr/scientific-software/CrysFML2008.
 
-### Build and test jobs
+## CI status
+
+### Status of CI jobs 'build' and 'tests'
 
 | Platform / Compiler       | gfortran | ifx         | ifort         | nagfor     |
 | ------------------------- | -------- | ----------- | ------------- | ---------- |
@@ -9,19 +13,20 @@ This is a repository for creating a python library **pycrysfml** based on the ne
 | macOS 12 (Intel)          | ✅       | Unsupported | ❌2         | ⚙️ Testing |
 | macOS 14 (Apple Silicone) | ✅       | Unsupported | Unsupported   | ⚙️ Testing |
 
-* ❌1 Failed at the _:::::: Running unit tests from 'tests/functional_tests/pyCFML'_ step (tests job):
+* ❌1 Failed at the **Run pyCFML functional tests** step (**'tests'** job):
 
 ```
-tests\functional_tests\pyCFML\cfml_utilities\powder_pattern_from_json\test__powder_pattern_from_json.py . [ 33%]
+tests\functional_tests\pyCFML\...\test__powder_pattern_from_json.py . [ 33%]
 Windows fatal exception: access violation
 
 Current thread 0x0000068c (most recent call first):
 
 ...
 
-scripts/run_pycfml_functional_tests_no_benchmarks.sh: line 2:  1359 Segmentation fault
+scripts/run_pycfml_functional_tests_no_benchmarks.sh: 
+line 2:  1359 Segmentation fault
 ```
-* ❌2 Failed at the _:::::: Building fortran shared obj or dynamic lib 'crysfml08lib.so'_ step (build job):
+* ❌2 Failed at the **Build pyCFML shared obj / dynamic library** step (**'build'** job):
 
 ```
 Undefined symbols for architecture x86_64:
@@ -34,7 +39,43 @@ Undefined symbols for architecture x86_64:
 ld: symbol(s) not found for architecture x86_64
 ```
 
-### Local build
+## Installing
+
+### Standard installation
+
+The pycrysfml python package is currently in beta testing, with pre-releases being published on our own PyPi server. To test it, please install it using the PIP package manager with additional option as shown below.
+
+* Create and activate a python environment (_optional_)
+
+  ***macOS and Linux***
+
+  ```
+  python3.11 -m venv .venv
+  source .venv/bin/activate
+  ```
+
+  ***Windows***
+
+  ```
+  python3.11 -m venv .venv
+  .venv\Scripts\activate
+  ```
+
+* Upgrade the package installer for Python (_optional_)
+
+  ```
+  pip install --upgrade pip
+  ```
+
+* Install pycrysfml using a link to our own online repository
+
+  ```
+  pip install pycrysfml --extra-index-url https://easyscience.github.io/pypi/
+  ```
+
+### Installation from source
+
+If the standard installation doesn't work for you, try building pycrysfml locally and installing it from the generated Python wheel.
 
 * Create and activate a python environment (_optional_)
 

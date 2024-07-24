@@ -143,6 +143,7 @@ extra-libs.macos.arm.gfortran = [
     '/opt/homebrew/opt/gcc@13/lib/gcc/13/libgfortran.5.dylib',
     '/opt/homebrew/opt/gcc@13/lib/gcc/13/libgcc_s.1.1.dylib',
     '/opt/homebrew/opt/gcc@13/lib/gcc/13/libquadmath.0.dylib',
+    '/Library/Frameworks/Python.framework/Versions/3.11/Python',
 ]
 extra-libs.macos.i386.ifort = [
     '/System/Volumes/Data/opt/intel/oneapi/compiler/2023.2.0/mac/compiler/lib/libifport.dylib',
@@ -256,7 +257,7 @@ dependent-libs.macos.arm.gfortran = [
     # gcc 13
     { old = '/opt/homebrew/opt/gcc@13/lib/gcc/13/libgfortran.5.dylib', new = '@rpath/libgfortran.5.dylib' },
     { old = '/opt/homebrew/opt/gcc@13/lib/gcc/13/libquadmath.0.dylib', new = '@rpath/libquadmath.0.dylib' },
-    { old = '/Library/Frameworks/Python.framework/Versions/3.11/Python', new = '`python3-config --prefix`/Python' },
+    { old = '/Library/Frameworks/Python.framework/Versions/3.11/Python', new = '@rpath/Python' },
 ]
 # Examples of GitHub values for Python 3.11
 #python-lib.macos = '`python3-config --ldflags --embed`'

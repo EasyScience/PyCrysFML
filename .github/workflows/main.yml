@@ -78,7 +78,7 @@ jobs:
           --bash-syntax
           --enable-backslash-escapes
 
-      - name: Print some build-specific variables
+      - name: Print build-specific variables
         shell: bash
         run: scripts/print_build_variables.sh  # bash -x scripts/print_build_variables.sh for printing commands
 
@@ -271,7 +271,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, windows-2022, macos-12, macos-14]
+        os: [macos-12, macos-14]
         python-version: ['3.10', '3.11', '3.12']
         toolchain:
           - { exe: gfortran, compiler: gcc, version: 13 }

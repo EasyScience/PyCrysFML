@@ -125,14 +125,24 @@ shared-lib-ext = { macos = 'so', linux = 'so', windows = 'pyd' }  # *.dylib does
 ifport-lib.linux.ifort = '-L/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin -lifport'
 ifport-lib.linux.ifx = '-L/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin -lifport'
 extra-libs.macos.i386.gfortran = [
-    '/usr/local/opt/gcc/lib/gcc/current/libgfortran.5.dylib',
-    '/usr/local/opt/gcc/lib/gcc/current/libgcc_s.1.1.dylib',
-    '/usr/local/opt/gcc/lib/gcc/current/libquadmath.0.dylib',
+    # current gcc
+    #'/usr/local/opt/gcc/lib/gcc/current/libgfortran.5.dylib',
+    #'/usr/local/opt/gcc/lib/gcc/current/libgcc_s.1.1.dylib',
+    #'/usr/local/opt/gcc/lib/gcc/current/libquadmath.0.dylib',
+    # gcc 13
+    '/usr/local/opt/gcc@13/lib/gcc/13/libgfortran.5.dylib',
+    '/usr/local/opt/gcc@13/lib/gcc/13/libgcc_s.1.1.dylib',
+    '/usr/local/opt/gcc@13/lib/gcc/13/libquadmath.0.dylib',
 ]
 extra-libs.macos.arm.gfortran = [
-    '/opt/homebrew/opt/gcc/lib/gcc/current/libgfortran.5.dylib',
-    '/opt/homebrew/opt/gcc/lib/gcc/current/libgcc_s.1.1.dylib',
-    '/opt/homebrew/opt/gcc/lib/gcc/current/libquadmath.0.dylib'
+    # current gcc
+    #'/opt/homebrew/opt/gcc/lib/gcc/current/libgfortran.5.dylib',
+    #'/opt/homebrew/opt/gcc/lib/gcc/current/libgcc_s.1.1.dylib',
+    #'/opt/homebrew/opt/gcc/lib/gcc/current/libquadmath.0.dylib'
+    # gcc 13
+    '/opt/homebrew/opt/gcc@13/lib/gcc/13/libgfortran.5.dylib',
+    '/opt/homebrew/opt/gcc@13/lib/gcc/13/libgcc_s.1.1.dylib',
+    '/opt/homebrew/opt/gcc@13/lib/gcc/13/libquadmath.0.dylib',
 ]
 extra-libs.macos.i386.ifort = [
     '/System/Volumes/Data/opt/intel/oneapi/compiler/2023.2.0/mac/compiler/lib/libifport.dylib',
@@ -230,13 +240,22 @@ rpaths.macos.arm.ifort = [
     { old = '/opt/intel/oneapi/compiler/2023.2.0/mac/bin/intel64/../../compiler/lib', new = '@loader_path' },
 ]
 dependent-libs.macos.i386.gfortran = [
-    { old = '/usr/local/opt/gcc/lib/gcc/current/libgfortran.5.dylib', new = '@rpath/libgfortran.5.dylib' },
-    { old = '/usr/local/opt/gcc/lib/gcc/current/libgcc_s.1.1.dylib',  new = '@rpath/libgcc_s.1.1.dylib' },
-    { old = '/usr/local/opt/gcc/lib/gcc/current/libquadmath.0.dylib', new = '@rpath/libquadmath.0.dylib' },
+    # current gcc
+    #{ old = '/usr/local/opt/gcc/lib/gcc/current/libgfortran.5.dylib', new = '@rpath/libgfortran.5.dylib' },
+    #{ old = '/usr/local/opt/gcc/lib/gcc/current/libgcc_s.1.1.dylib',  new = '@rpath/libgcc_s.1.1.dylib' },
+    #{ old = '/usr/local/opt/gcc/lib/gcc/current/libquadmath.0.dylib', new = '@rpath/libquadmath.0.dylib' },
+    # gcc 13
+    { old = '/usr/local/opt/gcc@13/lib/gcc/13/libgfortran.5.dylib', new = '@rpath/libgfortran.5.dylib' },
+    { old = '/usr/local/opt/gcc@13/lib/gcc/13/libgcc_s.1.1.dylib',  new = '@rpath/libgcc_s.1.1.dylib' },
+    { old = '/usr/local/opt/gcc@13/lib/gcc/13/libquadmath.0.dylib', new = '@rpath/libquadmath.0.dylib' },
 ]
 dependent-libs.macos.arm.gfortran = [
-    { old = '/opt/homebrew/opt/gcc/lib/gcc/current/libgfortran.5.dylib', new = '@rpath/libgfortran.5.dylib' },
-    { old = '/opt/homebrew/opt/gcc/lib/gcc/current/libquadmath.0.dylib', new = '@rpath/libquadmath.0.dylib' },
+    # current gcc
+    #{ old = '/opt/homebrew/opt/gcc/lib/gcc/current/libgfortran.5.dylib', new = '@rpath/libgfortran.5.dylib' },
+    #{ old = '/opt/homebrew/opt/gcc/lib/gcc/current/libquadmath.0.dylib', new = '@rpath/libquadmath.0.dylib' },
+    # gcc 13
+    { old = '/opt/homebrew/opt/gcc@13/lib/gcc/13/libgfortran.5.dylib', new = '@rpath/libgfortran.5.dylib' },
+    { old = '/opt/homebrew/opt/gcc@13/lib/gcc/13/libquadmath.0.dylib', new = '@rpath/libquadmath.0.dylib' },
 ]
 # Examples of GitHub values for Python 3.11
 #python-lib.macos = '`python3-config --ldflags --embed`'

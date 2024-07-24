@@ -7,7 +7,7 @@ from deepdiff import DeepDiff
 import numpy as np
 from numpy.testing import assert_almost_equal
 
-from pycrysfml08 import py_cfml_metrics
+from pycrysfml08 import cfml_metrics
 
 DI_CELL = {'fortran_type': 'cell_g_type',
            'cell': np.array([10., 10., 10.], dtype='f'),
@@ -31,7 +31,7 @@ DI_CELL = {'fortran_type': 'cell_g_type',
 def test__get_u_from_b():
     nd_b = np.array([1.5, 1.6, 1.7, 1.0, 1.1, 1.2], dtype='f')
     desired = np.array([0.019, 0.0203, 0.0215, 0.0127, 0.0139, 0.0152], dtype='f')
-    code, message, actual = py_cfml_metrics.get_u_from_b(nd_b)
+    code, message, actual = cfml_metrics.get_u_from_b(nd_b)
     assert code == 0
     assert message == ''
     assert_almost_equal(desired, actual, decimal=4, verbose=True)
@@ -40,7 +40,7 @@ def test__get_betas_from_biso():
     biso = 1.0
     di_cell = copy.deepcopy(DI_CELL)
     desired = np.array([0.0025, 0.0025, 0.0025, 0.0, 0.0, 0.0], dtype='f')
-    code, message, actual = py_cfml_metrics.get_betas_from_biso(biso, di_cell)
+    code, message, actual = cfml_metrics.get_betas_from_biso(biso, di_cell)
     assert code == 0
     assert message == ''
     assert_almost_equal(desired, actual, decimal=4, verbose=True)
@@ -49,7 +49,7 @@ def test__get_betas_from_u():
     u = np.array([0.0127, 0.0127, 0.0127, 0.0, 0.0, 0.0], dtype='f')
     di_cell = copy.deepcopy(DI_CELL)
     desired = np.array([0.0025, 0.0025, 0.0025, 0.0, 0.0, 0.0], dtype='f')
-    code, message, actual = py_cfml_metrics.get_betas_from_u(u, di_cell)
+    code, message, actual = cfml_metrics.get_betas_from_u(u, di_cell)
     assert code == 0
     assert message == ''
     assert_almost_equal(desired, actual, decimal=4, verbose=True)
@@ -58,7 +58,7 @@ def test__get_u_from_betas():
     betas = np.array([0.0025, 0.0025, 0.0025, 0.0, 0.0, 0.0], dtype='f')
     di_cell = copy.deepcopy(DI_CELL)
     desired = np.array([0.0127, 0.0127, 0.0127, 0.0, 0.0, 0.0], dtype='f')
-    code, message, actual = py_cfml_metrics.get_u_from_betas(betas, di_cell)
+    code, message, actual = cfml_metrics.get_u_from_betas(betas, di_cell)
     assert code == 0
     assert message == ''
     assert_almost_equal(desired, actual, decimal=4, verbose=True)
@@ -67,7 +67,7 @@ def test__set_crystal_cell():
     nd_abc = np.array([10.0, 10.0, 10.0], dtype='f')
     nd_albega = np.array([90.0, 90.0, 90.0], dtype='f')
     desired = copy.deepcopy(DI_CELL)
-    code, message, actual = py_cfml_metrics.set_crystal_cell(nd_abc, nd_albega)
+    code, message, actual = cfml_metrics.set_crystal_cell(nd_abc, nd_albega)
     assert code == 0
     assert message == ''
     for key in desired.keys():
@@ -104,7 +104,7 @@ def test__get_twofold_axes():
         'a': np.array([10., -0., 0.], dtype=np.float32),
         'b': np.array([0., 10., 0.], dtype=np.float32),
         'c': np.array([0., 0., 10.], dtype=np.float32)}
-    code, message, actual = py_cfml_metrics.get_twofold_axes(DI_CELL, 1.0)
+    code, message, actual = cfml_metrics.get_twofold_axes(DI_CELL, 1.0)
     assert code == 0
     assert message == ''
     for key in desired.keys():
@@ -142,7 +142,7 @@ def _test__get_conventional_cell():
         'b': np.array([0., 10., 0.], dtype=np.float32),
         'c': np.array([0., 0., 10.], dtype=np.float32)}
 
-    code, message, actual = py_cfml_metrics.get_twofold_axes(di_cell, 10.0)
+    code, message, actual = cfml_metrics.get_twofold_axes(di_cell, 10.0)
     assert code == 0
     assert message == ''
     assert DeepDiff(desired, actual) == {}
@@ -181,7 +181,7 @@ if __name__ == '__main__':
     print(desired)
     print()
     di_cell = copy.deepcopy(DI_CELL)
-    code, message, actual = py_cfml_metrics.get_twofold_axes(di_cell, 1.0)
+    code, message, actual = cfml_metrics.get_twofold_axes(di_cell, 1.0)
     print(f'CODE: {code}')
     print(f'MESSAGE: {message}')
     print('ACTUAL:')

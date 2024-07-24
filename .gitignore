@@ -6,11 +6,23 @@ __pycache__
 build
 *.spec
 
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# PyCharm
+.idea
+
 # macOS
 .DS_Store
 
-# Misc
+# Build
 .venv
-.benchmarks/local
 crysfml*
 pycrysfml*
+build
+dist
+repo
+scripts
+
+# Misc
+.benchmarks/local

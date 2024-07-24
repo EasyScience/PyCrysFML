@@ -6,6 +6,9 @@ __pycache__
 build
 *.spec
 
+# Jupyter Notebook
+.ipynb_checkpoints
+
 # PyCharm
 .idea
 

@@ -23,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-14]
+        os: [ubuntu-24.04, windows-2022, macos-12, macos-14]  # [ubuntu-22.04, windows-2022, macos-13, flyci-macos-14-m2]
         toolchain:
           - { exe: gfortran, compiler: gcc, version: 13 }
           - { exe: ifort, compiler: intel-classic, version: "2021.10" }
@@ -207,7 +207,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-14]
+        os: [ubuntu-24.04, windows-2022, macos-12, macos-14]  # [ubuntu-22.04, windows-2022, macos-13, flyci-macos-14-m2]
         toolchain:
           - { exe: gfortran, compiler: gcc, version: 13 }
           - { exe: ifort, compiler: intel-classic, version: "2021.10" }
@@ -286,8 +286,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-14]
-        python-version: ['3.11']
+        os: [ubuntu-24.04, windows-2022, macos-12, macos-14]  # [ubuntu-22.04, windows-2022, macos-13, flyci-macos-14-m2]
+        python-version: ['3.10', '3.11', '3.12']
         toolchain:
           - { exe: gfortran, compiler: gcc, version: 13 }
 
@@ -344,7 +344,7 @@ jobs:
           --create-scripts
           --platform ${{ runner.os }}
           --compiler ${{ matrix.toolchain.exe }}
-          --mode debug
+          --mode release
           --bash-syntax
           --enable-backslash-escapes
 

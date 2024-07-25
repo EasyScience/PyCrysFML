@@ -152,8 +152,10 @@ jobs:
       - name: Build pyCFML shared obj / dynamic library
         shell: bash
         run: |
-          export LD_LIBRARY_PATH=/opt/homebrew/opt/python@3.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/config-3.11-darwin:$LD_LIBRARY_PATH
-          export LD_LIBRARY_PATH=/opt/homebrew/opt/python@3.11/Frameworks/Python.framework/Versions/3.11/lib:$LD_LIBRARY_PATH
+          #export LD_LIBRARY_PATH=/opt/homebrew/opt/python@3.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/config-3.11-darwin:$LD_LIBRARY_PATH
+          #export LD_LIBRARY_PATH=/opt/homebrew/opt/python@3.11/Frameworks/Python.framework/Versions/3.11/lib:$LD_LIBRARY_PATH
+          export DYLD_LIBRARY_PATH="/opt/homebrew/opt/python@3.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/config-3.11-darwin:/opt/homebrew/opt/python@3.11/Frameworks/Python.framework/Versions/3.11/lib:/opt/homebrew/opt/python@3.11/Frameworks/Python.framework/Versions/3.11"
+          export DYLD_FALLBACK_LIBRARY_PATH="/opt/homebrew/opt/python@3.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/config-3.11-darwin:/opt/homebrew/opt/python@3.11/Frameworks/Python.framework/Versions/3.11/lib:/opt/homebrew/opt/python@3.11/Frameworks/Python.framework/Versions/3.11"
           scripts/build_pycfml_lib_obj.sh
           scripts/build_pycfml_shared_obj_or_dynamic_lib.sh
 

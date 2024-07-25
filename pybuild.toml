@@ -85,7 +85,7 @@ build-shared = '{COMPILER} -shared CFML_Wraps.{OBJ_EXT} Wraps_*.{OBJ_EXT} {PATH}
 build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} -L{CFML_LIB_DIR} -l{CFML_LIB_NAME}'
 modes.base = '-cpp -fdec-math -fPIC -fno-stack-arrays -ffree-line-length-none'
 modes.debug = ''
-modes.release = ''
+modes.release = '-O3'
 
 [[build-configs]]
 platforms = ['macos']
@@ -95,7 +95,7 @@ build-shared = '{COMPILER} -Wl,-shared CFML_Wraps.{OBJ_EXT} Wraps_*.{OBJ_EXT} {P
 build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} -L{CFML_LIB_DIR} -l{CFML_LIB_NAME}'
 modes.base = '-f2008 -fpp -PIC -quiet -w=all -colour'
 modes.debug = ''
-modes.release = ''
+modes.release = '-O3'
 
 [[build-configs]]
 platforms = ['linux', 'macos']
@@ -105,7 +105,7 @@ build-shared = "{COMPILER} -shared CFML_Wraps.{OBJ_EXT} Wraps_*.{OBJ_EXT} {PATH}
 build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} -L{CFML_LIB_DIR} -l{CFML_LIB_NAME}'
 modes.base = '-w -fpp -fPIC -heap-arrays -nologo'
 modes.debug = ''  # -g3
-modes.release = ''  # -O3
+modes.release = '-O3'  # -O3
 
 [[build-configs]]
 platforms = ['windows']
@@ -115,7 +115,7 @@ build-shared = 'link CFML_Wraps.{OBJ_EXT} Wraps_*.{OBJ_EXT} {PATH}.{OBJ_EXT} /ou
 build-exe = '{COMPILER} {OPTIONS} /exe:{EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} {CFML_LIB_DIR}\{CFML_LIB_NAME}.{LIB_EXT}'
 modes.base = '/w /fpp /heap-arrays /nologo -DWIN32=ON'
 modes.debug = ''
-modes.release = ''
+modes.release = '-O3'
 
 [build]
 src-ext = 'f90'
@@ -143,7 +143,6 @@ extra-libs.macos.arm.gfortran = [
     '/opt/homebrew/opt/gcc@13/lib/gcc/13/libgfortran.5.dylib',
     '/opt/homebrew/opt/gcc@13/lib/gcc/13/libgcc_s.1.1.dylib',
     '/opt/homebrew/opt/gcc@13/lib/gcc/13/libquadmath.0.dylib',
-    '/Library/Frameworks/Python.framework/Versions/3.11/Python',
 ]
 extra-libs.macos.i386.ifort = [
     '/System/Volumes/Data/opt/intel/oneapi/compiler/2023.2.0/mac/compiler/lib/libifport.dylib',
@@ -257,7 +256,6 @@ dependent-libs.macos.arm.gfortran = [
     # gcc 13
     { old = '/opt/homebrew/opt/gcc@13/lib/gcc/13/libgfortran.5.dylib', new = '@rpath/libgfortran.5.dylib' },
     { old = '/opt/homebrew/opt/gcc@13/lib/gcc/13/libquadmath.0.dylib', new = '@rpath/libquadmath.0.dylib' },
-    { old = '/Library/Frameworks/Python.framework/Versions/3.11/Python', new = '@rpath/Python' },
 ]
 # Examples of GitHub values for Python 3.11
 #python-lib.macos = '`python3-config --ldflags --embed`'

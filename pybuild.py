@@ -281,6 +281,8 @@ def _compile_obj_script_line(src_path: str,
     return cmd
 
 def _compile_pycfml_shared_obj_or_dynamic_lib_script_line():
+    rpaths = '-Wl,-rpath,/opt/homebrew/opt/python@3.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/config-3.11-darwin  -Wl,-rpath,/opt/homebrew/opt/python@3.11/Frameworks/Python.framework/Versions/3.11/lib  -Wl,-rpath,/opt/homebrew/opt/python@3.11/Frameworks/Python.framework/Versions/3.11'
+
     src_name = CONFIG['pycfml']['src-name']
     shared_lib_ext = CONFIG['build']['shared-lib-ext'][_platform()]
     cfml_lib_name = CONFIG['cfml']['static-lib-name']
@@ -297,7 +299,7 @@ def _compile_pycfml_shared_obj_or_dynamic_lib_script_line():
     cmd = cmd.replace('{CFML_LIB_PATH}', cfml_lib_dist_path)
     cmd = cmd.replace('{CFML_LIB_NAME}', cfml_lib_name)
     cmd = cmd.replace('{IFPORT_LIB}', _ifport_lib())
-    cmd = cmd.replace('{PYTHON_LIB}', _python_lib())
+    cmd = cmd.replace('{PYTHON_LIB}', _python_lib() + ' ' + rpaths)
     return cmd
 
 def _compile_objs_script_lines(modules: str,

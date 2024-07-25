@@ -23,7 +23,8 @@ dist-progs = 'dist/CFML/progs'      # for test programs
 
 [cfml.git]
 url = 'https://code.ill.fr/scientific-software/crysfml2008.git'
-branch = 'powder_mod_fix'
+#branch = 'powder_mod_fix'
+branch = 'master'
 
 [cfml.scripts]
 pyapigen = 'repo/CFML/Scripts/PythonAPI/apigen.py'

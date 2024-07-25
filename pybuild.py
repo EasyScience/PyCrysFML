@@ -146,6 +146,38 @@ def _ifport_lib():
         ifport_lib = ''
     return ifport_lib
 
+def _initial_python_wheel_tags():
+    return {
+        'python_tag': 'py3',
+        'abi_tag': 'none',
+        'platform_tag': 'any'
+    }
+
+def _new_python_wheel_tags():
+    return {
+        'python_tag': _python_tag(),
+        'abi_tag': 'none',
+        'platform_tag': _platform_tag_github_ci()
+    }
+
+def _initial_wheel_name():
+    dist_package_name = PYPROJECT['project']['name']
+    dist_package_version = PYPROJECT['project']['version']
+    python_tag = _initial_python_wheel_tags()['python_tag']
+    abi_tag = _initial_python_wheel_tags()['abi_tag']
+    platform_tag = _initial_python_wheel_tags()['platform_tag']
+    name = f'{dist_package_name}-{dist_package_version}-{python_tag}-{abi_tag}-{platform_tag}.whl'
+    return name
+
+def _new_wheel_name():
+    dist_package_name = PYPROJECT['project']['name']
+    dist_package_version = PYPROJECT['project']['version']
+    python_tag = _new_python_wheel_tags()['python_tag']
+    abi_tag = _new_python_wheel_tags()['abi_tag']
+    platform_tag = _new_python_wheel_tags()['platform_tag']
+    name = f'{dist_package_name}-{dist_package_version}-{python_tag}-{abi_tag}-{platform_tag}.whl'
+    return name
+
 def _fix_file_permissions(path: str):
     os.chmod(path, 0o777)
 
@@ -411,6 +443,12 @@ def _compile_executables_script_lines(modules: str,
         #lines.append(f"echo '>>>>> {cmd}'")
         lines.append(cmd)
     return lines
+
+def _run_subprocess(cmd:str):
+    result = None
+    p = subprocess.run(cmd, shell=True, text=True, capture_output=True)
+    result = p.stdout
+    return result
 
 def parsed_args():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -1238,20 +1276,40 @@ def create_pycfml_python_wheel():
 
 def rename_pycfml_python_wheel():
     project_name = CONFIG['pycfml']['log-name']
-    dist_package_name = PYPROJECT['project']['name']
-    dist_package_version = PYPROJECT['project']['version']
-    initial_wheel_name = f'{dist_package_name}-{dist_package_version}-py3-none-any.whl'
-    new_wheel_name = initial_wheel_name.replace('py3-none-any', f'{_python_tag()}-none-{_platform_tag_github_ci()}')
     wheel_dir = CONFIG['pycfml']['dir']['dist-wheel']
-    wheel_relpath = os.path.join(wheel_dir, initial_wheel_name)
+    wheel_relpath = os.path.join(wheel_dir, _initial_wheel_name())
     wheel_abspath = os.path.join(_project_path(), wheel_relpath)
     lines = []
-    msg = _echo_msg(f"Renaming {project_name} python wheel from '{initial_wheel_name}' to '{new_wheel_name}' in '{wheel_dir}'")
+    msg = _echo_msg(f"Renaming {project_name} python wheel from '{_initial_wheel_name()}' to '{_new_wheel_name()}' in '{wheel_dir}'")
     lines.append(msg)
     cmd = CONFIG['template']['rename-wheel']
     cmd = cmd.replace('{PYTHON_TAG}', _python_tag())  # https://packaging.python.org/en/latest/specifications/platform-compatibility-tags/
     cmd = cmd.replace('{PLATFORM_TAG}', _platform_tag_github_ci())
     cmd = cmd.replace('{PATH}', wheel_abspath)
+    lines.append(cmd)
+    script_name = f'{sys._getframe().f_code.co_name}.sh'
+    _write_lines_to_file(lines, script_name)
+    append_to_main_script(lines)
+
+def detect_abi3_violations():
+    wheel_dir = CONFIG['pycfml']['dir']['dist-wheel']
+    wheel_path = os.path.join(wheel_dir, _new_wheel_name())
+    lines = []
+    msg = _echo_msg(f"Scanning Python extensions in python wheel '{_new_wheel_name()}' for abi3 violations")
+    lines.append(msg)
+    cmd = f'abi3audit {wheel_path}'
+    lines.append(cmd)
+    script_name = f'{sys._getframe().f_code.co_name}.sh'
+    _write_lines_to_file(lines, script_name)
+    append_to_main_script(lines)
+
+def check_wheel_contents():
+    wheel_dir = CONFIG['pycfml']['dir']['dist-wheel']
+    wheel_path = os.path.join(wheel_dir, _new_wheel_name())
+    lines = []
+    msg = _echo_msg(f"Checking content of Python wheel '{_new_wheel_name()}'")
+    lines.append(msg)
+    cmd = f'check-wheel-contents {wheel_path}'
     lines.append(cmd)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
@@ -1418,6 +1476,8 @@ if __name__ == '__main__':
     validate_pyproject_toml()
     create_pycfml_python_wheel()
     rename_pycfml_python_wheel()
+    detect_abi3_violations()
+    check_wheel_contents()
 
     add_main_script_header(f"Install {pyCFML} from Python package wheel")
     install_pycfml_from_wheel()

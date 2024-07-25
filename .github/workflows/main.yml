@@ -178,6 +178,8 @@ jobs:
           scripts/validate_pyproject_toml.sh
           scripts/create_pycfml_python_wheel.sh
           scripts/rename_pycfml_python_wheel.sh
+          scripts/detect_abi3_violations.sh
+          scripts/check_wheel_contents.sh
 
       - name: Prepare for uploading Python package wheel of pyCFML
         shell: bash

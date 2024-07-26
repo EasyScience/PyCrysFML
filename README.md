@@ -228,9 +228,18 @@ If the standard installation doesn't work for you, try building pycrysfml locall
 
 ### Compute the powder diffraction pattern
 
-Here is the simplest example of using pycrysfml to calculate a powder diffraction pattern from a Python dictionary, which contains a description of the crystallographic phase as well as parameters related to the instrument and experiment. 
+Here is the simplest example of using pycrysfml to calculate a powder diffraction pattern from a Python dictionary, which contains a description of the crystallographic phase as well as parameters related to the instrument and experiment.
+
+Install the matplotlib package used in the example below:
 
 ```
+pip install matplotlib
+```
+
+Example.py
+
+```
+import matplotlib.pyplot as plt
 from pycrysfml import cfml_utilities
 
 EXAMPLE = {
@@ -305,9 +314,8 @@ EXAMPLE = {
 
 if __name__ == '__main__':
     x, y = cfml_utilities.powder_pattern_from_json(EXAMPLE)
-
+    plt.plot(x, y)
+    plt.show()
 ```
 
 More features will be added as the project develops.
-
-

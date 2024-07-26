@@ -72,8 +72,8 @@ run-python = 'python3 {PATH} {OPTIONS}'
 run-tests = 'pytest {PATH} --color=yes --benchmark-disable'
 run-benchmarks.base = 'pytest {PATH} --color=yes --benchmark-only --benchmark-storage="file://./.benchmarks/{PROJECT}/{RUNNER}/{COMPILER}/{PROCESSOR}" --benchmark-warmup=on --benchmark-columns="median, iqr, ops"'
 run-benchmarks.develop-branch = '--benchmark-autosave'
-run-benchmarks.non-develop-branch = '--benchmark-autosave'
-#run-benchmarks.non-develop-branch = '--benchmark-compare --benchmark-compare-fail=median:25%'
+#run-benchmarks.non-develop-branch = '--benchmark-autosave'
+run-benchmarks.non-develop-branch = '--benchmark-compare --benchmark-compare-fail=median:25%'
 
 ######################
 # Build configurations
@@ -193,7 +193,7 @@ extra-libs.linux.x86_64.gfortran = [
     '/lib/x86_64-linux-gnu/libm.so.6',
     '/lib/x86_64-linux-gnu/libc.so.6',
     '/lib/x86_64-linux-gnu/libgcc_s.so.1',
-    '/lib/x86_64-linux-gnu/libmvec.so.1'
+    '/lib/x86_64-linux-gnu/libmvec.so.1',
 ]
 extra-libs.windows.AMD64.gfortran = [
     'C:\mingw64\bin\libgcc_s_seh-1.dll',

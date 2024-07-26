@@ -1,0 +1,113 @@
+{
+    "machine_info": {
+        "node": "Mac-1721998221025.local",
+        "processor": "arm",
+        "machine": "arm64",
+        "python_compiler": "Clang 13.0.0 (clang-1300.0.29.30)",
+        "python_implementation": "CPython",
+        "python_implementation_version": "3.10.11",
+        "python_version": "3.10.11",
+        "python_build": [
+            "v3.10.11:7d4cc5aa85",
+            "Apr  4 2023 19:05:19"
+        ],
+        "release": "23.5.0",
+        "system": "Darwin",
+        "cpu": {
+            "python_version": "3.10.11.final.0 (64 bit)",
+            "cpuinfo_version": [
+                9,
+                0,
+                0
+            ],
+            "cpuinfo_version_string": "9.0.0",
+            "arch": "ARM_8",
+            "bits": 64,
+            "count": 3,
+            "arch_string_raw": "arm64",
+            "brand_raw": "Apple M1 (Virtual)"
+        }
+    },
+    "commit_info": {
+        "id": "7a75bcd61ffc8adc6319ef7f554d092f5c20d299",
+        "time": "2024-07-26T14:52:09+02:00",
+        "author_time": "2024-07-26T14:51:49+02:00",
+        "dirty": false,
+        "project": "PyCrysFML",
+        "branch": "test-rpath-macos"
+    },
+    "benchmarks": [
+        {
+            "group": null,
+            "name": "test__compute_pattern__SrTiO3_Pm3m",
+            "fullname": "tests/functional_tests/pyCFML/cfml_utilities/powder_pattern_from_json/test__powder_pattern_from_json.py::test__compute_pattern__SrTiO3_Pm3m",
+            "params": null,
+            "param": null,
+            "extra_info": {},
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 5,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": 100000
+            },
+            "stats": {
+                "min": 0.015967875000001186,
+                "max": 0.01989258300000074,
+                "mean": 0.017650020523081785,
+                "stddev": 0.001028320109104287,
+                "rounds": 65,
+                "median": 0.017956291999894347,
+                "iqr": 0.0018665309999335022,
+                "q1": 0.016514531250010123,
+                "q3": 0.018381062249943625,
+                "iqr_outliers": 0,
+                "stddev_outliers": 28,
+                "outliers": "28;0",
+                "ld15iqr": 0.015967875000001186,
+                "hd15iqr": 0.01989258300000074,
+                "ops": 56.65715791617645,
+                "total": 1.147251334000316,
+                "iterations": 1
+            }
+        },
+        {
+            "group": null,
+            "name": "test__compute_pattern__SrTiO3_Pnma",
+            "fullname": "tests/functional_tests/pyCFML/cfml_utilities/powder_pattern_from_json/test__powder_pattern_from_json.py::test__compute_pattern__SrTiO3_Pnma",
+            "params": null,
+            "param": null,
+            "extra_info": {},
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 5,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": 100000
+            },
+            "stats": {
+                "min": 0.02143324999997276,
+                "max": 0.035469333000037295,
+                "mean": 0.023128600749996526,
+                "stddev": 0.0032754462525434935,
+                "rounds": 48,
+                "median": 0.021814062000032663,
+                "iqr": 0.0007210414999576642,
+                "q1": 0.021695979500009344,
+                "q3": 0.022417020999967008,
+                "iqr_outliers": 8,
+                "stddev_outliers": 6,
+                "outliers": "6;8",
+                "ld15iqr": 0.02143324999997276,
+                "hd15iqr": 0.02350516699993932,
+                "ops": 43.236510967925724,
+                "total": 1.1101728359998333,
+                "iterations": 1
+            }
+        }
+    ],
+    "datetime": "2024-07-26T13:02:36.163650",
+    "version": "4.0.0"
+}

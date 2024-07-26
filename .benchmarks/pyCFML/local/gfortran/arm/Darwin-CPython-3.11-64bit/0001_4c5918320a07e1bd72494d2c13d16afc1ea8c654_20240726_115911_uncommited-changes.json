@@ -1,0 +1,113 @@
+{
+    "machine_info": {
+        "node": "CIN-956416",
+        "processor": "arm",
+        "machine": "arm64",
+        "python_compiler": "Clang 15.0.0 (clang-1500.1.0.2.5)",
+        "python_implementation": "CPython",
+        "python_implementation_version": "3.11.7",
+        "python_version": "3.11.7",
+        "python_build": [
+            "main",
+            "Dec  4 2023 18:10:11"
+        ],
+        "release": "23.5.0",
+        "system": "Darwin",
+        "cpu": {
+            "python_version": "3.11.7.final.0 (64 bit)",
+            "cpuinfo_version": [
+                9,
+                0,
+                0
+            ],
+            "cpuinfo_version_string": "9.0.0",
+            "arch": "ARM_8",
+            "bits": 64,
+            "count": 12,
+            "arch_string_raw": "arm64",
+            "brand_raw": "Apple M2 Max"
+        }
+    },
+    "commit_info": {
+        "id": "4c5918320a07e1bd72494d2c13d16afc1ea8c654",
+        "time": "2024-07-26T12:43:51+02:00",
+        "author_time": "2024-07-26T12:43:51+02:00",
+        "dirty": true,
+        "project": "TEST_PyCrysFML",
+        "branch": "test-rpath-macos"
+    },
+    "benchmarks": [
+        {
+            "group": null,
+            "name": "test__compute_pattern__SrTiO3_Pm3m",
+            "fullname": "tests/functional_tests/pyCFML/cfml_utilities/powder_pattern_from_json/test__powder_pattern_from_json.py::test__compute_pattern__SrTiO3_Pm3m",
+            "params": null,
+            "param": null,
+            "extra_info": {},
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 5,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": 100000
+            },
+            "stats": {
+                "min": 0.027375999954529107,
+                "max": 0.02833691705018282,
+                "mean": 0.02752962614082404,
+                "stddev": 0.00018287318527770188,
+                "rounds": 37,
+                "median": 0.027478584088385105,
+                "iqr": 6.759370444342494e-05,
+                "q1": 0.02744941652053967,
+                "q3": 0.027517010224983096,
+                "iqr_outliers": 5,
+                "stddev_outliers": 3,
+                "outliers": "3;5",
+                "ld15iqr": 0.027375999954529107,
+                "hd15iqr": 0.027706458000466228,
+                "ops": 36.32450345982313,
+                "total": 1.0185961672104895,
+                "iterations": 1
+            }
+        },
+        {
+            "group": null,
+            "name": "test__compute_pattern__SrTiO3_Pnma",
+            "fullname": "tests/functional_tests/pyCFML/cfml_utilities/powder_pattern_from_json/test__powder_pattern_from_json.py::test__compute_pattern__SrTiO3_Pnma",
+            "params": null,
+            "param": null,
+            "extra_info": {},
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 5,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": 100000
+            },
+            "stats": {
+                "min": 0.020283875055611134,
+                "max": 0.02087224996648729,
+                "mean": 0.020533147009032568,
+                "stddev": 9.214432322480115e-05,
+                "rounds": 49,
+                "median": 0.020545291947200894,
+                "iqr": 9.558277088217437e-05,
+                "q1": 0.020493198244366795,
+                "q3": 0.02058878101524897,
+                "iqr_outliers": 3,
+                "stddev_outliers": 13,
+                "outliers": "13;3",
+                "ld15iqr": 0.020390957943163812,
+                "hd15iqr": 0.02087224996648729,
+                "ops": 48.7017406323589,
+                "total": 1.006124203442596,
+                "iterations": 1
+            }
+        }
+    ],
+    "datetime": "2024-07-26T11:59:19.497848",
+    "version": "4.0.0"
+}

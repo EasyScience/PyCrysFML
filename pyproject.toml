@@ -1,36 +1,41 @@
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ['hatchling']
+build-backend = 'hatchling.build'
 
 [project]
-name = 'pycrysfml08'
-version = '0.0.1-alpha0'
-description = "Testing packaging PyCrysFML08 from https://code.ill.fr/scientific-software/PyCrysFML08"
+name = 'pycrysfml'
+version = '0.1.1'
+description = 'Python API to CrysFML2008 from https://code.ill.fr/scientific-software/CrysFML2008'
 authors = [
-  {name = "Juan Rodríguez-Carvajal", email = "jrc@ill.fr"},
-  {name = "Nebil Ayape Katcho", email = "katcho@ill.fr"}
+  {name = 'Juan Rodríguez-Carvajal', email = 'jrc@ill.fr'},
+  {name = 'Nebil Ayape Katcho', email = 'katcho@ill.fr'},
+  {name = 'Javier Gonzalez-Platas', email = 'jplatas@ull.edu.es'  }
 ]
 maintainers = [
-  {name = "Elisa Rebolini", email = "rebolini@ill.fr"},
-  {name = "Andrew Sazonov", email = "andrew.sazonov@ess.eu"}
+  {name = 'Elisa Rebolini', email = 'rebolini@ill.fr'},
+  {name = 'Andrew Sazonov', email = 'andrew.sazonov@ess.eu'}
 ]
-readme = "README.md"
-license = {file = "LICENSE"}
+readme = 'README.md'
+license = {file = 'LICENSE'}
 classifiers = [
-  "Programming Language :: Python :: 3",
-  "License :: OSI Approved :: MIT License",
-  "Operating System :: OS Independent"
+  'Programming Language :: Python :: 3',
+  'License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)',
+  'Operating System :: OS Independent'
 ]
-requires-python = ">=3.11"
+requires-python = '>=3.9'
 dependencies = [
-  "numpy"
+  'numpy<2'
 ]
 
 [project.optional-dependencies]
 ci = [
+  'toml',  # need this, as tomllib is only available for python >=3.11
   'validate-pyproject[all]',
   'build',
-  'wheel'
+  'wheel',
+  'check-wheel-contents',
+  'abi3audit',
+  'colorama'
 ]
 test = [
   'deepdiff',
@@ -40,8 +45,8 @@ test = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/AndrewSazonov/test_pycrysfml08_build"
+Homepage = 'https://github.com/easyscience/TEST_PyCrysFML'
 
 [tool.hatch.build.targets.wheel]
-packages = ["pycrysfml08_dist/pycrysfml08"]
-artifacts = ["*.py", "*.so", "*.so.*", "*.dylib", "*.pyd", "*.dll", "*.txt"]
+packages = ['dist/pyCFML/pycrysfml']  # NEED FIX: Replace based on scripts.toml - pycfml.dir.dist-package
+artifacts = ['*.py', '*.so', '*.so.*', '*.dylib', '*.pyd', '*.dll', '*.txt']

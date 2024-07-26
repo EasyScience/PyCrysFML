@@ -1,0 +1,113 @@
+{
+    "machine_info": {
+        "node": "Mac-1722027401151.local",
+        "processor": "arm",
+        "machine": "arm64",
+        "python_compiler": "Clang 13.0.0 (clang-1300.0.29.30)",
+        "python_implementation": "CPython",
+        "python_implementation_version": "3.12.4",
+        "python_version": "3.12.4",
+        "python_build": [
+            "v3.12.4:8e8a4baf65",
+            "Jun  6 2024 17:33:18"
+        ],
+        "release": "23.5.0",
+        "system": "Darwin",
+        "cpu": {
+            "python_version": "3.12.4.final.0 (64 bit)",
+            "cpuinfo_version": [
+                9,
+                0,
+                0
+            ],
+            "cpuinfo_version_string": "9.0.0",
+            "arch": "ARM_8",
+            "bits": 64,
+            "count": 3,
+            "arch_string_raw": "arm64",
+            "brand_raw": "Apple M1 (Virtual)"
+        }
+    },
+    "commit_info": {
+        "id": "d63cd10d86c6432267adabdb40c01745b4693b82",
+        "time": "2024-07-26T23:05:06+02:00",
+        "author_time": "2024-07-26T23:04:19+02:00",
+        "dirty": false,
+        "project": "PyCrysFML",
+        "branch": "issues"
+    },
+    "benchmarks": [
+        {
+            "group": null,
+            "name": "test__compute_pattern__SrTiO3_Pm3m",
+            "fullname": "tests/functional_tests/pyCFML/cfml_utilities/powder_pattern_from_json/test__powder_pattern_from_json.py::test__compute_pattern__SrTiO3_Pm3m",
+            "params": null,
+            "param": null,
+            "extra_info": {},
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 5,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": 100000
+            },
+            "stats": {
+                "min": 0.019206000000167478,
+                "max": 0.029284250000046086,
+                "mean": 0.023041809288464228,
+                "stddev": 0.0024768424873546084,
+                "rounds": 52,
+                "median": 0.022328207999976257,
+                "iqr": 0.003511792000040259,
+                "q1": 0.021364500000004227,
+                "q3": 0.024876292000044486,
+                "iqr_outliers": 0,
+                "stddev_outliers": 20,
+                "outliers": "20;0",
+                "ld15iqr": 0.019206000000167478,
+                "hd15iqr": 0.029284250000046086,
+                "ops": 43.399369705774156,
+                "total": 1.19817408300014,
+                "iterations": 1
+            }
+        },
+        {
+            "group": null,
+            "name": "test__compute_pattern__SrTiO3_Pnma",
+            "fullname": "tests/functional_tests/pyCFML/cfml_utilities/powder_pattern_from_json/test__powder_pattern_from_json.py::test__compute_pattern__SrTiO3_Pnma",
+            "params": null,
+            "param": null,
+            "extra_info": {},
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 5,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": 100000
+            },
+            "stats": {
+                "min": 0.030688333999933093,
+                "max": 0.047818666000011945,
+                "mean": 0.03632585093938553,
+                "stddev": 0.004013494472540076,
+                "rounds": 33,
+                "median": 0.03555741700006365,
+                "iqr": 0.00550227124989533,
+                "q1": 0.03345941599997104,
+                "q3": 0.03896168724986637,
+                "iqr_outliers": 1,
+                "stddev_outliers": 10,
+                "outliers": "10;1",
+                "ld15iqr": 0.030688333999933093,
+                "hd15iqr": 0.047818666000011945,
+                "ops": 27.528604950469898,
+                "total": 1.1987530809997224,
+                "iterations": 1
+            }
+        }
+    ],
+    "datetime": "2024-07-26T21:14:07.681995",
+    "version": "4.0.0"
+}

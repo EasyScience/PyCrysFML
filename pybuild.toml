@@ -193,6 +193,7 @@ extra-libs.linux.x86_64.gfortran = [
     '/lib/x86_64-linux-gnu/libm.so.6',
     '/lib/x86_64-linux-gnu/libc.so.6',
     '/lib/x86_64-linux-gnu/libgcc_s.so.1',
+    '/lib/x86_64-linux-gnu/libmvec.so.1'
 ]
 extra-libs.windows.AMD64.gfortran = [
     'C:\mingw64\bin\libgcc_s_seh-1.dll',

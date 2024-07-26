@@ -1,20 +1,20 @@
 {
     "machine_info": {
-        "node": "fv-az2022-88",
+        "node": "fv-az797-417",
         "processor": "x86_64",
         "machine": "x86_64",
-        "python_compiler": "GCC 11.4.0",
+        "python_compiler": "GCC 13.2.0",
         "python_implementation": "CPython",
-        "python_implementation_version": "3.11.9",
-        "python_version": "3.11.9",
+        "python_implementation_version": "3.12.4",
+        "python_version": "3.12.4",
         "python_build": [
             "main",
-            "Jun 25 2024 18:25:01"
+            "Jul 15 2024 21:50:43"
         ],
-        "release": "6.5.0-1022-azure",
+        "release": "6.8.0-1010-azure",
         "system": "Linux",
         "cpu": {
-            "python_version": "3.11.9.final.0 (64 bit)",
+            "python_version": "3.12.4.final.0 (64 bit)",
             "cpuinfo_version": [
                 9,
                 0,
@@ -27,14 +27,14 @@
             "arch_string_raw": "x86_64",
             "vendor_id_raw": "AuthenticAMD",
             "brand_raw": "AMD EPYC 7763 64-Core Processor",
-            "hz_advertised_friendly": "3.2431 GHz",
-            "hz_actual_friendly": "3.2431 GHz",
+            "hz_advertised_friendly": "3.2419 GHz",
+            "hz_actual_friendly": "3.2419 GHz",
             "hz_advertised": [
-                3243129000,
+                3241926000,
                 0
             ],
             "hz_actual": [
-                3243129000,
+                3241926000,
                 0
             ],
             "stepping": 1,
@@ -79,7 +79,6 @@
                 "ht",
                 "hypervisor",
                 "invpcid",
-                "invpcid_single",
                 "lahf_lm",
                 "lm",
                 "mca",
@@ -134,6 +133,7 @@
                 "tsc_reliable",
                 "tsc_scale",
                 "umip",
+                "user_shstk",
                 "v_vmsave_vmload",
                 "vaes",
                 "vmcb_clean",
@@ -156,18 +156,18 @@
         }
     },
     "commit_info": {
-        "id": "1913ddd6964f9df3c7fcd9bb0125f2b08ca4bd7a",
-        "time": "2024-07-10T09:39:28+02:00",
-        "author_time": "2024-07-10T09:39:28+02:00",
+        "id": "d63cd10d86c6432267adabdb40c01745b4693b82",
+        "time": "2024-07-26T23:05:06+02:00",
+        "author_time": "2024-07-26T23:04:19+02:00",
         "dirty": false,
-        "project": "TEST_PyCrysFML",
-        "branch": "master"
+        "project": "PyCrysFML",
+        "branch": "issues"
     },
     "benchmarks": [
         {
             "group": null,
-            "name": "test__Simple_calc_powder__SrTiO3s",
-            "fullname": "tests/functional_tests/cfml/test__PowderPattern.py::test__Simple_calc_powder__SrTiO3s",
+            "name": "test__compute_pattern__SrTiO3_Pm3m",
+            "fullname": "tests/functional_tests/pyCFML/cfml_utilities/powder_pattern_from_json/test__powder_pattern_from_json.py::test__compute_pattern__SrTiO3_Pm3m",
             "params": null,
             "param": null,
             "extra_info": {},
@@ -180,29 +180,29 @@
                 "warmup": 100000
             },
             "stats": {
-                "min": 2.46431721700003,
-                "max": 2.467420837000077,
-                "mean": 2.465482963000022,
-                "stddev": 0.0013055723245836192,
-                "rounds": 5,
-                "median": 2.464823847000048,
-                "iqr": 0.001967879999909883,
-                "q1": 2.464553159500042,
-                "q3": 2.466521039499952,
-                "iqr_outliers": 0,
-                "stddev_outliers": 1,
-                "outliers": "1;0",
-                "ld15iqr": 2.46431721700003,
-                "hd15iqr": 2.467420837000077,
-                "ops": 0.4056000447000416,
-                "total": 12.327414815000111,
+                "min": 0.01721514999996998,
+                "max": 0.02407884899992041,
+                "mean": 0.022132302620673665,
+                "stddev": 0.0012379475843029366,
+                "rounds": 58,
+                "median": 0.022470883500034233,
+                "iqr": 0.0009191310000460362,
+                "q1": 0.021884670999952505,
+                "q3": 0.02280380199999854,
+                "iqr_outliers": 5,
+                "stddev_outliers": 9,
+                "outliers": "9;5",
+                "ld15iqr": 0.020618261000095117,
+                "hd15iqr": 0.02407884899992041,
+                "ops": 45.182826980953415,
+                "total": 1.2836735519990725,
                 "iterations": 1
             }
         },
         {
             "group": null,
-            "name": "test__Simple_calc_powder__ponsin",
-            "fullname": "tests/functional_tests/cfml/test__PowderPattern.py::test__Simple_calc_powder__ponsin",
+            "name": "test__compute_pattern__SrTiO3_Pnma",
+            "fullname": "tests/functional_tests/pyCFML/cfml_utilities/powder_pattern_from_json/test__powder_pattern_from_json.py::test__compute_pattern__SrTiO3_Pnma",
             "params": null,
             "param": null,
             "extra_info": {},
@@ -215,26 +215,26 @@
                 "warmup": 100000
             },
             "stats": {
-                "min": 3.5426035079999565,
-                "max": 3.5576821759999575,
-                "mean": 3.5511517727999946,
-                "stddev": 0.006490766027120786,
-                "rounds": 5,
-                "median": 3.5520597180000095,
-                "iqr": 0.011371046000078877,
-                "q1": 3.545630235749968,
-                "q3": 3.557001281750047,
-                "iqr_outliers": 0,
-                "stddev_outliers": 2,
-                "outliers": "2;0",
-                "ld15iqr": 3.5426035079999565,
-                "hd15iqr": 3.5576821759999575,
-                "ops": 0.28159877808081546,
-                "total": 17.755758863999972,
+                "min": 0.031545184999913545,
+                "max": 0.034441498999967735,
+                "mean": 0.032223814326919446,
+                "stddev": 0.0005294512269030076,
+                "rounds": 52,
+                "median": 0.03207275400001208,
+                "iqr": 0.0003818449999926088,
+                "q1": 0.031925203999946916,
+                "q3": 0.032307048999939525,
+                "iqr_outliers": 6,
+                "stddev_outliers": 12,
+                "outliers": "12;6",
+                "ld15iqr": 0.031545184999913545,
+                "hd15iqr": 0.032904472000041096,
+                "ops": 31.032949416066188,
+                "total": 1.6756383449998111,
                 "iterations": 1
             }
         }
     ],
-    "datetime": "2024-07-10T07:48:50.360209",
+    "datetime": "2024-07-26T21:14:00.478866",
     "version": "4.0.0"
 }

@@ -1402,7 +1402,7 @@ def run_pycfml_functional_tests_with_benchmarks_save():
     lines.append(cmd)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
-    append_to_main_script(lines)
+    #append_to_main_script(lines)
 
 def run_pycfml_functional_tests_with_benchmarks_compare():
     project_name = CONFIG['pycfml']['log-name']
@@ -1526,6 +1526,7 @@ if __name__ == '__main__':
     add_main_script_header(f"Run {pyCFML} tests")
     run_pycfml_unit_tests()
     run_pycfml_functional_tests_no_benchmarks()
+    run_pycfml_functional_tests_with_benchmarks_save()
     run_pycfml_functional_tests_with_benchmarks_compare()
 
     _print_msg(f'All scripts were successfully created in {_scripts_path()}')

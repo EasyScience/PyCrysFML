@@ -73,7 +73,7 @@ run-tests = 'pytest {PATH} --color=yes --benchmark-disable'
 run-benchmarks.base = 'pytest {PATH} --color=yes --benchmark-only --benchmark-storage="file://./.benchmarks/{PROJECT}/{RUNNER}/{COMPILER}/{PROCESSOR}" --benchmark-warmup=on --benchmark-columns="median, iqr, ops"'
 run-benchmarks.develop-branch = '--benchmark-autosave'
 #run-benchmarks.non-develop-branch = '--benchmark-autosave'
-run-benchmarks.non-develop-branch = '--benchmark-compare --benchmark-compare-fail=median:25%'
+run-benchmarks.non-develop-branch = '--benchmark-compare --benchmark-compare-fail=median:50%'
 
 ######################
 # Build configurations

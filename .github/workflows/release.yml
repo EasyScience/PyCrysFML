@@ -292,7 +292,7 @@ jobs:
         run: scripts/run_pycfml_functional_tests_with_benchmarks_save.sh
 
       - name: Push benchmark results to repository
-        if: "contains(github.event.head_commit.message, '[save benchmark results]')"
+        if: "contains(github.event.head_commit.message, '[save benchmark results]')" && env.BRANCH_NAME != 'master'
         uses: EndBug/add-and-commit@v9
         with:
           add: '.benchmarks/pyCFML'

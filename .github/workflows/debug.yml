@@ -178,11 +178,11 @@ jobs:
         shell: bash
         run: scripts/run_pycfml_unit_tests.sh
 
-      - name: Run pyCFML functional tests
+      - name: Run pyCFML functional tests (without benchmarks)
         shell: bash
         run: |
           scripts/run_pycfml_functional_tests_no_benchmarks.sh
-          scripts/run_pycfml_functional_tests_with_benchmarks.sh
+        #  scripts/run_pycfml_functional_tests_with_benchmarks.sh
 
       - name: Prepare for uploading Python package wheel of pyCFML
         shell: bash
@@ -271,8 +271,8 @@ jobs:
         shell: bash
         run: scripts/run_pycfml_unit_tests.sh
 
-      - name: Run pyCFML functional tests
+      - name: Run pyCFML functional tests (without benchmarks)
         shell: bash
         run: |
           scripts/run_pycfml_functional_tests_no_benchmarks.sh
-          scripts/run_pycfml_functional_tests_with_benchmarks.sh
+        #  scripts/run_pycfml_functional_tests_with_benchmarks.sh

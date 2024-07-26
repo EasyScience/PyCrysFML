@@ -156,7 +156,7 @@ jobs:
         shell: bash
         run: scripts/run_pycfml_unit_tests.sh
 
-      - name: Run pyCFML functional tests
+      - name: Run pyCFML functional tests (inkl. benchmarks)
         shell: bash
         run: |
           scripts/run_pycfml_functional_tests_no_benchmarks.sh
@@ -272,14 +272,13 @@ jobs:
         shell: bash
         run: scripts/run_pycfml_unit_tests.sh
 
-      - name: Run pyCFML functional tests
+      - name: Run pyCFML functional tests (inkl. benchmarks)
         shell: bash
         run: |
           scripts/run_pycfml_functional_tests_no_benchmarks.sh
           scripts/run_pycfml_functional_tests_with_benchmarks.sh
 
       - name: Push benchmark results to repository (Python 3.11 only)
-        if: matrix.python-version == '3.11'
         uses: EndBug/add-and-commit@v9
         with:
           add: '.benchmarks/pyCFML'

@@ -1,0 +1,113 @@
+{
+    "machine_info": {
+        "node": "Mac-1720596028765.local",
+        "processor": "arm",
+        "machine": "arm64",
+        "python_compiler": "Clang 13.0.0 (clang-1300.0.29.30)",
+        "python_implementation": "CPython",
+        "python_implementation_version": "3.11.9",
+        "python_version": "3.11.9",
+        "python_build": [
+            "v3.11.9:de54cf5be3",
+            "Apr  2 2024 07:12:50"
+        ],
+        "release": "23.5.0",
+        "system": "Darwin",
+        "cpu": {
+            "python_version": "3.11.9.final.0 (64 bit)",
+            "cpuinfo_version": [
+                9,
+                0,
+                0
+            ],
+            "cpuinfo_version_string": "9.0.0",
+            "arch": "ARM_8",
+            "bits": 64,
+            "count": 3,
+            "arch_string_raw": "arm64",
+            "brand_raw": "Apple M1 (Virtual)"
+        }
+    },
+    "commit_info": {
+        "id": "1913ddd6964f9df3c7fcd9bb0125f2b08ca4bd7a",
+        "time": "2024-07-10T09:39:28+02:00",
+        "author_time": "2024-07-10T09:39:28+02:00",
+        "dirty": false,
+        "project": "TEST_PyCrysFML",
+        "branch": "master"
+    },
+    "benchmarks": [
+        {
+            "group": null,
+            "name": "test__Simple_calc_powder__SrTiO3s",
+            "fullname": "tests/functional_tests/cfml/test__PowderPattern.py::test__Simple_calc_powder__SrTiO3s",
+            "params": null,
+            "param": null,
+            "extra_info": {},
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 5,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": 100000
+            },
+            "stats": {
+                "min": 2.380568541999992,
+                "max": 2.5361679999998614,
+                "mean": 2.46077645839996,
+                "stddev": 0.06287710262343987,
+                "rounds": 5,
+                "median": 2.484050457999956,
+                "iqr": 0.09684827099994209,
+                "q1": 2.4048286667500065,
+                "q3": 2.5016769377499486,
+                "iqr_outliers": 0,
+                "stddev_outliers": 2,
+                "outliers": "2;0",
+                "ld15iqr": 2.380568541999992,
+                "hd15iqr": 2.5361679999998614,
+                "ops": 0.40637579922648387,
+                "total": 12.303882291999798,
+                "iterations": 1
+            }
+        },
+        {
+            "group": null,
+            "name": "test__Simple_calc_powder__ponsin",
+            "fullname": "tests/functional_tests/cfml/test__PowderPattern.py::test__Simple_calc_powder__ponsin",
+            "params": null,
+            "param": null,
+            "extra_info": {},
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 5,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": 100000
+            },
+            "stats": {
+                "min": 3.0090524160000314,
+                "max": 3.120269290999886,
+                "mean": 3.074346841399938,
+                "stddev": 0.04762452480666202,
+                "rounds": 5,
+                "median": 3.0842990409998947,
+                "iqr": 0.08143562449993169,
+                "q1": 3.034739948249978,
+                "q3": 3.11617557274991,
+                "iqr_outliers": 0,
+                "stddev_outliers": 1,
+                "outliers": "1;0",
+                "ld15iqr": 3.0090524160000314,
+                "hd15iqr": 3.120269290999886,
+                "ops": 0.3252723429034568,
+                "total": 15.37173420699969,
+                "iterations": 1
+            }
+        }
+    ],
+    "datetime": "2024-07-10T07:41:50.588777",
+    "version": "4.0.0"
+}

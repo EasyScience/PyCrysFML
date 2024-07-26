@@ -35,8 +35,8 @@ jobs:
 
 
       - name: debug 0
-        if: ${{ env.BRANCH_NAME != 'master' }} && ${{ contains(github.event.head_commit.message, '[save benchmark results]') }}
-        run: echo "env.BRANCH_NAME != 'master' && ${{ contains(github.event.head_commit.message, '[save benchmark results]') }}"
+        if: ${{ env.BRANCH_NAME != 'master' && contains(github.event.head_commit.message, '[save benchmark results]') }}
+        run: echo "${{ env.BRANCH_NAME != 'master' && contains(github.event.head_commit.message, '[save benchmark results]') }}"
 
 
       - name: debug 1
@@ -49,7 +49,7 @@ jobs:
 
       - name: debug 3
         shell: bash
-        run: echo "SAVE_BENCHMARK_RESULTS=${{ contains(github.event.head_commit.message, '[save benchmark results]') }}" >> $GITHUB_ENV
+        run: echo "SAVE_BENCHMARK_RESULTS=${{ env.BRANCH_NAME != 'master' && contains(github.event.head_commit.message, '[save benchmark results]') }}" >> $GITHUB_ENV
 
       - name: debug 4
         shell: bash

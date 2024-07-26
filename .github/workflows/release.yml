@@ -33,6 +33,32 @@ jobs:
       - name: Check-out repository
         uses: actions/checkout@v4
 
+
+      - name: debug 0
+        if: ${{ env.BRANCH_NAME != 'master' }} && ${{ contains(github.event.head_commit.message, '[save benchmark results]') }}
+        run: echo "env.BRANCH_NAME != 'master' && ${{ contains(github.event.head_commit.message, '[save benchmark results]') }}"
+
+
+      - name: debug 1
+        if: env.BRANCH_NAME != 'master' && ${{ contains(github.event.head_commit.message, '[save benchmark results]') }}
+        run: echo "env.BRANCH_NAME != 'master' && ${{ contains(github.event.head_commit.message, '[save benchmark results]') }}"
+
+      - name: debug 2
+        if: ${{ contains(github.event.head_commit.message, '[save benchmark results]') }}
+        run: echo "env.BRANCH_NAME != 'master' && ${{ contains(github.event.head_commit.message, '[save benchmark results]') }}"
+
+      - name: debug 3
+        shell: bash
+        run: echo "SAVE_BENCHMARK_RESULTS=${{ contains(github.event.head_commit.message, '[save benchmark results]') }}" >> $GITHUB_ENV
+
+      - name: debug 4
+        shell: bash
+        run: echo "${{ env.SAVE_BENCHMARK_RESULTS }}"
+
+
+
+
+
       - name: Declare env variables on push only
         if: github.event_name == 'push'
         shell: bash

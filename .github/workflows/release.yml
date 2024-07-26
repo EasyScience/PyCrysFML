@@ -33,32 +33,6 @@ jobs:
       - name: Check-out repository
         uses: actions/checkout@v4
 
-
-      - name: debug 0
-        if: ${{ env.BRANCH_NAME != 'master' && contains(github.event.head_commit.message, '[save benchmark results]') }}
-        run: echo "${{ env.BRANCH_NAME != 'master' && contains(github.event.head_commit.message, '[save benchmark results]') }}"
-
-
-      - name: debug 1
-        if: env.BRANCH_NAME != 'master' && ${{ contains(github.event.head_commit.message, '[save benchmark results]') }}
-        run: echo "env.BRANCH_NAME != 'master' && ${{ contains(github.event.head_commit.message, '[save benchmark results]') }}"
-
-      - name: debug 2
-        if: ${{ contains(github.event.head_commit.message, '[save benchmark results]') }}
-        run: echo "env.BRANCH_NAME != 'master' && ${{ contains(github.event.head_commit.message, '[save benchmark results]') }}"
-
-      - name: debug 3
-        shell: bash
-        run: echo "SAVE_BENCHMARK_RESULTS=${{ env.BRANCH_NAME != 'master' && contains(github.event.head_commit.message, '[save benchmark results]') }}" >> $GITHUB_ENV
-
-      - name: debug 4
-        shell: bash
-        run: echo "${{ env.SAVE_BENCHMARK_RESULTS }}"
-
-
-
-
-
       - name: Declare env variables on push only
         if: github.event_name == 'push'
         shell: bash
@@ -318,7 +292,7 @@ jobs:
         run: scripts/run_pycfml_functional_tests_with_benchmarks_save.sh
 
       - name: Push benchmark results to repository
-        if: env.BRANCH_NAME != 'master' && ${{ contains(github.event.head_commit.message, '[save benchmark results]') }}
+        if: ${{ env.BRANCH_NAME != 'master' && contains(github.event.head_commit.message, '[save benchmark results]') }}
         uses: EndBug/add-and-commit@v9
         with:
           add: '.benchmarks/pyCFML'

@@ -198,6 +198,8 @@ jobs:
 
     needs: build  # previous job 'build' need to be finished first
 
+    if: always()  # start this job even if the previous job failed
+
     timeout-minutes: 30
 
     strategy:

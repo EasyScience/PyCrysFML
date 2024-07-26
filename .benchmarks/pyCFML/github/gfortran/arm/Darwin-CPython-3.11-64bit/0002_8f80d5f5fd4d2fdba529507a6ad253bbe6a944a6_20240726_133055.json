@@ -1,0 +1,113 @@
+{
+    "machine_info": {
+        "node": "Mac-1721999967119.local",
+        "processor": "arm",
+        "machine": "arm64",
+        "python_compiler": "Clang 13.0.0 (clang-1300.0.29.30)",
+        "python_implementation": "CPython",
+        "python_implementation_version": "3.11.9",
+        "python_version": "3.11.9",
+        "python_build": [
+            "v3.11.9:de54cf5be3",
+            "Apr  2 2024 07:12:50"
+        ],
+        "release": "23.5.0",
+        "system": "Darwin",
+        "cpu": {
+            "python_version": "3.11.9.final.0 (64 bit)",
+            "cpuinfo_version": [
+                9,
+                0,
+                0
+            ],
+            "cpuinfo_version_string": "9.0.0",
+            "arch": "ARM_8",
+            "bits": 64,
+            "count": 3,
+            "arch_string_raw": "arm64",
+            "brand_raw": "Apple M1 (Virtual)"
+        }
+    },
+    "commit_info": {
+        "id": "8f80d5f5fd4d2fdba529507a6ad253bbe6a944a6",
+        "time": "2024-07-26T15:16:02+02:00",
+        "author_time": "2024-07-26T15:16:02+02:00",
+        "dirty": false,
+        "project": "PyCrysFML",
+        "branch": "develop"
+    },
+    "benchmarks": [
+        {
+            "group": null,
+            "name": "test__compute_pattern__SrTiO3_Pm3m",
+            "fullname": "tests/functional_tests/pyCFML/cfml_utilities/powder_pattern_from_json/test__powder_pattern_from_json.py::test__compute_pattern__SrTiO3_Pm3m",
+            "params": null,
+            "param": null,
+            "extra_info": {},
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 5,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": 100000
+            },
+            "stats": {
+                "min": 0.01486037499989834,
+                "max": 0.022309749999976702,
+                "mean": 0.015828223070415537,
+                "stddev": 0.0008986824166855435,
+                "rounds": 71,
+                "median": 0.01568512500000452,
+                "iqr": 0.00036634300008131504,
+                "q1": 0.015544864749955423,
+                "q3": 0.015911207750036738,
+                "iqr_outliers": 4,
+                "stddev_outliers": 4,
+                "outliers": "4;4",
+                "ld15iqr": 0.015060667000057038,
+                "hd15iqr": 0.01728937500001848,
+                "ops": 63.17828574637007,
+                "total": 1.1238038379995032,
+                "iterations": 1
+            }
+        },
+        {
+            "group": null,
+            "name": "test__compute_pattern__SrTiO3_Pnma",
+            "fullname": "tests/functional_tests/pyCFML/cfml_utilities/powder_pattern_from_json/test__powder_pattern_from_json.py::test__compute_pattern__SrTiO3_Pnma",
+            "params": null,
+            "param": null,
+            "extra_info": {},
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 5,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": 100000
+            },
+            "stats": {
+                "min": 0.019714499999963664,
+                "max": 0.03161104200000864,
+                "mean": 0.0218045515294075,
+                "stddev": 0.0031920140173387146,
+                "rounds": 51,
+                "median": 0.020174458999917988,
+                "iqr": 0.0019080007500349438,
+                "q1": 0.01998477050000247,
+                "q3": 0.021892771250037413,
+                "iqr_outliers": 8,
+                "stddev_outliers": 7,
+                "outliers": "7;8",
+                "ld15iqr": 0.019714499999963664,
+                "hd15iqr": 0.02497037500006627,
+                "ops": 45.861984304117136,
+                "total": 1.1120321279997825,
+                "iterations": 1
+            }
+        }
+    ],
+    "datetime": "2024-07-26T13:31:03.807345",
+    "version": "4.0.0"
+}

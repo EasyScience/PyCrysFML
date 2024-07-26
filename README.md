@@ -243,11 +243,3 @@ python examples/pyCFML/cfml_utilities/powder_pattern_from_json/srtio3-pattern-si
 ```
 
 More features will be added as the project develops.
-
-## Issues
-
-* [ ] Attempting to calculate the powder diffraction pattern for 2theta > 150deg results in non-zero intensities for only about half of the 2theta range. This can be seen at any of the following links:
-  * [Python script](https://github.com/EasyScience/PyCrysFML/blob/issues/issues/pyCFML/cfml_utilities/powder_pattern_from_json/above_150deg/above_150deg.py)
-  * [Jupyter notebook (GitHub, non-interactive)](https://github.com/EasyScience/PyCrysFML/blob/issues/issues/pyCFML/cfml_utilities/powder_pattern_from_json/above_150deg/above_150deg.ipynb)
-  * [Jupyter notebook (nbviewer, non-interactive)](https://nbviewer.jupyter.org/github/EasyScience/PyCrysFML/blob/issues/issues/pyCFML/cfml_utilities/powder_pattern_from_json/above_150deg/above_150deg.ipynb)
-  * [Jupyter notebook (Binder, interactive)](https://mybinder.org/v2/gh/EasyScience/PyCrysFML/issues?filepath=issues/pyCFML/cfml_utilities/powder_pattern_from_json/above_150deg/above_150deg.ipynb)

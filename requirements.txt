@@ -1,0 +1,4 @@
+--extra-index-url https://easyscience.github.io/pypi/
+
+pycrysfml
+matplotlib

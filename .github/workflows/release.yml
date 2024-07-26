@@ -283,5 +283,5 @@ jobs:
         uses: EndBug/add-and-commit@v9
         with:
           add: '.benchmarks/pyCFML'
-          message: 'Auto push pyCFML benchmark results by GitHub Action for ${{ runner.os }} + ${{ matrix.toolchain.exe }}'
+          message: 'Auto push pyCFML benchmark results by GitHub Action for ${{ matrix.os }} + ${{ matrix.toolchain.exe }}'
           pull: '--rebase --autostash'

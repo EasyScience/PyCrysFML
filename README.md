@@ -236,7 +236,7 @@ Install the matplotlib package used in the example below:
 pip install matplotlib
 ```
 
-Run this example [srtio3-pattern-simulation.py](examples/pyCFML/cfml_utilities/powder_pattern_from_json/srtio3-pattern-simulation.py) to simulate the powder diffraction pattern:
+Run this example [srtio3-pattern-simulation.py](examples/pyCFML/cfml_utilities/powder_pattern_from_json/srtio3-pattern-simulation.py) to see the simulated powder diffraction pattern:
 
 ```
 python examples/pyCFML/cfml_utilities/powder_pattern_from_json/srtio3-pattern-simulation.py 

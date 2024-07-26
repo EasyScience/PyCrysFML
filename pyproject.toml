@@ -4,7 +4,7 @@ build-backend = 'hatchling.build'
 
 [project]
 name = 'pycrysfml'
-version = '0.1.0'
+version = '0.1.1'
 description = 'Python API to CrysFML2008 from https://code.ill.fr/scientific-software/CrysFML2008'
 authors = [
   {name = 'Juan Rodríguez-Carvajal', email = 'jrc@ill.fr'},

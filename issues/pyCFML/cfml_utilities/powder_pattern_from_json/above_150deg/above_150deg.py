@@ -1,11 +1,12 @@
 import copy
 import matplotlib.pyplot as plt
 import numpy as np
-import os
 
 from pycrysfml import cfml_utilities
-#import cfml_utilities
 
+##################
+# Global variables
+##################
 
 STUDY_DICT = {
   "phases": [
@@ -77,7 +78,9 @@ STUDY_DICT = {
   ]
 }
 
+################
 # Help functions
+################
 
 def generated_x_array(study_dict:dict):
     experiment = study_dict['experiments'][0]['NPD']
@@ -92,23 +95,24 @@ def compute_pattern(study_dict:dict):
     y = y.astype(np.float64)
     return y
 
-# Main
+######
+# MAIN
+######
 
-if __name__ == '__main__':
-    study_dict = copy.deepcopy(STUDY_DICT)
+study_dict = copy.deepcopy(STUDY_DICT)
 
-    # set upper limit to 140deg
-    study_dict['experiments'][0]['NPD']['_pd_meas_2theta_range_max'] = 150.0
-    x_1 = generated_x_array(study_dict)
-    y_1 = compute_pattern(study_dict)
+# set upper limit to 140deg
+study_dict['experiments'][0]['NPD']['_pd_meas_2theta_range_max'] = 150.0
+x_1 = generated_x_array(study_dict)
+y_1 = compute_pattern(study_dict)
 
-    # set upper limit to 160deg
-    study_dict['experiments'][0]['NPD']['_pd_meas_2theta_range_max'] = 160.0
-    x_2 = generated_x_array(study_dict)
-    y_2 = compute_pattern(study_dict)
+# set upper limit to 160deg
+study_dict['experiments'][0]['NPD']['_pd_meas_2theta_range_max'] = 160.0
+x_2 = generated_x_array(study_dict)
+y_2 = compute_pattern(study_dict)
 
-    # plot results§
-    plt.plot(x_1, y_1, '-', linewidth=3)
-    plt.plot(x_2, y_2, '-', linewidth=2)
-    plt.legend(["2theta_range_max = 150", "2theta_range_max = 160"])
-    plt.show()
+# plot results§
+plt.plot(x_1, y_1, '-', linewidth=3)
+plt.plot(x_2, y_2, '-', linewidth=2)
+plt.legend(["2theta_range_max = 150", "2theta_range_max = 160"])
+plt.show()

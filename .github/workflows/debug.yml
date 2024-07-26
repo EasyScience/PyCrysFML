@@ -116,7 +116,7 @@ jobs:
         shell: bash
         run: scripts/move_built_to_cfml_dist.sh
 
-      - name: Build und run CFML functional test programs (incl. benchmarks)
+      - name: Build und run CFML functional test programs (without benchmarks)
         # 1st combination: this always fails with 'Undefined symbols...' error
         # 2nd combination: this randomly fails with test__Simple_calc_powder__SrTiO3s 'forrtl: severe (157): Program Exception - access violation'
         if: |
@@ -128,14 +128,6 @@ jobs:
           scripts/build_cfml_test_programs.sh
           scripts/copy_cfml_test_programs_to_tests_dir.sh
           scripts/run_cfml_functional_tests_no_benchmarks.sh
-      #   scripts/run_cfml_functional_tests_with_benchmarks.sh
-
-      #- name: Push benchmark results to repository
-      #  uses: EndBug/add-and-commit@v9
-      #  with:
-      #    add: '.benchmarks/CFML'
-      #    message: 'Auto push CFML benchmark results by GitHub Action for ${{ runner.os }} + ${{ matrix.toolchain.exe }}'
-      #    pull: '--rebase --autostash'
 
       - name: Create pyCFML source code
         shell: bash
@@ -180,9 +172,7 @@ jobs:
 
       - name: Run pyCFML functional tests (without benchmarks)
         shell: bash
-        run: |
-          scripts/run_pycfml_functional_tests_no_benchmarks.sh
-        #  scripts/run_pycfml_functional_tests_with_benchmarks.sh
+        run: scripts/run_pycfml_functional_tests_no_benchmarks.sh
 
       - name: Prepare for uploading Python package wheel of pyCFML
         shell: bash
@@ -273,6 +263,4 @@ jobs:
 
       - name: Run pyCFML functional tests (without benchmarks)
         shell: bash
-        run: |
-          scripts/run_pycfml_functional_tests_no_benchmarks.sh
-        #  scripts/run_pycfml_functional_tests_with_benchmarks.sh
+        run: scripts/run_pycfml_functional_tests_no_benchmarks.sh

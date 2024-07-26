@@ -71,9 +71,8 @@ install-wheel = 'python3 -m pip install {PACKAGE} --force-reinstall --find-links
 run-python = 'python3 {PATH} {OPTIONS}'
 run-tests = 'pytest {PATH} --color=yes --benchmark-disable'
 run-benchmarks.base = 'pytest {PATH} --color=yes --benchmark-only --benchmark-storage="file://./.benchmarks/{PROJECT}/{RUNNER}/{COMPILER}/{PROCESSOR}" --benchmark-warmup=on --benchmark-columns="median, iqr, ops"'
-run-benchmarks.develop-branch = '--benchmark-autosave'
-#run-benchmarks.non-develop-branch = '--benchmark-autosave'
-run-benchmarks.non-develop-branch = '--benchmark-compare --benchmark-compare-fail=median:50%'
+run-benchmarks.save = '--benchmark-autosave'
+run-benchmarks.compare = '--benchmark-compare --benchmark-compare-fail=median:50%'
 
 ######################
 # Build configurations

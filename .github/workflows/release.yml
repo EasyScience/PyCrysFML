@@ -117,6 +117,19 @@ jobs:
         shell: bash
         run: scripts/move_built_to_cfml_dist.sh
 
+      - name: Build und run CFML functional test programs (without benchmarks)
+        # 1st combination: this always fails with 'Undefined symbols...' error
+        # 2nd combination: this randomly fails with test__Simple_calc_powder__SrTiO3s 'forrtl: severe (157): Program Exception - access violation'
+        if: |
+          (runner.os != 'macOS' || matrix.toolchain.exe != 'ifort')
+          &&
+          (runner.os != 'Windows' || matrix.toolchain.exe != 'ifx')
+        shell: bash
+        run: |
+          scripts/build_cfml_test_programs.sh
+          scripts/copy_cfml_test_programs_to_tests_dir.sh
+          scripts/run_cfml_functional_tests_no_benchmarks.sh
+
       - name: Create pyCFML source code
         shell: bash
         run: scripts/create_pycfml_src.sh
@@ -272,15 +285,24 @@ jobs:
         shell: bash
         run: scripts/run_pycfml_unit_tests.sh
 
-      - name: Run pyCFML functional tests (inkl. benchmarks)
+      - name: Run pyCFML functional tests (without benchmarks)
         shell: bash
-        run: |
-          scripts/run_pycfml_functional_tests_no_benchmarks.sh
-          scripts/run_pycfml_functional_tests_with_benchmarks.sh
+        run: scripts/run_pycfml_functional_tests_no_benchmarks.sh
 
-      - name: Push benchmark results to repository (Python 3.11 only)
+      - name: Run pyCFML functional tests and compare benchmark results
+        if: "!contains(github.event.head_commit.message, '[save benchmark results]')"
+        shell: bash
+        run: scripts/run_pycfml_functional_tests_with_benchmarks_compare.sh
+
+      - name: Run pyCFML functional tests and save benchmark results
+        if: "contains(github.event.head_commit.message, '[save benchmark results]')"
+        shell: bash
+        run: scripts/run_pycfml_functional_tests_with_benchmarks_save.sh
+
+      - name: Push benchmark results to repository
+        if: "contains(github.event.head_commit.message, '[save benchmark results]')"
         uses: EndBug/add-and-commit@v9
         with:
           add: '.benchmarks/pyCFML'
-          message: 'Auto push pyCFML benchmark results by GitHub Action for ${{ matrix.os }} + ${{ matrix.toolchain.exe }}'
+          message: 'Auto push pyCFML benchmarks : ${{ github.workflow }} : ${{ matrix.os }} : ${{ matrix.toolchain.exe }}'
           pull: '--rebase --autostash'

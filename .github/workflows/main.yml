@@ -128,18 +128,14 @@ jobs:
           scripts/build_cfml_test_programs.sh
           scripts/copy_cfml_test_programs_to_tests_dir.sh
           scripts/run_cfml_functional_tests_no_benchmarks.sh
-      #  #  scripts/run_cfml_functional_tests_with_benchmarks.sh
+      #   scripts/run_cfml_functional_tests_with_benchmarks.sh
 
       #- name: Push benchmark results to repository
       #  uses: EndBug/add-and-commit@v9
       #  with:
-      #    add: '.benchmarks'
-      #    message: 'Auto push benchmark results by GitHub Action for ${{ runner.os }} + ${{ matrix.toolchain.exe }}'
+      #    add: '.benchmarks/CFML'
+      #    message: 'Auto push CFML benchmark results by GitHub Action for ${{ runner.os }} + ${{ matrix.toolchain.exe }}'
       #    pull: '--rebase --autostash'
-
-      #- name: Copy powder_mod from CFML to pyCFML
-      #  shell: bash
-      #  run: scripts/copy_powder_mod_to_pycfml_repo.sh
 
       - name: Create pyCFML source code
         shell: bash
@@ -263,7 +259,16 @@ jobs:
 
       - name: Run pyCFML functional tests
         shell: bash
-        run: scripts/run_pycfml_functional_tests_no_benchmarks.sh
+        run: |
+          scripts/run_pycfml_functional_tests_no_benchmarks.sh
+          scripts/run_pycfml_functional_tests_with_benchmarks.sh
+
+      - name: Push benchmark results to repository
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: '.benchmarks/pyCFML'
+          message: 'Auto push pyCFML benchmark results by GitHub Action for ${{ runner.os }} + ${{ matrix.toolchain.exe }}'
+          pull: '--rebase --autostash'
 
   ##############################################################################
   # JOB 3

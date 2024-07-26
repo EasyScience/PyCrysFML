@@ -102,25 +102,25 @@ def test__crysfml_db_path():
     desired = os.environ['CRYSFML_DB']
     assert desired == actual
 
-def test__compute_pattern__SrTiO3_Pm3m():
+def test__compute_pattern__SrTiO3_Pm3m(benchmark):
     study_dict = copy.deepcopy(STUDY_DICT_PM3M)
     norm = 120
     _, desired = np.loadtxt(path_to_desired('srtio3-pm3m-pattern_Nebil-ifort.xy'), unpack=True)
     desired = desired - 20.0  # remove background
     desired = np.roll(desired, -1)  # compensate for a 1-element horizontal shift in y data between old Nebil windows build and Andrew current gfortran build
     desired = desired / norm
-    actual = compute_pattern(study_dict)
+    actual = benchmark(compute_pattern, study_dict)
     actual = actual / norm
     assert_almost_equal(desired, actual, decimal=0, verbose=True)
 
-def test__compute_pattern__SrTiO3_Pnma():
+def test__compute_pattern__SrTiO3_Pnma(benchmark):
     study_dict = copy.deepcopy(STUDY_DICT_PM3M)
     study_dict['phases'][0]['SrTiO3']['_space_group_name_H-M_alt'] = 'P n m a'
     norm = 0.65
     desired = np.loadtxt(path_to_desired('srtio3-pnma-pattern_Andrew-ifort.y'), unpack=True)
     desired = desired - 20.0  # remove background
     desired = desired / norm
-    actual = compute_pattern(study_dict)
+    actual = benchmark(compute_pattern, study_dict)
     actual = actual / norm
     assert_almost_equal(desired, actual, decimal=2, verbose=True)
 

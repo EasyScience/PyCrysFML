@@ -831,6 +831,7 @@ def run_cfml_functional_tests_no_benchmarks():
     append_to_main_script(lines)
 
 def run_cfml_functional_tests_with_benchmarks():
+    project_name = CONFIG['cfml']['log-name']
     relpath = os.path.join('tests', 'functional_tests', 'CFML')
     abspath = os.path.join(_project_path(), relpath)
     lines = []
@@ -842,6 +843,7 @@ def run_cfml_functional_tests_with_benchmarks():
     else:
         cmd += ' ' + CONFIG['template']['run-benchmarks']['non-master-branch']
     cmd = cmd.replace('{PATH}', abspath)
+    cmd = cmd.replace('{PROJECT}', project_name)
     if _github_actions():
         cmd = cmd.replace('{RUNNER}', 'github')
     else:
@@ -852,7 +854,6 @@ def run_cfml_functional_tests_with_benchmarks():
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
-
 
 def copy_powder_mod_to_pycfml_repo():
     CFML = CONFIG['cfml']['log-name']
@@ -1384,6 +1385,31 @@ def run_pycfml_functional_tests_no_benchmarks():
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)
 
+def run_pycfml_functional_tests_with_benchmarks():
+    project_name = CONFIG['pycfml']['log-name']
+    relpath = os.path.join('tests', 'functional_tests', 'pyCFML')
+    abspath = os.path.join(_project_path(), relpath)
+    lines = []
+    msg = _echo_msg(f"Running functional tests with benchmarks from '{relpath}'")
+    lines.append(msg)
+    cmd = CONFIG['template']['run-benchmarks']['base']
+    if _github_branch() == 'master':
+        cmd += ' ' + CONFIG['template']['run-benchmarks']['master-branch']
+    else:
+        cmd += ' ' + CONFIG['template']['run-benchmarks']['non-master-branch']
+    cmd = cmd.replace('{PATH}', abspath)
+    cmd = cmd.replace('{PROJECT}', project_name)
+    if _github_actions():
+        cmd = cmd.replace('{RUNNER}', 'github')
+    else:
+        cmd = cmd.replace('{RUNNER}', 'local')
+    cmd = cmd.replace('{COMPILER}', _compiler_name())
+    cmd = cmd.replace('{PROCESSOR}', _processor())
+    lines.append(cmd)
+    script_name = f'{sys._getframe().f_code.co_name}.sh'
+    _write_lines_to_file(lines, script_name)
+    append_to_main_script(lines)
+
 
 if __name__ == '__main__':
     ARGS = parsed_args()
@@ -1485,5 +1511,6 @@ if __name__ == '__main__':
     add_main_script_header(f"Run {pyCFML} tests")
     run_pycfml_unit_tests()
     run_pycfml_functional_tests_no_benchmarks()
+    run_pycfml_functional_tests_with_benchmarks()
 
     _print_msg(f'All scripts were successfully created in {_scripts_path()}')

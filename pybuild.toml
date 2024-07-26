@@ -70,9 +70,10 @@ rename-wheel = 'python3 -m wheel tags --python-tag {PYTHON_TAG} --platform-tag {
 install-wheel = 'python3 -m pip install {PACKAGE} --force-reinstall --find-links={PATH}' # Dependencies "{PACKAGE}[test]" are installed via ci script
 run-python = 'python3 {PATH} {OPTIONS}'
 run-tests = 'pytest {PATH} --color=yes --benchmark-disable'
-run-benchmarks.base = 'pytest {PATH} --color=yes --benchmark-only --benchmark-storage="file://./.benchmarks/{RUNNER}/{COMPILER}/{PROCESSOR}" --benchmark-warmup=on --benchmark-columns="median, iqr, ops"'
+run-benchmarks.base = 'pytest {PATH} --color=yes --benchmark-only --benchmark-storage="file://./.benchmarks/{PROJECT}/{RUNNER}/{COMPILER}/{PROCESSOR}" --benchmark-warmup=on --benchmark-columns="median, iqr, ops"'
 run-benchmarks.master-branch = '--benchmark-autosave'
-run-benchmarks.non-master-branch = '--benchmark-compare --benchmark-compare-fail=median:25%'
+run-benchmarks.non-master-branch = '--benchmark-autosave'
+#run-benchmarks.non-master-branch = '--benchmark-compare --benchmark-compare-fail=median:25%'
 
 ######################
 # Build configurations

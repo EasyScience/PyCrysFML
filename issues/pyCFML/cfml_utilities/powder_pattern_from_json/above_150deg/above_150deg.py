@@ -1,8 +1,7 @@
-import argparse
 import copy
-import os
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 
 from pycrysfml import cfml_utilities
 #import cfml_utilities

@@ -838,10 +838,10 @@ def run_cfml_functional_tests_with_benchmarks():
     msg = _echo_msg(f"Running functional tests with benchmarks from '{relpath}'")
     lines.append(msg)
     cmd = CONFIG['template']['run-benchmarks']['base']
-    if _github_branch() == 'master':
-        cmd += ' ' + CONFIG['template']['run-benchmarks']['master-branch']
+    if _github_branch() == 'develop':
+        cmd += ' ' + CONFIG['template']['run-benchmarks']['develop-branch']
     else:
-        cmd += ' ' + CONFIG['template']['run-benchmarks']['non-master-branch']
+        cmd += ' ' + CONFIG['template']['run-benchmarks']['non-develop-branch']
     cmd = cmd.replace('{PATH}', abspath)
     cmd = cmd.replace('{PROJECT}', project_name)
     if _github_actions():
@@ -1393,10 +1393,10 @@ def run_pycfml_functional_tests_with_benchmarks():
     msg = _echo_msg(f"Running functional tests with benchmarks from '{relpath}'")
     lines.append(msg)
     cmd = CONFIG['template']['run-benchmarks']['base']
-    if _github_branch() == 'master':
-        cmd += ' ' + CONFIG['template']['run-benchmarks']['master-branch']
+    if _github_branch() == 'develop':
+        cmd += ' ' + CONFIG['template']['run-benchmarks']['develop-branch']
     else:
-        cmd += ' ' + CONFIG['template']['run-benchmarks']['non-master-branch']
+        cmd += ' ' + CONFIG['template']['run-benchmarks']['non-develop-branch']
     cmd = cmd.replace('{PATH}', abspath)
     cmd = cmd.replace('{PROJECT}', project_name)
     if _github_actions():

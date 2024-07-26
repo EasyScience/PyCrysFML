@@ -148,6 +148,20 @@ jobs:
           scripts/create_pycfml_python_wheel.sh
           scripts/rename_pycfml_python_wheel.sh
 
+      - name: Install pyCFML from created Python package wheel
+        shell: bash
+        run: scripts/install_pycfml_from_wheel.sh
+
+      - name: Run pyCFML unit tests
+        shell: bash
+        run: scripts/run_pycfml_unit_tests.sh
+
+      - name: Run pyCFML functional tests
+        shell: bash
+        run: |
+          scripts/run_pycfml_functional_tests_no_benchmarks.sh
+          scripts/run_pycfml_functional_tests_with_benchmarks.sh
+
       - name: Prepare for uploading Python package wheel of pyCFML
         shell: bash
         run: |
@@ -250,7 +264,7 @@ jobs:
           name: pycfml-wheel_${{ matrix.os }}_${{ matrix.python-version }}  # name (without .zip) of the zipped artifact uploaded on the previous jobs
           path: ${{ env.WHEEL_DIR }}  # directory to extract downloaded zipped artifacts
 
-      - name: Install pyCFML from downloaded Python package wheel (with dev extras)
+      - name: Install pyCFML from downloaded Python package wheel
         shell: bash
         run: scripts/install_pycfml_from_wheel.sh
 
@@ -264,7 +278,8 @@ jobs:
           scripts/run_pycfml_functional_tests_no_benchmarks.sh
           scripts/run_pycfml_functional_tests_with_benchmarks.sh
 
-      - name: Push benchmark results to repository
+      - name: Push benchmark results to repository (Python 3.11 only)
+        if: matrix.python-version == '3.11'
         uses: EndBug/add-and-commit@v9
         with:
           add: '.benchmarks/pyCFML'

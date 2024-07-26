@@ -170,6 +170,20 @@ jobs:
           scripts/detect_abi3_violations.sh
           scripts/check_wheel_contents.sh
 
+      - name: Install pyCFML from created Python package wheel
+        shell: bash
+        run: scripts/install_pycfml_from_wheel.sh
+
+      - name: Run pyCFML unit tests
+        shell: bash
+        run: scripts/run_pycfml_unit_tests.sh
+
+      - name: Run pyCFML functional tests
+        shell: bash
+        run: |
+          scripts/run_pycfml_functional_tests_no_benchmarks.sh
+          scripts/run_pycfml_functional_tests_with_benchmarks.sh
+
       - name: Prepare for uploading Python package wheel of pyCFML
         shell: bash
         run: echo "WHEEL_DIR=$(python3 pybuild.py --print-wheel-dir)" >> $GITHUB_ENV
@@ -249,7 +263,7 @@ jobs:
           name: pycfml-wheel_${{ matrix.os }}_${{ matrix.toolchain.exe }}  # name (without .zip) of the zipped artifact uploaded on the previous jobs
           path: ${{ env.WHEEL_DIR }}  # directory to extract downloaded zipped artifacts
 
-      - name: Install pyCFML from downloaded Python package wheel (with dev extras)
+      - name: Install pyCFML from downloaded Python package wheel
         shell: bash
         run: scripts/install_pycfml_from_wheel.sh
 
@@ -262,10 +276,3 @@ jobs:
         run: |
           scripts/run_pycfml_functional_tests_no_benchmarks.sh
           scripts/run_pycfml_functional_tests_with_benchmarks.sh
-
-      - name: Push benchmark results to repository
-        uses: EndBug/add-and-commit@v9
-        with:
-          add: '.benchmarks/pyCFML'
-          message: 'Auto push pyCFML benchmark results by GitHub Action for ${{ runner.os }} + ${{ matrix.toolchain.exe }}'
-          pull: '--rebase --autostash'

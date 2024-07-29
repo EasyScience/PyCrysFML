@@ -104,7 +104,7 @@ compilers = ['ifort', 'ifx']
 obj-ext = 'o'
 build-shared = "{COMPILER} -shared CFML_Wraps.{OBJ_EXT} Wraps_*.{OBJ_EXT} {PATH}.{OBJ_EXT} -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {IFPORT_LIB} {PYTHON_LIB}"
 build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} -L{CFML_LIB_DIR} -l{CFML_LIB_NAME}'
-modes.base = '-w -fpp -fPIC -heap-arrays -nologo'
+modes.base = '-fpp -fPIC -heap-arrays -nologo'
 modes.debug = ''  # -g3
 modes.release = '-O3'  # -O3
 
@@ -114,7 +114,7 @@ compilers = ['ifort', 'ifx']
 obj-ext = 'obj'
 build-shared = 'link CFML_Wraps.{OBJ_EXT} Wraps_*.{OBJ_EXT} {PATH}.{OBJ_EXT} /out:"{PATH}.{EXT}" /libpath:{CFML_LIB_PATH} /dll {CFML_LIB_NAME}.lib {PYTHON_LIB}'
 build-exe = '{COMPILER} {OPTIONS} /exe:{EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} {CFML_LIB_DIR}\{CFML_LIB_NAME}.{LIB_EXT}'
-modes.base = '/w /fpp /heap-arrays /nologo -DWIN32=ON'
+modes.base = '/fpp /heap-arrays /nologo -DWIN32=ON'
 modes.debug = ''
 modes.release = '-O3'
 

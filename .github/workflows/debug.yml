@@ -176,7 +176,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:  # if name or path modified, remember to UPDATE those in the download step of the next job
           name: pycfml-wheel_${{ matrix.os }}_${{ matrix.toolchain.exe }} # name (without .zip) of the zip file to be uploaded
-          path: ${{ env.WHEEL_DIR }}  # all files from this directory are zipped
+          path: |  # all files from the directories below are zipped
+            ${{ env.WHEEL_DIR }}
+            scripts
           if-no-files-found: "error"
           compression-level: 0
 

@@ -1,0 +1,113 @@
+{
+    "machine_info": {
+        "node": "Mac-1724247835053.local",
+        "processor": "arm",
+        "machine": "arm64",
+        "python_compiler": "Clang 13.0.0 (clang-1300.0.29.30)",
+        "python_implementation": "CPython",
+        "python_implementation_version": "3.12.4",
+        "python_version": "3.12.4",
+        "python_build": [
+            "v3.12.4:8e8a4baf65",
+            "Jun  6 2024 17:33:18"
+        ],
+        "release": "23.6.0",
+        "system": "Darwin",
+        "cpu": {
+            "python_version": "3.12.4.final.0 (64 bit)",
+            "cpuinfo_version": [
+                9,
+                0,
+                0
+            ],
+            "cpuinfo_version_string": "9.0.0",
+            "arch": "ARM_8",
+            "bits": 64,
+            "count": 3,
+            "arch_string_raw": "arm64",
+            "brand_raw": "Apple M1 (Virtual)"
+        }
+    },
+    "commit_info": {
+        "id": "be41d12e9242d3459ba7183dcc982415f275ebac",
+        "time": "2024-08-21T15:40:47+02:00",
+        "author_time": "2024-08-21T15:40:47+02:00",
+        "dirty": false,
+        "project": "PyCrysFML",
+        "branch": "20-calculating-diffraction-pattern-above-approx-150-degrees-in-2theta"
+    },
+    "benchmarks": [
+        {
+            "group": null,
+            "name": "test__compute_pattern__SrTiO3_Pm3m",
+            "fullname": "tests/functional_tests/pyCFML/cfml_utilities/powder_pattern_from_json/test__powder_pattern_from_json.py::test__compute_pattern__SrTiO3_Pm3m",
+            "params": null,
+            "param": null,
+            "extra_info": {},
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 5,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": 100000
+            },
+            "stats": {
+                "min": 0.019108165999909943,
+                "max": 0.022669083999971917,
+                "mean": 0.02089360901923844,
+                "stddev": 0.0006906844597092767,
+                "rounds": 52,
+                "median": 0.02090954149997515,
+                "iqr": 0.0009058335000418083,
+                "q1": 0.020411770999999135,
+                "q3": 0.021317604500040943,
+                "iqr_outliers": 0,
+                "stddev_outliers": 16,
+                "outliers": "16;0",
+                "ld15iqr": 0.019108165999909943,
+                "hd15iqr": 0.022669083999971917,
+                "ops": 47.861525458776356,
+                "total": 1.086467669000399,
+                "iterations": 1
+            }
+        },
+        {
+            "group": null,
+            "name": "test__compute_pattern__SrTiO3_Pnma",
+            "fullname": "tests/functional_tests/pyCFML/cfml_utilities/powder_pattern_from_json/test__powder_pattern_from_json.py::test__compute_pattern__SrTiO3_Pnma",
+            "params": null,
+            "param": null,
+            "extra_info": {},
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 5,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": 100000
+            },
+            "stats": {
+                "min": 0.030300500000066677,
+                "max": 0.03787187500006439,
+                "mean": 0.03457921268422201,
+                "stddev": 0.001511601731888343,
+                "rounds": 38,
+                "median": 0.03463277099996276,
+                "iqr": 0.0014892489999738245,
+                "q1": 0.03388029200004894,
+                "q3": 0.035369541000022764,
+                "iqr_outliers": 3,
+                "stddev_outliers": 13,
+                "outliers": "13;3",
+                "ld15iqr": 0.03217395800004397,
+                "hd15iqr": 0.03787187500006439,
+                "ops": 28.919108399951668,
+                "total": 1.3140100820004363,
+                "iterations": 1
+            }
+        }
+    ],
+    "datetime": "2024-08-21T13:54:08.341438",
+    "version": "4.0.0"
+}

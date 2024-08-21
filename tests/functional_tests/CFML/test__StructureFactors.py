@@ -3,7 +3,7 @@ import sys
 import re
 import filecmp
 import time
-import tomllib
+import toml
 import subprocess
 import platform
 import numpy as np
@@ -21,8 +21,8 @@ def set_crysfml_db_path():
     default = os.path.join(os.getcwd(), '..', '..', '..')
     project_dir = os.getenv('GITHUB_WORKSPACE', default=default)  # locally do: export GITHUB_WORKSPACE=`pwd`
     config_path = os.path.join(project_dir, 'scripts.toml')
-    with open(config_path, 'rb') as f:
-        CONFIG = tomllib.load(f)
+    with open(config_path, 'r') as f:
+        CONFIG = toml.load(f)
     db_relpath = CONFIG['cfml']['dir']['repo-database']
     db_abspath = os.path.join(project_dir, db_relpath)
     db_dir_relpath = os.path.dirname(db_abspath)

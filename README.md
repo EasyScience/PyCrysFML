@@ -1,5 +1,5 @@
 ## About
-
+ 
 This is a repository for creating a python library **pycrysfml** based on the new automatically generated Python API for the crystallographic library CrysFML2008 (Fortran 2008) from https://code.ill.fr/scientific-software/CrysFML2008.
 
 ## CI status
@@ -216,7 +216,7 @@ pip install matplotlib
 Run this example [srtio3-pattern-simulation.py](examples/pyCFML/cfml_utilities/powder_pattern_from_json/srtio3-pattern-simulation.py) to see the simulated powder diffraction pattern:
 
 ```
-python examples/pyCFML/cfml_utilities/powder_pattern_from_json/srtio3-pattern-simulation.py 
+python examples/pyCFML/cfml_utilities/powder_pattern_from_json/srtio3-pattern-simulation.py
 ```
 
 More features will be added as the project develops.

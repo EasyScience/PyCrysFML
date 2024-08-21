@@ -4,7 +4,7 @@ build-backend = 'hatchling.build'
 
 [project]
 name = 'pycrysfml'
-version = '0.1.1'
+version = '0.1.2'
 description = 'Python API to CrysFML2008 from https://code.ill.fr/scientific-software/CrysFML2008'
 authors = [
   {name = 'Juan Rodríguez-Carvajal', email = 'jrc@ill.fr'},
@@ -18,9 +18,13 @@ maintainers = [
 readme = 'README.md'
 license = {file = 'LICENSE'}
 classifiers = [
-  'Programming Language :: Python :: 3',
+  'Development Status :: 4 - Beta',
   'License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)',
-  'Operating System :: OS Independent'
+  'Programming Language :: Python :: 3',
+  'Operating System :: MacOS',
+  'Operating System :: Microsoft :: Windows',
+  'Operating System :: POSIX :: Linux',
+  'Programming Language :: Python :: 3'
 ]
 requires-python = '>=3.9'
 dependencies = [
@@ -29,7 +33,7 @@ dependencies = [
 
 [project.optional-dependencies]
 ci = [
-  'toml',  # need this, as tomllib is only available for python >=3.11
+  'toml',  # use this as tomllib is only available for python >=3.11
   'validate-pyproject[all]',
   'build',
   'wheel',
@@ -45,7 +49,9 @@ test = [
 ]
 
 [project.urls]
-Homepage = 'https://github.com/easyscience/TEST_PyCrysFML'
+homepage = 'https://github.com/EasyScience/PyCrysFML'
+source = 'https://github.com/EasyScience/PyCrysFML'
+tracker = 'https://github.com/EasyScience/PyCrysFML/issues'
 
 [tool.hatch.build.targets.wheel]
 packages = ['dist/pyCFML/pycrysfml']  # NEED FIX: Replace based on scripts.toml - pycfml.dir.dist-package

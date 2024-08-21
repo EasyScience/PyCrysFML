@@ -1,20 +1,20 @@
 {
     "machine_info": {
-        "node": "Mac-1720595489201.local",
+        "node": "Mac-1724247796866.local",
         "processor": "i386",
         "machine": "x86_64",
-        "python_compiler": "Clang 13.0.0 (clang-1300.0.29.30)",
+        "python_compiler": "Clang 14.0.0 (clang-1400.0.29.202)",
         "python_implementation": "CPython",
-        "python_implementation_version": "3.11.9",
-        "python_version": "3.11.9",
+        "python_implementation_version": "3.10.14",
+        "python_version": "3.10.14",
         "python_build": [
-            "v3.11.9:de54cf5be3",
-            "Apr  2 2024 07:12:50"
+            "main",
+            "Jul 16 2024 19:02:43"
         ],
         "release": "21.6.0",
         "system": "Darwin",
         "cpu": {
-            "python_version": "3.11.9.final.0 (64 bit)",
+            "python_version": "3.10.14.final.0 (64 bit)",
             "cpuinfo_version": [
                 9,
                 0,
@@ -136,18 +136,18 @@
         }
     },
     "commit_info": {
-        "id": "1913ddd6964f9df3c7fcd9bb0125f2b08ca4bd7a",
-        "time": "2024-07-10T09:39:28+02:00",
-        "author_time": "2024-07-10T09:39:28+02:00",
+        "id": "be41d12e9242d3459ba7183dcc982415f275ebac",
+        "time": "2024-08-21T15:40:47+02:00",
+        "author_time": "2024-08-21T15:40:47+02:00",
         "dirty": false,
-        "project": "TEST_PyCrysFML",
-        "branch": "master"
+        "project": "PyCrysFML",
+        "branch": "20-calculating-diffraction-pattern-above-approx-150-degrees-in-2theta"
     },
     "benchmarks": [
         {
             "group": null,
-            "name": "test__Simple_calc_powder__SrTiO3s",
-            "fullname": "tests/functional_tests/cfml/test__PowderPattern.py::test__Simple_calc_powder__SrTiO3s",
+            "name": "test__compute_pattern__SrTiO3_Pm3m",
+            "fullname": "tests/functional_tests/pyCFML/cfml_utilities/powder_pattern_from_json/test__powder_pattern_from_json.py::test__compute_pattern__SrTiO3_Pm3m",
             "params": null,
             "param": null,
             "extra_info": {},
@@ -160,29 +160,29 @@
                 "warmup": 100000
             },
             "stats": {
-                "min": 2.8330578099999,
-                "max": 3.584613845999911,
-                "mean": 3.0653403239999535,
-                "stddev": 0.3136057289239474,
-                "rounds": 5,
-                "median": 2.9085455699998874,
-                "iqr": 0.3911761700000511,
-                "q1": 2.8568025197499765,
-                "q3": 3.2479786897500276,
-                "iqr_outliers": 0,
-                "stddev_outliers": 1,
-                "outliers": "1;0",
-                "ld15iqr": 2.8330578099999,
-                "hd15iqr": 3.584613845999911,
-                "ops": 0.32622805114673303,
-                "total": 15.326701619999767,
+                "min": 0.04552017399998931,
+                "max": 0.05824691899999834,
+                "mean": 0.04904680718180481,
+                "stddev": 0.0031242172201893428,
+                "rounds": 22,
+                "median": 0.04848321700001179,
+                "iqr": 0.0023212580000517846,
+                "q1": 0.04703061999998681,
+                "q3": 0.049351878000038596,
+                "iqr_outliers": 2,
+                "stddev_outliers": 4,
+                "outliers": "4;2",
+                "ld15iqr": 0.04552017399998931,
+                "hd15iqr": 0.05641257399997812,
+                "ops": 20.38868700042469,
+                "total": 1.079029757999706,
                 "iterations": 1
             }
         },
         {
             "group": null,
-            "name": "test__Simple_calc_powder__ponsin",
-            "fullname": "tests/functional_tests/cfml/test__PowderPattern.py::test__Simple_calc_powder__ponsin",
+            "name": "test__compute_pattern__SrTiO3_Pnma",
+            "fullname": "tests/functional_tests/pyCFML/cfml_utilities/powder_pattern_from_json/test__powder_pattern_from_json.py::test__compute_pattern__SrTiO3_Pnma",
             "params": null,
             "param": null,
             "extra_info": {},
@@ -195,26 +195,26 @@
                 "warmup": 100000
             },
             "stats": {
-                "min": 3.625105188000134,
-                "max": 3.8328000149999752,
-                "mean": 3.7257969111999953,
-                "stddev": 0.07597762436543809,
-                "rounds": 5,
-                "median": 3.719639733999884,
-                "iqr": 0.09250678199987306,
-                "q1": 3.6802746165000713,
-                "q3": 3.7727813984999443,
-                "iqr_outliers": 0,
-                "stddev_outliers": 2,
-                "outliers": "2;0",
-                "ld15iqr": 3.625105188000134,
-                "hd15iqr": 3.8328000149999752,
-                "ops": 0.2683989556687679,
-                "total": 18.628984555999978,
+                "min": 0.04632450700000845,
+                "max": 0.07124689500005843,
+                "mean": 0.05283068649999801,
+                "stddev": 0.0057995642976370375,
+                "rounds": 22,
+                "median": 0.05144028550000712,
+                "iqr": 0.006785152000020389,
+                "q1": 0.04872208199992656,
+                "q3": 0.05550723399994695,
+                "iqr_outliers": 1,
+                "stddev_outliers": 5,
+                "outliers": "5;1",
+                "ld15iqr": 0.04632450700000845,
+                "hd15iqr": 0.07124689500005843,
+                "ops": 18.92839306564827,
+                "total": 1.1622751029999563,
                 "iterations": 1
             }
         }
     ],
-    "datetime": "2024-07-10T07:42:52.864962",
+    "datetime": "2024-08-21T13:53:17.212304",
     "version": "4.0.0"
 }

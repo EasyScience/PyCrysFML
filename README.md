@@ -1,5 +1,5 @@
 ## About
-
+ 
 This is a repository for creating a python library **pycrysfml** based on the new automatically generated Python API for the crystallographic library CrysFML2008 (Fortran 2008) from https://code.ill.fr/scientific-software/CrysFML2008.
 
 ## CI status
@@ -13,31 +13,8 @@ This is a repository for creating a python library **pycrysfml** based on the ne
 | macOS 12 (Intel)          | ✅       | Unsupported | ❌2         | ⚙️ Testing |
 | macOS 14 (Apple Silicone) | ✅       | Unsupported | Unsupported   | ⚙️ Testing |
 
-* ❌1 - Failed at the **Run pyCFML functional tests** step (**'tests'** job):
-
-```
-tests\functional_tests\pyCFML\...\test__powder_pattern_from_json.py . [ 33%]
-Windows fatal exception: access violation
-
-Current thread 0x0000068c (most recent call first):
-
-...
-
-scripts/run_pycfml_functional_tests_no_benchmarks.sh:
-line 2:  1359 Segmentation fault
-```
-* ❌2 - Failed at the **Build pyCFML shared obj / dynamic library** step (**'build'** job):
-
-```
-Undefined symbols for architecture x86_64:
-  "_cfml_kvec_symmetry_mp_inlat_", referenced from:
-      _cfml_kvec_symmetry_mp_latsym_ in libCrysFML08.a(ksym_auxsub.o)
-  "_cfml_kvec_symmetry_mp_ltr_", referenced from:
-      _cfml_kvec_symmetry_mp_latsym_ in libCrysFML08.a(ksym_auxsub.o)
-  "_cfml_kvec_symmetry_mp_nlat_", referenced from:
-      _cfml_kvec_symmetry_mp_latsym_ in libCrysFML08.a(ksym_auxsub.o)
-ld: symbol(s) not found for architecture x86_64
-```
+* ❌1 - Failed at the **Run pyCFML functional tests** step (**'tests'** job): [Issue #23](https://github.com/EasyScience/PyCrysFML/issues/23)
+* ❌2 - Failed at the **Build pyCFML shared obj / dynamic library** step (**'build'** job): [Issue #22](https://github.com/EasyScience/PyCrysFML/issues/22)
 
 ## Installing
 
@@ -239,7 +216,7 @@ pip install matplotlib
 Run this example [srtio3-pattern-simulation.py](examples/pyCFML/cfml_utilities/powder_pattern_from_json/srtio3-pattern-simulation.py) to see the simulated powder diffraction pattern:
 
 ```
-python examples/pyCFML/cfml_utilities/powder_pattern_from_json/srtio3-pattern-simulation.py 
+python examples/pyCFML/cfml_utilities/powder_pattern_from_json/srtio3-pattern-simulation.py
 ```
 
 More features will be added as the project develops.

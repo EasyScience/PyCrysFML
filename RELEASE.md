@@ -1,3 +1,3 @@
-### Features
+### 🐛 Bug Fixes
 
-- Performance has been improved as pycrysfml is now built with compiler optimisation level set to 3.
+- Fix calculating diffraction pattern for large 2theta angles @AndrewSazonov (#20)

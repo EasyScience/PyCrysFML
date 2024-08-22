@@ -121,7 +121,6 @@ jobs:
         shell: bash
         run: |
           scripts/build_cfml_test_programs.sh
-          scripts/copy_cfml_test_programs_to_tests_dir.sh
           scripts/run_cfml_functional_tests_no_benchmarks.sh
 
       - name: Create pyCFML source code

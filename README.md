@@ -1,20 +1,30 @@
 ## About
- 
+
 This is a repository for creating a python library **pycrysfml** based on the new automatically generated Python API for the crystallographic library CrysFML2008 (Fortran 2008) from https://code.ill.fr/scientific-software/CrysFML2008.
 
 ## CI status
 
-### Status of CI jobs 'build' and 'tests'
+### Workflow for testing the build process: `debug-build-and-test`
 
-| Platform / Compiler       | gfortran | ifx         | ifort         | nagfor     |
-| ------------------------- | -------- | ----------- | ------------- | ---------- |
-| Windows 10                | ✅       | ❌1        | ✅           | ⚙️ Testing |
-| Ubuntu 22.04              | ✅       | ✅          | ✅           | ⚙️ Testing |
-| macOS 12 (Intel)          | ✅       | Unsupported | ❌2         | ⚙️ Testing |
-| macOS 14 (Apple Silicone) | ✅       | Unsupported | Unsupported   | ⚙️ Testing |
+#### Python version: 3.11
 
-* ❌1 - Failed at the **Run pyCFML functional tests** step (**'tests'** job): [Issue #23](https://github.com/EasyScience/PyCrysFML/issues/23)
-* ❌2 - Failed at the **Build pyCFML shared obj / dynamic library** step (**'build'** job): [Issue #22](https://github.com/EasyScience/PyCrysFML/issues/22)
+| Platform / Compiler       | gfortran | ifx                | ifort             | nagfor       |
+| ------------------------- | -------- |--------------------|-------------------|--------------|
+| Windows 10                | ✅       | ❌ [Issue #23](https://github.com/EasyScience/PyCrysFML/issues/23) | ✅                 | ⚙️ Testing   |
+| Ubuntu 22.04              | ✅       | ✅                  | ✅                 | ⚙️ Testing   |
+| macOS 12 (Intel)          | ✅       | Unsupported        | ❌ [Issue #22](https://github.com/EasyScience/PyCrysFML/issues/22) | ⚙️ Testing   |
+| macOS 14 (Apple Silicon)  | ✅       | Unsupported        | Unsupported       | ⚙️ Testing   |
+
+### Workflow for building a python release package: `release-build-and-test`
+
+#### Fortran compiler: gfortran
+
+| Platform / Python         | 3.10 | 3.11 | 3.12 |
+| ------------------------- | ---- | ---- | ---- |
+| Windows 10                | ✅   | ✅   | ✅   |
+| Ubuntu 22.04              | ✅   | ✅   | ✅   |
+| macOS 12 (Intel)          | ✅   | ✅   | ✅   |
+| macOS 14 (Apple Silicon)  | ✅   | ✅   | ✅   |
 
 ## Installing
 

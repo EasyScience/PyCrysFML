@@ -811,19 +811,19 @@ def run_cfml_functional_tests_no_benchmarks():
     tests_relpath = os.path.join('tests', 'functional_tests', 'CFML')
     tests_abspath = os.path.join(_project_path(), tests_relpath)
     lines = []
-    msg = _echo_msg(f"Entering tests dir '{tests_relpath}'")
-    lines.append(msg)
-    cmd = f'cd {tests_relpath}'
-    lines.append(cmd)
+    #msg = _echo_msg(f"Entering tests dir '{tests_relpath}'")
+    #lines.append(msg)
+    #cmd = f'cd {tests_relpath}'
+    #lines.append(cmd)
     msg = _echo_msg(f"Running functional tests from '{tests_relpath}'")
     lines.append(msg)
     cmd = CONFIG['template']['run-tests']
     cmd = cmd.replace('{PATH}', tests_abspath)
     lines.append(cmd)
-    msg = _echo_msg(f"Exiting tests dir '{tests_relpath}'")
-    lines.append(msg)
-    cmd = f'cd {_project_path()}'
-    lines.append(cmd)
+    #msg = _echo_msg(f"Exiting tests dir '{tests_relpath}'")
+    #lines.append(msg)
+    #cmd = f'cd {_project_path()}'
+    #lines.append(cmd)
     script_name = f'{sys._getframe().f_code.co_name}.sh'
     _write_lines_to_file(lines, script_name)
     append_to_main_script(lines)

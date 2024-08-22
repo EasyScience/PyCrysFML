@@ -1,8 +1,11 @@
-import argparse
 import copy
-import os
 import numpy as np
 from numpy.testing import assert_almost_equal
+import os
+import sys
+
+sys.path.append(os.getcwd())  # to access tests/helpers.py
+from tests.helpers import path_to_desired
 
 #import cfml_utilities
 #import pycrysfml
@@ -82,8 +85,8 @@ STUDY_DICT_PM3M = {
 
 # Help functions
 
-def path_to_desired(file_name:str):
-    return os.path.join(os.path.dirname(__file__), 'desired', file_name)
+#def path_to_desired(file_name:str):
+#    return os.path.join(os.path.dirname(__file__), 'desired', file_name)
 
 def compute_pattern(study_dict:dict):
     #_, y = crysfml08lib.f_powder_pattern_from_json(study_dict)  # returns x and y arrays
@@ -91,16 +94,6 @@ def compute_pattern(study_dict:dict):
     return y
 
 # Tests
-
-# Workaround to set env variable CRYSFML_DB for all the tests below
-# If running this with python instead of pytest, CRYSFML_DB is set automatically
-# from the pycrysfml __init__.py, when importing pycrysfml
-def test__crysfml_db_path():
-    #os.environ['CRYSFML_DB'] = os.path.join(os.path.dirname(crysfml08lib.__file__), 'Databases')
-    os.environ['CRYSFML_DB'] = os.path.join(os.path.dirname(cfml_utilities.__file__), 'Databases')
-    actual = os.getenv('CRYSFML_DB', default='')
-    desired = os.environ['CRYSFML_DB']
-    assert desired == actual
 
 def test__compute_pattern__SrTiO3_Pm3m(benchmark):
     study_dict = copy.deepcopy(STUDY_DICT_PM3M)
@@ -127,6 +120,4 @@ def test__compute_pattern__SrTiO3_Pnma(benchmark):
 # Debug
 
 if __name__ == '__main__':
-    print(f":::::: os.environ['CRYSFML_DB']: {os.environ['CRYSFML_DB']}")
-    print(f':::::: os.getcwd(): {os.getcwd()}')
-    test__compute_pattern__SrTiO3_Pm3m()
+    pass

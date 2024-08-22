@@ -13,7 +13,7 @@ This is a repository for creating a python library **pycrysfml** based on the ne
 | Windows 10                | ✅       | ❌ [Issue #23](https://github.com/EasyScience/PyCrysFML/issues/23) | ✅                 | ⚙️ Testing   |
 | Ubuntu 22.04              | ✅       | ✅                  | ✅                 | ⚙️ Testing   |
 | macOS 12 (Intel)          | ✅       | Unsupported        | ❌ [Issue #22](https://github.com/EasyScience/PyCrysFML/issues/22) | ⚙️ Testing   |
-| macOS 14 (Apple Silicone) | ✅       | Unsupported        | Unsupported       | ⚙️ Testing   |
+| macOS 14 (Apple Silicon)  | ✅       | Unsupported        | Unsupported       | ⚙️ Testing   |
 
 ### Workflow for building a python release package: `release-build-and-test`
 
@@ -24,7 +24,7 @@ This is a repository for creating a python library **pycrysfml** based on the ne
 | Windows 10                | ✅   | ✅   | ✅   |
 | Ubuntu 22.04              | ✅   | ✅   | ✅   |
 | macOS 12 (Intel)          | ✅   | ✅   | ✅   |
-| macOS 14 (Apple Silicone) | ✅   | ✅   | ✅   |
+| macOS 14 (Apple Silicon)  | ✅   | ✅   | ✅   |
 
 ## Installing
 

@@ -4,16 +4,20 @@ This is a repository for creating a python library **pycrysfml** based on the ne
 
 ## CI status
 
-### Testing build process (Python 3.11): `debug-build-and-test` workflow
+### Workflow for testing the build process: `debug-build-and-test`
 
-| Platform / Compiler       | gfortran | ifx         | ifort         | nagfor     |
-| ------------------------- | -------- | ----------- | ------------- | ---------- |
-| Windows 10                | ✅       | ❌ [Issue #23](https://github.com/EasyScience/PyCrysFML/issues/23)       | ✅           | ⚙️ Testing |
-| Ubuntu 22.04              | ✅       | ✅          | ✅           | ⚙️ Testing |
-| macOS 12 (Intel)          | ✅       | Unsupported | ❌ [Issue #22](https://github.com/EasyScience/PyCrysFML/issues/22)         | ⚙️ Testing |
-| macOS 14 (Apple Silicone) | ✅       | Unsupported | Unsupported   | ⚙️ Testing |
+#### Python version: 3.11
 
-### Building release python package (gfortran): `release-build-and-test` workflow
+| Platform / Compiler       | gfortran | ifx                | ifort             | nagfor       |
+| ------------------------- | -------- |--------------------|-------------------|--------------|
+| Windows 10                | ✅       | ❌ [Issue #23](https://github.com/EasyScience/PyCrysFML/issues/23) | ✅                 | ⚙️ Testing   |
+| Ubuntu 22.04              | ✅       | ✅                  | ✅                 | ⚙️ Testing   |
+| macOS 12 (Intel)          | ✅       | Unsupported        | ❌ [Issue #22](https://github.com/EasyScience/PyCrysFML/issues/22) | ⚙️ Testing   |
+| macOS 14 (Apple Silicone) | ✅       | Unsupported        | Unsupported       | ⚙️ Testing   |
+
+### Workflow for building a python release package: `release-build-and-test`
+
+#### Fortran compiler: gfortran
 
 | Platform / Python         | 3.10 | 3.11 | 3.12 |
 | ------------------------- | ---- | ---- | ---- |

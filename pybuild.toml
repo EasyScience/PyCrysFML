@@ -84,7 +84,7 @@ compilers = ['gfortran']
 obj-ext = 'o'
 build-shared = '{COMPILER} -shared CFML_Wraps.{OBJ_EXT} Wraps_*.{OBJ_EXT} {PATH}.{OBJ_EXT} -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {PYTHON_LIB}'
 build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} -L{CFML_LIB_DIR} -l{CFML_LIB_NAME}'
-modes.base = '-cpp -fdec-math -fPIC -fno-stack-arrays -ffree-line-length-none'
+modes.base = '-cpp -fdec-math -fPIC -ffree-line-length-none -fno-stack-arrays -frecursive'
 modes.debug = ''
 modes.release = '-O3'
 
@@ -960,6 +960,7 @@ components-files = [
                             # that the entire line is meaningful. -ffree-line-length-0 means the same thing as -ffree-line-length-none.
 #'-fno-stack-arrays',       # Enabled: Put all local arrays, even those of unknown size onto stack memory.
                             # The -fno- form disables the behavior.
+#'-frecursive',             # Allow indirect recursion by forcing all local arrays to be allocated on the stack.
 #'-fpic',                   # Generate position-independent code (PIC) suitable for use in a shared library, if supported for the target machine. Such code accesses all constant
                             # addresses through a global offset table (GOT). The dynamic loader resolves the GOT entries when the program starts (the dynamic loader is not part
                             # of GCC; it is part of the operating system). If the GOT size for the linked executable exceeds a machine-specific maximum size, you get an error

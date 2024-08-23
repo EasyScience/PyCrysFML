@@ -23,7 +23,6 @@ dist-progs = 'dist/CFML/progs'      # for test programs
 
 [cfml.git]
 url = 'https://code.ill.fr/scientific-software/crysfml2008.git'
-#branch = 'powder_mod_fix'
 branch = 'master'
 
 [cfml.scripts]
@@ -84,9 +83,9 @@ compilers = ['gfortran']
 obj-ext = 'o'
 build-shared = '{COMPILER} -shared CFML_Wraps.{OBJ_EXT} Wraps_*.{OBJ_EXT} {PATH}.{OBJ_EXT} -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {PYTHON_LIB}'
 build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} -L{CFML_LIB_DIR} -l{CFML_LIB_NAME}'
-modes.base = '-cpp -fdec-math -fPIC -ffree-line-length-none -fno-stack-arrays -frecursive'
-modes.debug = ''
-modes.release = '-O2'
+modes.base = '-cpp -fdec-math -fPIC -ffree-line-length-none -fno-stack-arrays -frecursive -m64'
+modes.debug = '-O0'
+modes.release = '-O3'
 
 [[build-configs]]
 platforms = ['macos']

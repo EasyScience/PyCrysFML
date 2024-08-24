@@ -23,7 +23,7 @@ dist-progs = 'dist/CFML/progs'      # for test programs
 
 [cfml.git]
 url = 'https://code.ill.fr/scientific-software/crysfml2008.git'
-branch = 'master'
+branch = 'develop'
 
 [cfml.scripts]
 pyapigen = 'repo/CFML/Scripts/PythonAPI/apigen.py'
@@ -83,9 +83,9 @@ compilers = ['gfortran']
 obj-ext = 'o'
 build-shared = '{COMPILER} -shared CFML_Wraps.{OBJ_EXT} Wraps_*.{OBJ_EXT} {PATH}.{OBJ_EXT} -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {PYTHON_LIB}'
 build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} -L{CFML_LIB_DIR} -l{CFML_LIB_NAME}'
-modes.base = '-cpp -fdec-math -fPIC -ffree-line-length-none -fno-stack-arrays -frecursive -m64'
+modes.base = '-cpp -fdec-math -ffree-line-length-none -fno-stack-arrays -fPIC'
 modes.debug = '-O0'
-modes.release = '-O3'
+modes.release = '-march=native -O2 -pipe'
 
 [[build-configs]]
 platforms = ['macos']
@@ -94,8 +94,8 @@ obj-ext = 'o'
 build-shared = '{COMPILER} -Wl,-shared CFML_Wraps.{OBJ_EXT} Wraps_*.{OBJ_EXT} {PATH}.{OBJ_EXT} -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {PYTHON_LIB}'
 build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} -L{CFML_LIB_DIR} -l{CFML_LIB_NAME}'
 modes.base = '-f2008 -fpp -PIC -quiet -w=all -colour'
-modes.debug = ''
-modes.release = '-O3'
+modes.debug = '-O0'
+modes.release = '-O2'
 
 [[build-configs]]
 platforms = ['linux', 'macos']
@@ -104,8 +104,8 @@ obj-ext = 'o'
 build-shared = "{COMPILER} -shared CFML_Wraps.{OBJ_EXT} Wraps_*.{OBJ_EXT} {PATH}.{OBJ_EXT} -o {PATH}.{EXT} -L{CFML_LIB_PATH} -l{CFML_LIB_NAME} {IFPORT_LIB} {PYTHON_LIB}"
 build-exe = '{COMPILER} {OPTIONS} -o {EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} -L{CFML_LIB_DIR} -l{CFML_LIB_NAME}'
 modes.base = '-fpp -fPIC -heap-arrays -nologo'
-modes.debug = ''  # -g3
-modes.release = '-O3'  # -O3
+modes.debug = '-O0'  # -g3
+modes.release = '-O2'  # -O3
 
 [[build-configs]]
 platforms = ['windows']
@@ -114,8 +114,8 @@ obj-ext = 'obj'
 build-shared = 'link CFML_Wraps.{OBJ_EXT} Wraps_*.{OBJ_EXT} {PATH}.{OBJ_EXT} /out:"{PATH}.{EXT}" /libpath:{CFML_LIB_PATH} /dll {CFML_LIB_NAME}.lib {PYTHON_LIB}'
 build-exe = '{COMPILER} {OPTIONS} /exe:{EXE_NAME} {SOURCE_PATH} -I {CFML_INCLUDE_PATH} {CFML_LIB_DIR}\{CFML_LIB_NAME}.{LIB_EXT}'
 modes.base = '/fpp /heap-arrays /nologo -DWIN32=ON'
-modes.debug = ''
-modes.release = '-O3'
+modes.debug = '-O0'
+modes.release = '-O2'
 
 [build]
 src-ext = 'f90'

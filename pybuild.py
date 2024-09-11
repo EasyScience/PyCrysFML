@@ -1334,7 +1334,7 @@ def run_pycfml_unit_tests():
     relpath = os.path.join('tests', 'unit_tests', 'pyCFML')
     abspath = os.path.join(_project_path(), relpath)
     lines = []
-    msg = _echo_msg(f"Running unit tests from '{relpath}'")
+    msg = _echo_msg(f"Running tests from '{relpath}'")
     lines.append(msg)
     cmd = CONFIG['template']['run-tests']
     cmd = cmd.replace('{PATH}', abspath)
@@ -1374,7 +1374,7 @@ def run_pycfml_functional_tests_no_benchmarks():
     relpath = os.path.join('tests', 'functional_tests', 'pyCFML')
     abspath = os.path.join(_project_path(), relpath)
     lines = []
-    msg = _echo_msg(f"Running unit tests from '{relpath}'")
+    msg = _echo_msg(f"Running tests from '{relpath}'")
     lines.append(msg)
     cmd = CONFIG['template']['run-tests']
     cmd = cmd.replace('{PATH}', abspath)

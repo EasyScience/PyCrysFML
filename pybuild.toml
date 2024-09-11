@@ -919,7 +919,7 @@ components-files = [
     'Wraps_ExtinCorr',
     'Wraps_Symmetry_Tables',
     'Wraps_DiffPatt',
-    'Wraps_EoS',
+#    'Wraps_EoS',
     'Wraps_IOForm',
     'Wraps_Molecules',
     'Wraps_Propagation_Vectors',
